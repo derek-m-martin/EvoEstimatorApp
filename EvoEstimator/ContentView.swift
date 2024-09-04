@@ -9,16 +9,40 @@ import SwiftUI
 
 struct ContentView: View {
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+        ZStack {
+            // sets background colour to black
+            Color.black
+                .edgesIgnoringSafeArea(.all) // ensures colour covers entire screen
+
+            VStack(
+            ) {
+                
+                // creating the title in top left of screen
+                
+                HStack {
+                    
+                    VStack (
+                        alignment: .leading
+                    ) {
+                        
+                        Text("Evo")
+							.font(Font.custom("Arya W00 Triple Slant", size: 32))
+                            .foregroundStyle(.white)
+                        
+                        Text("Estimator")
+							.font(Font.custom("Arya W00 Triple Slant", size: 32))
+                            .foregroundStyle(.white)
+                    }
+                    Spacer()
+                }
+                Spacer()
+            }
+            .padding()
         }
-        .padding()
     }
 }
 
 #Preview {
     ContentView()
 }
+

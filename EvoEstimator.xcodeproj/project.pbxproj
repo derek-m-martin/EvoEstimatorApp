@@ -9,16 +9,16 @@
 /* Begin PBXBuildFile section */
 		D3A8BE552C72F2B2001232F9 /* EvoEstimatorApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3A8BE542C72F2B2001232F9 /* EvoEstimatorApp.swift */; };
 		D3A8BE572C72F2B2001232F9 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3A8BE562C72F2B2001232F9 /* ContentView.swift */; };
-		D3A8BE592C72F2B2001232F9 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D3A8BE582C72F2B2001232F9 /* Assets.xcassets */; };
-		D3A8BE5C2C72F2B2001232F9 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D3A8BE5B2C72F2B2001232F9 /* Preview Assets.xcassets */; };
+		D3A8BE682C88F571001232F9 /* Arya W00 Triple Slant.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D3A8BE672C88F571001232F9 /* Arya W00 Triple Slant.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		D3A8BE512C72F2B2001232F9 /* EvoEstimator.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = EvoEstimator.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D3A8BE542C72F2B2001232F9 /* EvoEstimatorApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EvoEstimatorApp.swift; sourceTree = "<group>"; };
-		D3A8BE562C72F2B2001232F9 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
-		D3A8BE582C72F2B2001232F9 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		D3A8BE5B2C72F2B2001232F9 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		D3A8BE562C72F2B2001232F9 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; usesTabs = 1; };
+		D3A8BE662C88F4DB001232F9 /* ProjectAssets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = ProjectAssets.xcassets; sourceTree = "<group>"; };
+		D3A8BE672C88F571001232F9 /* Arya W00 Triple Slant.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Arya W00 Triple Slant.ttf"; path = "../OnlineWebFonts_COM_7dc20b82009cb05ad3149b71f8d60358/Arya W00 Triple Slant/Arya W00 Triple Slant.ttf"; sourceTree = "<group>"; };
+		D3A8BE692C88F66E001232F9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -35,6 +35,7 @@
 		D3A8BE482C72F2B2001232F9 = {
 			isa = PBXGroup;
 			children = (
+				D3A8BE672C88F571001232F9 /* Arya W00 Triple Slant.ttf */,
 				D3A8BE532C72F2B2001232F9 /* EvoEstimator */,
 				D3A8BE522C72F2B2001232F9 /* Products */,
 			);
@@ -51,9 +52,10 @@
 		D3A8BE532C72F2B2001232F9 /* EvoEstimator */ = {
 			isa = PBXGroup;
 			children = (
+				D3A8BE692C88F66E001232F9 /* Info.plist */,
+				D3A8BE662C88F4DB001232F9 /* ProjectAssets.xcassets */,
 				D3A8BE542C72F2B2001232F9 /* EvoEstimatorApp.swift */,
 				D3A8BE562C72F2B2001232F9 /* ContentView.swift */,
-				D3A8BE582C72F2B2001232F9 /* Assets.xcassets */,
 				D3A8BE5A2C72F2B2001232F9 /* Preview Content */,
 			);
 			path = EvoEstimator;
@@ -62,7 +64,6 @@
 		D3A8BE5A2C72F2B2001232F9 /* Preview Content */ = {
 			isa = PBXGroup;
 			children = (
-				D3A8BE5B2C72F2B2001232F9 /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
 			sourceTree = "<group>";
@@ -125,8 +126,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D3A8BE5C2C72F2B2001232F9 /* Preview Assets.xcassets in Resources */,
-				D3A8BE592C72F2B2001232F9 /* Assets.xcassets in Resources */,
+				D3A8BE682C88F571001232F9 /* Arya W00 Triple Slant.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -274,6 +274,7 @@
 				DEVELOPMENT_ASSET_PATHS = "\"EvoEstimator/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = EvoEstimator/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -302,6 +303,7 @@
 				DEVELOPMENT_ASSET_PATHS = "\"EvoEstimator/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = EvoEstimator/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
