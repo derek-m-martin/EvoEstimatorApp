@@ -7,17 +7,20 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D32ED5842C8A60FF00140CE2 /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = D32ED5832C8A60FF00140CE2 /* Color.swift */; };
+		D32ED5882C8B86E200140CE2 /* Arya W00 Triple Slant.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D32ED5872C8A62DC00140CE2 /* Arya W00 Triple Slant.ttf */; };
+		D32ED5892C8B88E300140CE2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D3A8BE662C88F4DB001232F9 /* Assets.xcassets */; };
 		D3A8BE552C72F2B2001232F9 /* EvoEstimatorApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3A8BE542C72F2B2001232F9 /* EvoEstimatorApp.swift */; };
 		D3A8BE572C72F2B2001232F9 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3A8BE562C72F2B2001232F9 /* ContentView.swift */; };
-		D3A8BE682C88F571001232F9 /* Arya W00 Triple Slant.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D3A8BE672C88F571001232F9 /* Arya W00 Triple Slant.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		D32ED5832C8A60FF00140CE2 /* Color.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
+		D32ED5872C8A62DC00140CE2 /* Arya W00 Triple Slant.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Arya W00 Triple Slant.ttf"; path = "../OnlineWebFonts_COM_7dc20b82009cb05ad3149b71f8d60358/Arya W00 Triple Slant/Arya W00 Triple Slant.ttf"; sourceTree = "<group>"; };
 		D3A8BE512C72F2B2001232F9 /* EvoEstimator.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = EvoEstimator.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D3A8BE542C72F2B2001232F9 /* EvoEstimatorApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EvoEstimatorApp.swift; sourceTree = "<group>"; };
 		D3A8BE562C72F2B2001232F9 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; usesTabs = 1; };
-		D3A8BE662C88F4DB001232F9 /* ProjectAssets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = ProjectAssets.xcassets; sourceTree = "<group>"; };
-		D3A8BE672C88F571001232F9 /* Arya W00 Triple Slant.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Arya W00 Triple Slant.ttf"; path = "../OnlineWebFonts_COM_7dc20b82009cb05ad3149b71f8d60358/Arya W00 Triple Slant/Arya W00 Triple Slant.ttf"; sourceTree = "<group>"; };
+		D3A8BE662C88F4DB001232F9 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		D3A8BE692C88F66E001232F9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -35,7 +38,7 @@
 		D3A8BE482C72F2B2001232F9 = {
 			isa = PBXGroup;
 			children = (
-				D3A8BE672C88F571001232F9 /* Arya W00 Triple Slant.ttf */,
+				D32ED5872C8A62DC00140CE2 /* Arya W00 Triple Slant.ttf */,
 				D3A8BE532C72F2B2001232F9 /* EvoEstimator */,
 				D3A8BE522C72F2B2001232F9 /* Products */,
 			);
@@ -53,9 +56,10 @@
 			isa = PBXGroup;
 			children = (
 				D3A8BE692C88F66E001232F9 /* Info.plist */,
-				D3A8BE662C88F4DB001232F9 /* ProjectAssets.xcassets */,
+				D3A8BE662C88F4DB001232F9 /* Assets.xcassets */,
 				D3A8BE542C72F2B2001232F9 /* EvoEstimatorApp.swift */,
 				D3A8BE562C72F2B2001232F9 /* ContentView.swift */,
+				D32ED5832C8A60FF00140CE2 /* Color.swift */,
 				D3A8BE5A2C72F2B2001232F9 /* Preview Content */,
 			);
 			path = EvoEstimator;
@@ -126,7 +130,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D3A8BE682C88F571001232F9 /* Arya W00 Triple Slant.ttf in Resources */,
+				D32ED5892C8B88E300140CE2 /* Assets.xcassets in Resources */,
+				D32ED5882C8B86E200140CE2 /* Arya W00 Triple Slant.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -139,6 +144,7 @@
 			files = (
 				D3A8BE572C72F2B2001232F9 /* ContentView.swift in Sources */,
 				D3A8BE552C72F2B2001232F9 /* EvoEstimatorApp.swift in Sources */,
+				D32ED5842C8A60FF00140CE2 /* Color.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
