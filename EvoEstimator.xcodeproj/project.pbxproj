@@ -16,7 +16,7 @@
 
 /* Begin PBXFileReference section */
 		D32ED5832C8A60FF00140CE2 /* Color.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
-		D32ED5872C8A62DC00140CE2 /* Arya W00 Triple Slant.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Arya W00 Triple Slant.ttf"; path = "../OnlineWebFonts_COM_7dc20b82009cb05ad3149b71f8d60358/Arya W00 Triple Slant/Arya W00 Triple Slant.ttf"; sourceTree = "<group>"; };
+		D32ED5872C8A62DC00140CE2 /* Arya W00 Triple Slant.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Arya W00 Triple Slant.ttf"; path = "EvoEstimator/Arya W00 Triple Slant.ttf"; sourceTree = "<group>"; };
 		D3A8BE512C72F2B2001232F9 /* EvoEstimator.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = EvoEstimator.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D3A8BE542C72F2B2001232F9 /* EvoEstimatorApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EvoEstimatorApp.swift; sourceTree = "<group>"; };
 		D3A8BE562C72F2B2001232F9 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; usesTabs = 1; };

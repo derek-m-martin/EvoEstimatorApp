@@ -31,11 +31,12 @@ struct ContentView: View {
 					}
 					Spacer() // Keeps the text on the left
 				}
-				.padding(.top, 30)
+				.padding(.top, 30) // keeps the title from hugging the very top of the screen
 				.ignoresSafeArea(.container, edges: .top) // Raises the title higher near the notch
 				
 				// Button Section
-				VStack(spacing: 20) { // Added spacing between buttons
+				VStack(spacing: 20) { // Adjusted spacing between buttons and the dashed line
+					// Start Location Button
 					Button(action: {
 						print("Entered Start Location")
 					}) {
@@ -47,8 +48,32 @@ struct ContentView: View {
 							.cornerRadius(90)
 					}
 					
-					Spacer()
+					// Dashed Line Image between Start and End Location
+					Image("dash")
+						.resizable()
+						.aspectRatio(contentMode: .fit)
+						.frame(width: 65, height: 65)
+						.foregroundColor(.white) // Forces image from black to white
 					
+					HStack(spacing: 12) { // Closer spacing between speed lines and car
+						Image("plus")
+							.resizable()
+							.aspectRatio(contentMode: .fit)
+							.frame(width: 17, height: 17)
+							.foregroundColor(.white)
+
+						Text("Add Stops?")
+							.font(.system(size: 24, weight: .light))
+							.foregroundStyle(.white)
+					}
+					
+					Image("dash")
+						.resizable()
+						.aspectRatio(contentMode: .fit)
+						.frame(width: 65, height: 65)
+						.foregroundColor(.white)
+					
+					// End Location Button
 					Button(action: {
 						print("Entered End Location")
 					}) {
@@ -59,9 +84,22 @@ struct ContentView: View {
 							.foregroundColor(.white)
 							.cornerRadius(90)
 					}
-					
-					Spacer()
-					
+
+					// Car and Speed Lines Section
+					HStack(spacing: -10) { // Closer spacing between speed lines and car
+						Image("speed_lines")
+							.resizable()
+							.aspectRatio(contentMode: .fit)
+							.frame(width: 150, height: 50)
+							.foregroundColor(.white)
+
+						Image("car-skeleton")
+							.resizable()
+							.aspectRatio(contentMode: .fit)
+							.frame(width: 200, height: 150)
+					}
+
+					// "Get my Estimate" Button
 					Button(action: {
 						print("Trip Estimated!")
 					}) {
@@ -82,4 +120,5 @@ struct ContentView: View {
 #Preview {
 	ContentView()
 }
+
 
