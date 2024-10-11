@@ -16,6 +16,7 @@ struct ContentView: View {
 	@State var endLocation: String = ""
 	@State var isPresentingAutocomplete = false
 	@State var isStartLocation = true
+	@State var estimateAnimation = false
 	
 	var body: some View {
 		ZStack {
@@ -103,16 +104,21 @@ struct ContentView: View {
 							.aspectRatio(contentMode: .fit)
 							.frame(width: 150, height: 50)
 							.foregroundColor(.white)
+							.offset(x: estimateAnimation ? UIScreen.main.bounds.width : 0)
 
 						Image("car-skeleton")
 							.resizable()
 							.aspectRatio(contentMode: .fit)
 							.frame(width: 200, height: 150)
+							.offset(x: estimateAnimation ? UIScreen.main.bounds.width : 0)
 					}
 
 					// "Get my Estimate" Button
 					Button(action: {
 						estimateTripTime(startAddress: startLocation, endAddress: endLocation)
+						withAnimation(.easeInOut(duration: 1.0)) {
+							estimateAnimation = true
+						}
 					}) {
 						Text("Get my Estimate!")
 							.padding()
