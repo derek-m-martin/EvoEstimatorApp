@@ -5,9 +5,9 @@
 //  Created by Derek Martin on 2024-10-11.
 //
 
-// **********************
+// ***********************
 // Handles the autofill functionality of the start/end location buttons
-// **********************
+// ***********************
 
 import Foundation
 import SwiftUI
