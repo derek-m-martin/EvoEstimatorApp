@@ -7,6 +7,7 @@
 
 import SwiftUI
 import GooglePlaces
+import CoreLocation
 
 struct ContentView: View {
 	@State var showingStartLocationPrompt = false
@@ -111,7 +112,7 @@ struct ContentView: View {
 
 					// "Get my Estimate" Button
 					Button(action: {
-						print("Trip Estimated!")
+						estimateTripTime()
 					}) {
 						Text("Get my Estimate!")
 							.padding()
@@ -127,6 +128,49 @@ struct ContentView: View {
 		.sheet(isPresented: $isPresentingAutocomplete) {
 			AutocompleteViewController(isStartLocation: $isStartLocation, startLocation: $startLocation, endLocation: $endLocation)
 		}
+	}
+	
+	private func estimateTripTime() {
+		guard !startLocation.isEmpty, !endLocation.isEmpty else {
+			print("Start or End location is missing")
+			return
+		}
+		
+		let apiKey = APIKeys.googleAPIKey
+		let startLocationEncoded = startLocation.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
+		let endLocationEncoded = endLocation.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
+		
+		let urlString = "https://maps.googleapis.com/maps/api/directions/json?origin=\(startLocationEncoded)&destination=\(endLocationEncoded)&key=\(apiKey)"
+		
+		guard let url = URL(string: urlString) else {
+			print("Invalid URL")
+			return
+		}
+		
+		URLSession.shared.dataTask(with: url) { data, response, error in
+			if let error = error {
+				print("Error fetching data: \(error)")
+				return
+			}
+			
+			guard let data = data else {
+				print("No data received")
+				return
+			}
+			
+			do {
+				if let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any],
+				   let routes = json["routes"] as? [[String: Any]],
+				   let legs = routes.first?["legs"] as? [[String: Any]],
+				   let duration = legs.first?["duration"] as? [String: Any],
+				   let travelTimeText = duration["text"] as? String {
+					
+					print("Estimated Travel Time: \(travelTimeText)")
+				}
+			} catch {
+				print("Error parsing JSON: \(error)")
+			}
+		}.resume()
 	}
 }
 
