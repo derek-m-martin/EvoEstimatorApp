@@ -1,0 +1,6 @@
+framework module Pods_EvoEstimator {
+  umbrella header "Pods-EvoEstimator-umbrella.h"
+
+  export *
+  module * { export * }
+}

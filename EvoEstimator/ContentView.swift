@@ -6,12 +6,15 @@
 //
 
 import SwiftUI
+import GooglePlaces
 
 struct ContentView: View {
-	@State private var showingStartLocationPrompt = false
-	@State private var showingEndLocationPrompt = false
-	@State private var startLocation: String = ""
-	@State private var endLocation: String = ""
+	@State var showingStartLocationPrompt = false
+	@State var showingEndLocationPrompt = false
+	@State var startLocation: String = ""
+	@State var endLocation: String = ""
+	@State var isPresentingAutocomplete = false
+	@State var isStartLocation = true
 	
 	var body: some View {
 		ZStack {
@@ -43,7 +46,8 @@ struct ContentView: View {
 				VStack(spacing: 20) { // Adjusted spacing between buttons and the dashed line
 					// Start Location Button
 					Button(action: {
-						showingStartLocationPrompt = true
+						isStartLocation = true
+						isPresentingAutocomplete = true
 					}) {
 						Text(startLocation.isEmpty ? "Start Location" : startLocation)
 							.padding()
@@ -51,30 +55,6 @@ struct ContentView: View {
 							.background(Color.theme.accent)
 							.foregroundColor(.white)
 							.cornerRadius(90)
-					}
-					.sheet(isPresented: $showingStartLocationPrompt) {
-						ZStack {
-							Color.black.ignoresSafeArea()
-							VStack(spacing: 20) {
-								TextField("Enter Start Location", text: $startLocation)
-									.padding()
-									.background(Color.white)
-									.foregroundColor(.black)
-									.cornerRadius(10)
-								Button("Finish") {
-									showingStartLocationPrompt = false
-								}
-								.padding()
-								.background(Color.theme.accent)
-								.foregroundColor(.white)
-								.cornerRadius(10)
-							}
-							.padding()
-							.frame(maxWidth: .infinity)
-							.background(Color.black.opacity(0.9))
-							.cornerRadius(20)
-							.padding(.horizontal, 20)
-						}
 					}
 					
 					// Dashed Line Image between Start and End Location
@@ -104,7 +84,8 @@ struct ContentView: View {
 					
 					// End Location Button
 					Button(action: {
-						showingEndLocationPrompt = true
+						isStartLocation = false
+						isPresentingAutocomplete = true
 					}) {
 						Text(endLocation.isEmpty ? "End Location" : endLocation)
 							.padding()
@@ -112,30 +93,6 @@ struct ContentView: View {
 							.background(Color.theme.accent)
 							.foregroundColor(.white)
 							.cornerRadius(90)
-					}
-					.sheet(isPresented: $showingEndLocationPrompt) {
-						ZStack {
-							Color.black.ignoresSafeArea()
-							VStack(spacing: 20) {
-								TextField("Enter End Location", text: $endLocation)
-									.padding()
-									.background(Color.white)
-									.foregroundColor(.black)
-									.cornerRadius(10)
-								Button("Finish") {
-									showingEndLocationPrompt = false
-								}
-								.padding()
-								.background(Color.theme.accent)
-								.foregroundColor(.white)
-								.cornerRadius(10)
-							}
-							.padding()
-							.frame(maxWidth: .infinity)
-							.background(Color.black.opacity(0.9))
-							.cornerRadius(20)
-							.padding(.horizontal, 20)
-						}
 					}
 
 					// Car and Speed Lines Section
@@ -166,6 +123,57 @@ struct ContentView: View {
 				}
 				Spacer() // Pushes the buttons towards the center of the screen
 			}
+		}
+		.sheet(isPresented: $isPresentingAutocomplete) {
+			AutocompleteViewController(isStartLocation: $isStartLocation, startLocation: $startLocation, endLocation: $endLocation)
+		}
+	}
+}
+
+struct AutocompleteViewController: UIViewControllerRepresentable {
+	@Binding var isStartLocation: Bool
+	@Binding var startLocation: String
+	@Binding var endLocation: String
+
+	func makeUIViewController(context: Context) -> GMSAutocompleteViewController {
+		let autocompleteController = GMSAutocompleteViewController()
+		autocompleteController.delegate = context.coordinator
+		return autocompleteController
+	}
+
+	func updateUIViewController(_ uiViewController: GMSAutocompleteViewController, context: Context) {}
+
+	func makeCoordinator() -> Coordinator {
+		return Coordinator(isStartLocation: $isStartLocation, startLocation: $startLocation, endLocation: $endLocation)
+	}
+
+	class Coordinator: NSObject, GMSAutocompleteViewControllerDelegate {
+		@Binding var isStartLocation: Bool
+		@Binding var startLocation: String
+		@Binding var endLocation: String
+
+		init(isStartLocation: Binding<Bool>, startLocation: Binding<String>, endLocation: Binding<String>) {
+			_isStartLocation = isStartLocation
+			_startLocation = startLocation
+			_endLocation = endLocation
+		}
+
+		func viewController(_ viewController: GMSAutocompleteViewController, didAutocompleteWith place: GMSPlace) {
+			if isStartLocation {
+				startLocation = place.name ?? ""
+			} else {
+				endLocation = place.name ?? ""
+			}
+			viewController.dismiss(animated: true, completion: nil)
+		}
+
+		func viewController(_ viewController: GMSAutocompleteViewController, didFailAutocompleteWithError error: Error) {
+			print("Error: ", error.localizedDescription)
+			viewController.dismiss(animated: true, completion: nil)
+		}
+
+		func wasCancelled(_ viewController: GMSAutocompleteViewController) {
+			viewController.dismiss(animated: true, completion: nil)
 		}
 	}
 }
