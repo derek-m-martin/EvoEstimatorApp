@@ -53,16 +53,28 @@ struct ContentView: View {
 							.cornerRadius(90)
 					}
 					.sheet(isPresented: $showingStartLocationPrompt) {
-						VStack {
-							TextField("Enter Start Location", text: $startLocation)
+						ZStack {
+							Color.black.ignoresSafeArea()
+							VStack(spacing: 20) {
+								TextField("Enter Start Location", text: $startLocation)
+									.padding()
+									.background(Color.white)
+									.foregroundColor(.black)
+									.cornerRadius(10)
+								Button("Finish") {
+									showingStartLocationPrompt = false
+								}
 								.padding()
-								.textFieldStyle(RoundedBorderTextFieldStyle())
-							Button("Finish") {
-								showingStartLocationPrompt = false
+								.background(Color.theme.accent)
+								.foregroundColor(.white)
+								.cornerRadius(10)
 							}
 							.padding()
+							.frame(maxWidth: .infinity)
+							.background(Color.black.opacity(0.9))
+							.cornerRadius(20)
+							.padding(.horizontal, 20)
 						}
-						.padding()
 					}
 					
 					// Dashed Line Image between Start and End Location
@@ -102,16 +114,28 @@ struct ContentView: View {
 							.cornerRadius(90)
 					}
 					.sheet(isPresented: $showingEndLocationPrompt) {
-						VStack {
-							TextField("Enter End Location", text: $endLocation)
+						ZStack {
+							Color.black.ignoresSafeArea()
+							VStack(spacing: 20) {
+								TextField("Enter End Location", text: $endLocation)
+									.padding()
+									.background(Color.white)
+									.foregroundColor(.black)
+									.cornerRadius(10)
+								Button("Finish") {
+									showingEndLocationPrompt = false
+								}
 								.padding()
-								.textFieldStyle(RoundedBorderTextFieldStyle())
-							Button("Finish") {
-								showingEndLocationPrompt = false
+								.background(Color.theme.accent)
+								.foregroundColor(.white)
+								.cornerRadius(10)
 							}
 							.padding()
+							.frame(maxWidth: .infinity)
+							.background(Color.black.opacity(0.9))
+							.cornerRadius(20)
+							.padding(.horizontal, 20)
 						}
-						.padding()
 					}
 
 					// Car and Speed Lines Section
