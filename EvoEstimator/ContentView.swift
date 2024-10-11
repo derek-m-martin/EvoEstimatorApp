@@ -17,7 +17,8 @@ struct ContentView: View {
 	@State var isPresentingAutocomplete = false
 	@State var isStartLocation = true
 	@State var estimateAnimation = false
-	
+	@State var travelTime: String = ""
+
 	var body: some View {
 		ZStack {
 			// Background color for the entire app
@@ -98,24 +99,40 @@ struct ContentView: View {
 					}
 
 					// Car and Speed Lines Section
-					HStack(spacing: -10) { // Closer spacing between speed lines and car
+					HStack(spacing: -10) {
+						// Speed Lines Image
 						Image("speed_lines")
 							.resizable()
 							.aspectRatio(contentMode: .fit)
 							.frame(width: 150, height: 50)
 							.foregroundColor(.white)
-							.offset(x: estimateAnimation ? UIScreen.main.bounds.width : 0)
-
+							.offset(x: estimateAnimation ? UIScreen.main.bounds.width * 2 : 130)
+						
+						// Car Skeleton Image
 						Image("car-skeleton")
 							.resizable()
 							.aspectRatio(contentMode: .fit)
 							.frame(width: 200, height: 150)
-							.offset(x: estimateAnimation ? UIScreen.main.bounds.width : 0)
+							.offset(x: estimateAnimation ? UIScreen.main.bounds.width * 2 : 130)
+						
+						// Estimated Travel Time Text
+						Text("Estimated Travel Time: \(travelTime)")
+							.font(.system(size: 18, weight: .bold))
+							.foregroundColor(Color.theme.accent)
+							.offset(x: estimateAnimation ? -150 : -UIScreen.main.bounds.width * 2)
+							.frame(width: UIScreen.main.bounds.width * 0.8, alignment: .leading)
+						
+						// Move Spacer after the Text
+						Spacer()
 					}
+					.frame(width: UIScreen.main.bounds.width * 1)
+
 
 					// "Get my Estimate" Button
 					Button(action: {
-						estimateTripTime(startAddress: startLocation, endAddress: endLocation)
+						estimateTripTime(startAddress: startLocation, endAddress: endLocation) { time in
+							travelTime = time
+						}
 						withAnimation(.easeInOut(duration: 1.0)) {
 							estimateAnimation = true
 						}
@@ -138,5 +155,5 @@ struct ContentView: View {
 }
 
 #Preview {
-	ContentView()
+	ContentView(travelTime: "")
 }
