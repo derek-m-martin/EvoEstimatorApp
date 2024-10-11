@@ -14,26 +14,24 @@ import SwiftUI
 import GooglePlaces
 import CoreLocation
 
-func estimateTripTime(start: String, end: String) {
-    guard !start.isEmpty, !end.isEmpty else {
-        print("Start or End location is missing")
-        return
-    }
-    
+import Foundation
+
+func estimateTripTime(startAddress: String, endAddress: String) {
     let apiKey = APIKeys.googleAPIKey
-    let startEncoded = start.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
-    let endEncoded = end.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
+    let originsEncoded = startAddress.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
+    let destinationsEncoded = endAddress.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
     
-    let urlString = "https://maps.googleapis.com/maps/api/directions/json?origin=\(startEncoded)&destination=\(endEncoded)&key=\(apiKey)"
+    let urlString = "https://maps.googleapis.com/maps/api/distancematrix/json?origins=\(originsEncoded)&destinations=\(destinationsEncoded)&mode=driving&key=\(apiKey)"
     
     guard let url = URL(string: urlString) else {
         print("Invalid URL")
         return
     }
     
+    // Make the network request
     URLSession.shared.dataTask(with: url) { data, response, error in
         if let error = error {
-            print("Error fetching data: \(error)")
+            print("Error fetching data: \(error.localizedDescription)")
             return
         }
         
@@ -43,16 +41,18 @@ func estimateTripTime(start: String, end: String) {
         }
         
         do {
+            // Parse the JSON response
             if let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any],
-               let routes = json["routes"] as? [[String: Any]],
-               let legs = routes.first?["legs"] as? [[String: Any]],
-               let duration = legs.first?["duration"] as? [String: Any],
+               let rows = json["rows"] as? [[String: Any]],
+               let elements = rows.first?["elements"] as? [[String: Any]],
+               let duration = elements.first?["duration"] as? [String: Any],
                let travelTimeText = duration["text"] as? String {
                 
+                // Print the estimated travel time
                 print("Estimated Travel Time: \(travelTimeText)")
             }
         } catch {
-            print("Error parsing JSON: \(error)")
+            print("Error parsing JSON: \(error.localizedDescription)")
         }
     }.resume()
 }
