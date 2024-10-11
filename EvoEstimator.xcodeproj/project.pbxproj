@@ -14,6 +14,7 @@
 		D36533E42CB8DDED007C90F8 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D36533E32CB8DDED007C90F8 /* AppDelegate.swift */; };
 		D3A8BE552C72F2B2001232F9 /* EvoEstimatorApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3A8BE542C72F2B2001232F9 /* EvoEstimatorApp.swift */; };
 		D3A8BE572C72F2B2001232F9 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3A8BE562C72F2B2001232F9 /* ContentView.swift */; };
+		D3BB81302CB9AD7D00A49903 /* APIKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3BB812F2CB9AD7D00A49903 /* APIKeys.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -27,6 +28,7 @@
 		D3A8BE562C72F2B2001232F9 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; usesTabs = 1; };
 		D3A8BE662C88F4DB001232F9 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		D3A8BE692C88F66E001232F9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		D3BB812F2CB9AD7D00A49903 /* APIKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIKeys.swift; sourceTree = "<group>"; };
 		D9E61D3F8163CB371C7CFF6B /* Pods_EvoEstimator.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_EvoEstimator.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -87,6 +89,7 @@
 				D3A8BE562C72F2B2001232F9 /* ContentView.swift */,
 				D32ED5832C8A60FF00140CE2 /* Color.swift */,
 				D36533E32CB8DDED007C90F8 /* AppDelegate.swift */,
+				D3BB812F2CB9AD7D00A49903 /* APIKeys.swift */,
 				D3A8BE5A2C72F2B2001232F9 /* Preview Content */,
 			);
 			path = EvoEstimator;
@@ -214,6 +217,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D36533E42CB8DDED007C90F8 /* AppDelegate.swift in Sources */,
+				D3BB81302CB9AD7D00A49903 /* APIKeys.swift in Sources */,
 				D3A8BE572C72F2B2001232F9 /* ContentView.swift in Sources */,
 				D3A8BE552C72F2B2001232F9 /* EvoEstimatorApp.swift in Sources */,
 				D32ED5842C8A60FF00140CE2 /* Color.swift in Sources */,
