@@ -19,7 +19,7 @@ func estimateTripTime(startAddress: String, endAddress: String, completion: @esc
     let apiKey = APIKeys.googleAPIKey
     let originsEncoded = startAddress.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
     let destinationsEncoded = endAddress.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
-    let urlString = "https://maps.googleapis.com/maps/api/distancematrix/json?origins=\(originsEncoded)&destinations=\(destinationsEncoded)&mode=driving&key=\(apiKey)"
+    let urlString = "https://maps.googleapis.com/maps/api/distancematrix/json?origins=\(originsEncoded)&destinations=\(destinationsEncoded)&mode=driving&departure_time=now&key=\(apiKey)"
     
     guard let url = URL(string: urlString) else {
         print("Invalid URL")
@@ -43,8 +43,8 @@ func estimateTripTime(startAddress: String, endAddress: String, completion: @esc
             if let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any],
                let rows = json["rows"] as? [[String: Any]],
                let elements = rows.first?["elements"] as? [[String: Any]],
-               let duration = elements.first?["duration"] as? [String: Any],
-               let travelTimeText = duration["text"] as? String {
+               let durationInTraffic = elements.first?["duration_in_traffic"] as? [String: Any],
+               let travelTimeText = durationInTraffic["text"] as? String {
                 
                 // Pass the travel time back using the completion handler
                 DispatchQueue.main.async {
