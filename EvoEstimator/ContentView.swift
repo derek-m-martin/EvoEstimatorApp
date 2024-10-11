@@ -112,7 +112,7 @@ struct ContentView: View {
 
 					// "Get my Estimate" Button
 					Button(action: {
-						estimateTripTime(start: startLocation, end: endLocation)
+						estimateTripTime(startAddress: startLocation, endAddress: endLocation)
 					}) {
 						Text("Get my Estimate!")
 							.padding()
