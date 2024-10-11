@@ -8,6 +8,11 @@
 import SwiftUI
 
 struct ContentView: View {
+	@State private var showingStartLocationPrompt = false
+	@State private var showingEndLocationPrompt = false
+	@State private var startLocation: String = ""
+	@State private var endLocation: String = ""
+	
 	var body: some View {
 		ZStack {
 			// Background color for the entire app
@@ -38,14 +43,26 @@ struct ContentView: View {
 				VStack(spacing: 20) { // Adjusted spacing between buttons and the dashed line
 					// Start Location Button
 					Button(action: {
-						print("Entered Start Location")
+						showingStartLocationPrompt = true
 					}) {
-						Text("Start Location")
+						Text(startLocation.isEmpty ? "Start Location" : startLocation)
 							.padding()
 							.font(.system(size: 30, weight: .semibold))
 							.background(Color.theme.accent)
 							.foregroundColor(.white)
 							.cornerRadius(90)
+					}
+					.sheet(isPresented: $showingStartLocationPrompt) {
+						VStack {
+							TextField("Enter Start Location", text: $startLocation)
+								.padding()
+								.textFieldStyle(RoundedBorderTextFieldStyle())
+							Button("Finish") {
+								showingStartLocationPrompt = false
+							}
+							.padding()
+						}
+						.padding()
 					}
 					
 					// Dashed Line Image between Start and End Location
@@ -75,14 +92,26 @@ struct ContentView: View {
 					
 					// End Location Button
 					Button(action: {
-						print("Entered End Location")
+						showingEndLocationPrompt = true
 					}) {
-						Text("End Location")
+						Text(endLocation.isEmpty ? "End Location" : endLocation)
 							.padding()
 							.font(.system(size: 30, weight: .semibold))
 							.background(Color.theme.accent)
 							.foregroundColor(.white)
 							.cornerRadius(90)
+					}
+					.sheet(isPresented: $showingEndLocationPrompt) {
+						VStack {
+							TextField("Enter End Location", text: $endLocation)
+								.padding()
+								.textFieldStyle(RoundedBorderTextFieldStyle())
+							Button("Finish") {
+								showingEndLocationPrompt = false
+							}
+							.padding()
+						}
+						.padding()
 					}
 
 					// Car and Speed Lines Section
@@ -120,5 +149,3 @@ struct ContentView: View {
 #Preview {
 	ContentView()
 }
-
-
