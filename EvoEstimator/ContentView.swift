@@ -112,7 +112,7 @@ struct ContentView: View {
 
 					// "Get my Estimate" Button
 					Button(action: {
-						estimateTripTime()
+						estimateTripTime(start: startLocation, end: endLocation)
 					}) {
 						Text("Get my Estimate!")
 							.padding()
@@ -127,97 +127,6 @@ struct ContentView: View {
 		}
 		.sheet(isPresented: $isPresentingAutocomplete) {
 			AutocompleteViewController(isStartLocation: $isStartLocation, startLocation: $startLocation, endLocation: $endLocation)
-		}
-	}
-	
-	private func estimateTripTime() {
-		guard !startLocation.isEmpty, !endLocation.isEmpty else {
-			print("Start or End location is missing")
-			return
-		}
-		
-		let apiKey = APIKeys.googleAPIKey
-		let startLocationEncoded = startLocation.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
-		let endLocationEncoded = endLocation.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
-		
-		let urlString = "https://maps.googleapis.com/maps/api/directions/json?origin=\(startLocationEncoded)&destination=\(endLocationEncoded)&key=\(apiKey)"
-		
-		guard let url = URL(string: urlString) else {
-			print("Invalid URL")
-			return
-		}
-		
-		URLSession.shared.dataTask(with: url) { data, response, error in
-			if let error = error {
-				print("Error fetching data: \(error)")
-				return
-			}
-			
-			guard let data = data else {
-				print("No data received")
-				return
-			}
-			
-			do {
-				if let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any],
-				   let routes = json["routes"] as? [[String: Any]],
-				   let legs = routes.first?["legs"] as? [[String: Any]],
-				   let duration = legs.first?["duration"] as? [String: Any],
-				   let travelTimeText = duration["text"] as? String {
-					
-					print("Estimated Travel Time: \(travelTimeText)")
-				}
-			} catch {
-				print("Error parsing JSON: \(error)")
-			}
-		}.resume()
-	}
-}
-
-struct AutocompleteViewController: UIViewControllerRepresentable {
-	@Binding var isStartLocation: Bool
-	@Binding var startLocation: String
-	@Binding var endLocation: String
-
-	func makeUIViewController(context: Context) -> GMSAutocompleteViewController {
-		let autocompleteController = GMSAutocompleteViewController()
-		autocompleteController.delegate = context.coordinator
-		return autocompleteController
-	}
-
-	func updateUIViewController(_ uiViewController: GMSAutocompleteViewController, context: Context) {}
-
-	func makeCoordinator() -> Coordinator {
-		return Coordinator(isStartLocation: $isStartLocation, startLocation: $startLocation, endLocation: $endLocation)
-	}
-
-	class Coordinator: NSObject, GMSAutocompleteViewControllerDelegate {
-		@Binding var isStartLocation: Bool
-		@Binding var startLocation: String
-		@Binding var endLocation: String
-
-		init(isStartLocation: Binding<Bool>, startLocation: Binding<String>, endLocation: Binding<String>) {
-			_isStartLocation = isStartLocation
-			_startLocation = startLocation
-			_endLocation = endLocation
-		}
-
-		func viewController(_ viewController: GMSAutocompleteViewController, didAutocompleteWith place: GMSPlace) {
-			if isStartLocation {
-				startLocation = place.name ?? ""
-			} else {
-				endLocation = place.name ?? ""
-			}
-			viewController.dismiss(animated: true, completion: nil)
-		}
-
-		func viewController(_ viewController: GMSAutocompleteViewController, didFailAutocompleteWithError error: Error) {
-			print("Error: ", error.localizedDescription)
-			viewController.dismiss(animated: true, completion: nil)
-		}
-
-		func wasCancelled(_ viewController: GMSAutocompleteViewController) {
-			viewController.dismiss(animated: true, completion: nil)
 		}
 	}
 }
