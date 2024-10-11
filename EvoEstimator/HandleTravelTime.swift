@@ -13,33 +13,31 @@ import Foundation
 import SwiftUI
 import GooglePlaces
 import CoreLocation
-
 import Foundation
 
-func estimateTripTime(startAddress: String, endAddress: String) {
+func estimateTripTime(startAddress: String, endAddress: String, completion: @escaping (String) -> Void) {
     let apiKey = APIKeys.googleAPIKey
     let originsEncoded = startAddress.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
     let destinationsEncoded = endAddress.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
-    
     let urlString = "https://maps.googleapis.com/maps/api/distancematrix/json?origins=\(originsEncoded)&destinations=\(destinationsEncoded)&mode=driving&key=\(apiKey)"
     
     guard let url = URL(string: urlString) else {
         print("Invalid URL")
         return
     }
-    
+
     // Make the network request
     URLSession.shared.dataTask(with: url) { data, response, error in
         if let error = error {
             print("Error fetching data: \(error.localizedDescription)")
             return
         }
-        
+
         guard let data = data else {
             print("No data received")
             return
         }
-        
+
         do {
             // Parse the JSON response
             if let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any],
@@ -48,8 +46,10 @@ func estimateTripTime(startAddress: String, endAddress: String) {
                let duration = elements.first?["duration"] as? [String: Any],
                let travelTimeText = duration["text"] as? String {
                 
-                // Print the estimated travel time
-                print("Estimated Travel Time: \(travelTimeText)")
+                // Pass the travel time back using the completion handler
+                DispatchQueue.main.async {
+                    completion(travelTimeText)
+                }
             }
         } catch {
             print("Error parsing JSON: \(error.localizedDescription)")
