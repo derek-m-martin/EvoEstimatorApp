@@ -5,7 +5,6 @@ target 'EvoEstimator' do
   # Comment the next line if you don't want to use dynamic frameworks
   use_frameworks!
 
-  # Pods for EvoEstimator
-  pod 'GooglePlaces'
+pod 'GooglePlaces'
 
 end
