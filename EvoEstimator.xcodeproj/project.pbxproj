@@ -17,6 +17,7 @@
 		D3BB81302CB9AD7D00A49903 /* APIKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3BB812F2CB9AD7D00A49903 /* APIKeys.swift */; };
 		D3BB81322CB9B2E200A49903 /* HandleAutofill.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3BB81312CB9B2E200A49903 /* HandleAutofill.swift */; };
 		D3BB81342CB9B3C500A49903 /* HandleTravelTime.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3BB81332CB9B3C500A49903 /* HandleTravelTime.swift */; };
+		D3BB81362CB9F33B00A49903 /* ComputeTripCost.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3BB81352CB9F33B00A49903 /* ComputeTripCost.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -33,6 +34,7 @@
 		D3BB812F2CB9AD7D00A49903 /* APIKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIKeys.swift; sourceTree = "<group>"; };
 		D3BB81312CB9B2E200A49903 /* HandleAutofill.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HandleAutofill.swift; sourceTree = "<group>"; };
 		D3BB81332CB9B3C500A49903 /* HandleTravelTime.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HandleTravelTime.swift; sourceTree = "<group>"; };
+		D3BB81352CB9F33B00A49903 /* ComputeTripCost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComputeTripCost.swift; sourceTree = "<group>"; };
 		D9E61D3F8163CB371C7CFF6B /* Pods_EvoEstimator.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_EvoEstimator.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -96,6 +98,7 @@
 				D3BB812F2CB9AD7D00A49903 /* APIKeys.swift */,
 				D3BB81312CB9B2E200A49903 /* HandleAutofill.swift */,
 				D3BB81332CB9B3C500A49903 /* HandleTravelTime.swift */,
+				D3BB81352CB9F33B00A49903 /* ComputeTripCost.swift */,
 			);
 			path = EvoEstimator;
 			sourceTree = "<group>";
@@ -219,6 +222,7 @@
 				D3A8BE572C72F2B2001232F9 /* ContentView.swift in Sources */,
 				D3A8BE552C72F2B2001232F9 /* EvoEstimatorApp.swift in Sources */,
 				D32ED5842C8A60FF00140CE2 /* Color.swift in Sources */,
+				D3BB81362CB9F33B00A49903 /* ComputeTripCost.swift in Sources */,
 				D3BB81322CB9B2E200A49903 /* HandleAutofill.swift in Sources */,
 				D3BB81342CB9B3C500A49903 /* HandleTravelTime.swift in Sources */,
 			);
