@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		8E605EB4D118DA9E4BC15F9D /* Pods_EvoEstimator.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D9E61D3F8163CB371C7CFF6B /* Pods_EvoEstimator.framework */; };
+		433B5DBD29EF663D63A038F7 /* Pods_EvoEstimator.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17D62E144F442A1FB76455B5 /* Pods_EvoEstimator.framework */; };
 		D32ED5842C8A60FF00140CE2 /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = D32ED5832C8A60FF00140CE2 /* Color.swift */; };
 		D32ED5882C8B86E200140CE2 /* Arya W00 Triple Slant.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D32ED5872C8A62DC00140CE2 /* Arya W00 Triple Slant.ttf */; };
 		D32ED5892C8B88E300140CE2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D3A8BE662C88F4DB001232F9 /* Assets.xcassets */; };
@@ -21,8 +21,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		7E5A9B5F055F6DA03E1F9E26 /* Pods-EvoEstimator.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-EvoEstimator.release.xcconfig"; path = "Target Support Files/Pods-EvoEstimator/Pods-EvoEstimator.release.xcconfig"; sourceTree = "<group>"; };
-		8F7F9FF78BAB0751A575E763 /* Pods-EvoEstimator.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-EvoEstimator.debug.xcconfig"; path = "Target Support Files/Pods-EvoEstimator/Pods-EvoEstimator.debug.xcconfig"; sourceTree = "<group>"; };
+		0689375A80EE9034E3D4729B /* Pods-EvoEstimator.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-EvoEstimator.debug.xcconfig"; path = "Target Support Files/Pods-EvoEstimator/Pods-EvoEstimator.debug.xcconfig"; sourceTree = "<group>"; };
+		17D62E144F442A1FB76455B5 /* Pods_EvoEstimator.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_EvoEstimator.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		7C8B10F5153996742081DA39 /* Pods-EvoEstimator.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-EvoEstimator.release.xcconfig"; path = "Target Support Files/Pods-EvoEstimator/Pods-EvoEstimator.release.xcconfig"; sourceTree = "<group>"; };
 		D32ED5832C8A60FF00140CE2 /* Color.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
 		D32ED5872C8A62DC00140CE2 /* Arya W00 Triple Slant.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Arya W00 Triple Slant.ttf"; path = "EvoEstimator/Arya W00 Triple Slant.ttf"; sourceTree = "<group>"; };
 		D36533E32CB8DDED007C90F8 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -35,7 +36,6 @@
 		D3BB81312CB9B2E200A49903 /* HandleAutofill.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HandleAutofill.swift; sourceTree = "<group>"; };
 		D3BB81332CB9B3C500A49903 /* HandleTravelTime.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HandleTravelTime.swift; sourceTree = "<group>"; };
 		D3BB81352CB9F33B00A49903 /* ComputeTripCost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComputeTripCost.swift; sourceTree = "<group>"; };
-		D9E61D3F8163CB371C7CFF6B /* Pods_EvoEstimator.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_EvoEstimator.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -43,7 +43,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8E605EB4D118DA9E4BC15F9D /* Pods_EvoEstimator.framework in Frameworks */,
+				433B5DBD29EF663D63A038F7 /* Pods_EvoEstimator.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -53,16 +53,16 @@
 		5C2C30D29683D91C3C754D58 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				8F7F9FF78BAB0751A575E763 /* Pods-EvoEstimator.debug.xcconfig */,
-				7E5A9B5F055F6DA03E1F9E26 /* Pods-EvoEstimator.release.xcconfig */,
+				0689375A80EE9034E3D4729B /* Pods-EvoEstimator.debug.xcconfig */,
+				7C8B10F5153996742081DA39 /* Pods-EvoEstimator.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
 		};
-		BBF0493FD050B118ECEE7AFF /* Frameworks */ = {
+		B98654A4D2AF608EDCD7D0A9 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				D9E61D3F8163CB371C7CFF6B /* Pods_EvoEstimator.framework */,
+				17D62E144F442A1FB76455B5 /* Pods_EvoEstimator.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -74,7 +74,7 @@
 				D3A8BE532C72F2B2001232F9 /* EvoEstimator */,
 				D3A8BE522C72F2B2001232F9 /* Products */,
 				5C2C30D29683D91C3C754D58 /* Pods */,
-				BBF0493FD050B118ECEE7AFF /* Frameworks */,
+				B98654A4D2AF608EDCD7D0A9 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -110,11 +110,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = D3A8BE5F2C72F2B2001232F9 /* Build configuration list for PBXNativeTarget "EvoEstimator" */;
 			buildPhases = (
-				AAC70267CD842E98362FEB28 /* [CP] Check Pods Manifest.lock */,
+				3EB3B36FD3E254B1F52C8C4B /* [CP] Check Pods Manifest.lock */,
 				D3A8BE4D2C72F2B2001232F9 /* Sources */,
 				D3A8BE4E2C72F2B2001232F9 /* Frameworks */,
 				D3A8BE4F2C72F2B2001232F9 /* Resources */,
-				21687BECE2BA47F9F22F071A /* [CP] Copy Pods Resources */,
+				A6A19B9EF493E6E5B0176BBE /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -171,24 +171,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		21687BECE2BA47F9F22F071A /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-EvoEstimator/Pods-EvoEstimator-resources-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Copy Pods Resources";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-EvoEstimator/Pods-EvoEstimator-resources-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-EvoEstimator/Pods-EvoEstimator-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		AAC70267CD842E98362FEB28 /* [CP] Check Pods Manifest.lock */ = {
+		3EB3B36FD3E254B1F52C8C4B /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -208,6 +191,23 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		A6A19B9EF493E6E5B0176BBE /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-EvoEstimator/Pods-EvoEstimator-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-EvoEstimator/Pods-EvoEstimator-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-EvoEstimator/Pods-EvoEstimator-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -352,13 +352,14 @@
 		};
 		D3A8BE602C72F2B2001232F9 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 8F7F9FF78BAB0751A575E763 /* Pods-EvoEstimator.debug.xcconfig */;
+			baseConfigurationReference = 0689375A80EE9034E3D4729B /* Pods-EvoEstimator.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"EvoEstimator/Preview Content\"";
+				DEVELOPMENT_TEAM = R6Y2HXTQBG;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -383,13 +384,14 @@
 		};
 		D3A8BE612C72F2B2001232F9 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 7E5A9B5F055F6DA03E1F9E26 /* Pods-EvoEstimator.release.xcconfig */;
+			baseConfigurationReference = 7C8B10F5153996742081DA39 /* Pods-EvoEstimator.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"EvoEstimator/Preview Content\"";
+				DEVELOPMENT_TEAM = R6Y2HXTQBG;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
