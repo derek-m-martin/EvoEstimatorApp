@@ -15,7 +15,7 @@ import GooglePlaces
 import CoreLocation
 import Foundation
 
-func estimateTripTime(startAddress: String, endAddress: String, completion: @escaping (String) -> Void) {
+func estimateTripTime(startAddress: String, endAddress: String, completion: @escaping (String, Double) -> Void) {
     let apiKey = APIKeys.googleAPIKey
     let originsEncoded = startAddress.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
     let destinationsEncoded = endAddress.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
@@ -44,11 +44,12 @@ func estimateTripTime(startAddress: String, endAddress: String, completion: @esc
                let rows = json["rows"] as? [[String: Any]],
                let elements = rows.first?["elements"] as? [[String: Any]],
                let durationInTraffic = elements.first?["duration_in_traffic"] as? [String: Any],
-               let travelTimeText = durationInTraffic["text"] as? String {
+               let travelTimeText = durationInTraffic["text"] as? String,
+               let travelTimeValue = durationInTraffic["value"] as? Double {
                 
                 // Pass the travel time back using the completion handler
                 DispatchQueue.main.async {
-                    completion(travelTimeText)
+                    completion(travelTimeText, travelTimeValue)
                 }
             }
         } catch {
