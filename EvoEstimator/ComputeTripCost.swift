@@ -35,9 +35,22 @@ func calculateCost(travelCost: Double, completion: @escaping (Double) -> Void) {
     else {
         total = (inMinutes * perMin)
     }
+
+    total = (total * 1.12)
+    total = total.rounded(toPlaces: 2)
     
     DispatchQueue.main.async {
         completion(total)
     }
 }
+
+extension Double {
+    func rounded(toPlaces places: Int) -> Double {
+        let multiplier = pow(10.0, Double(places))
+        return (self * multiplier).rounded() / multiplier
+    }
+}
+
+
+
 
