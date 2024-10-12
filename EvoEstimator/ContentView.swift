@@ -20,7 +20,7 @@ struct ContentView: View {
 	@State var travelTime: String = ""
 	@State var travelTimeValue: Double = 0.0
 	@State var tripCost: Double = 0.0
-
+	
 	var body: some View {
 		GeometryReader { geometry in
 			ZStack {
@@ -43,17 +43,21 @@ struct ContentView: View {
 
 						Spacer()
 
-						// Reset Button
-						Button(action: {
-							withAnimation(.easeInOut(duration: 1.2)) {
+						// Dropdown menu!
+						Menu {
+							Button("Reset Estimator", role: .destructive) {
+								startLocation = ""
+								endLocation = ""
+								travelTime = ""
+								tripCost = 0.0
 								estimateAnimation = false
 							}
-							startLocation = ""
-							endLocation = ""
-							travelTime = ""
-							tripCost = 0.0
-						}) {
-							Image(systemName: "arrow.counterclockwise.circle")
+
+							Button("View Evo's Current Rates", role: .cancel) {
+								// stub
+							}
+						} label: {
+							Image(systemName: "line.horizontal.3")
 								.resizable()
 								.aspectRatio(contentMode: .fit)
 								.frame(width: geometry.size.width * 0.08)
