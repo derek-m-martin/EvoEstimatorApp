@@ -108,7 +108,7 @@ struct ContentView: View {
 						.frame(width: UIScreen.main.bounds.width * 0.8, alignment: .leading)
 					
 					// Estimated Price Text
-					Text("Estimated Trip Price: \(tripCost)")
+					Text("Estimated Trip Price: \(String(format: "%.2f", tripCost))")
 						.font(.system(size: 18, weight: .bold))
 						.foregroundColor(Color.theme.accent)
 						.offset(x: estimateAnimation ? -10 : -UIScreen.main.bounds.width * 2)
