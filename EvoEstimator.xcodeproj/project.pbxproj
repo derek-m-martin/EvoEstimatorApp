@@ -19,6 +19,7 @@
 		D3BB81362CB9F33B00A49903 /* ComputeTripCost.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3BB81352CB9F33B00A49903 /* ComputeTripCost.swift */; };
 		D3F089CC2CBB1F7500CDF2E4 /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3F089CB2CBB1F7500CDF2E4 /* MainView.swift */; };
 		D3F089CE2CBB1F9100CDF2E4 /* RatesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3F089CD2CBB1F9100CDF2E4 /* RatesView.swift */; };
+		D3F089D02CBB923800CDF2E4 /* SplashScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3F089CF2CBB923800CDF2E4 /* SplashScreen.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -38,6 +39,7 @@
 		D3BB81352CB9F33B00A49903 /* ComputeTripCost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComputeTripCost.swift; sourceTree = "<group>"; };
 		D3F089CB2CBB1F7500CDF2E4 /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
 		D3F089CD2CBB1F9100CDF2E4 /* RatesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RatesView.swift; sourceTree = "<group>"; };
+		D3F089CF2CBB923800CDF2E4 /* SplashScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashScreen.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -94,6 +96,7 @@
 				D3A8BE692C88F66E001232F9 /* Info.plist */,
 				D3A8BE662C88F4DB001232F9 /* Assets.xcassets */,
 				D3A8BE542C72F2B2001232F9 /* EvoEstimatorApp.swift */,
+				D3F089CF2CBB923800CDF2E4 /* SplashScreen.swift */,
 				D3F089CB2CBB1F7500CDF2E4 /* MainView.swift */,
 				D3F089CD2CBB1F9100CDF2E4 /* RatesView.swift */,
 				D32ED5832C8A60FF00140CE2 /* Color.swift */,
@@ -220,6 +223,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D3F089D02CBB923800CDF2E4 /* SplashScreen.swift in Sources */,
 				D36533E42CB8DDED007C90F8 /* AppDelegate.swift in Sources */,
 				D3F089CC2CBB1F7500CDF2E4 /* MainView.swift in Sources */,
 				D3BB81302CB9AD7D00A49903 /* APIKeys.swift in Sources */,
