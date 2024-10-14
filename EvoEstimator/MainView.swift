@@ -54,7 +54,9 @@ struct MainView: View {
                                     estimateAnimation = false
                                 }
 
-                                NavigationLink("View Evo's Current Rates", destination: RatesView())
+                                NavigationLink("Evo's Current Rates", destination: RatesView())
+                                NavigationLink("About the App", destination: AboutPage())
+                                NavigationLink("Our Privacy Policy", destination: PrivacyPolicy())
                             } label: {
                                 Image(systemName: "line.horizontal.3")
                                     .resizable()
