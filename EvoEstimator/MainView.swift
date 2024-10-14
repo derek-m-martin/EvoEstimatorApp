@@ -32,14 +32,11 @@ struct MainView: View {
                         // Title and Reset Button
                         HStack {
                             VStack(alignment: .leading, spacing: geometry.size.height * 0.005) {
-                                Text("Evo")
-                                    .font(Font.custom("Arya W00 Triple Slant", size: geometry.size.width * 0.12))
-                                    .foregroundColor(.white)
-                                    .padding(.top, geometry.safeAreaInsets.top + geometry.size.height * 0.02)
-
-                                Text("Estimator")
-                                    .font(Font.custom("Arya W00 Triple Slant", size: geometry.size.width * 0.06))
-                                    .foregroundColor(.white)
+                                Image("icon")
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+                                    .frame(width: geometry.size.width * 0.4)
+                                    .padding(.top, geometry.size.height * 0.06)
                             }
 
                             Spacer()
