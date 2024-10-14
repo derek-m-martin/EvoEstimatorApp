@@ -52,7 +52,7 @@ struct MainView: View {
                                 }
 
                                 NavigationLink("Evo's Current Rates", destination: RatesView())
-                                NavigationLink("About the App", destination: AboutPage())
+                                NavigationLink("About the App", destination: AboutView())
                                 NavigationLink("Our Privacy Policy", destination: PrivacyPolicy())
                             } label: {
                                 Image(systemName: "line.horizontal.3")
@@ -98,6 +98,12 @@ struct MainView: View {
                                     Text("Add Stops?")
                                         .font(.system(size: geometry.size.width * 0.045, weight: .light))
                                         .foregroundColor(.white)
+                                        .shadow(
+                                            color: Color.theme.accent.opacity(1),
+                                            radius: 1,
+                                                x: -2,
+                                                y: 2
+                                            )
                                 }
                                 .padding(.vertical, geometry.size.height * 0.01)
                             }
@@ -155,6 +161,12 @@ struct MainView: View {
                                     .frame(width: geometry.size.width * 0.3)
                                     .offset(x: estimateAnimation ? geometry.size.width : 0)
                                     .animation(.easeInOut(duration: 1.2), value: estimateAnimation)
+                                    .shadow(
+                                        color: Color.theme.accent.opacity(1),
+                                        radius: 1.2,
+                                            x: -2,
+                                            y: 2
+                                        )
 
                                 // Car Skeleton Image
                                 Image("car-skeleton")
@@ -163,6 +175,12 @@ struct MainView: View {
                                     .frame(width: geometry.size.width * 0.4)
                                     .offset(x: estimateAnimation ? geometry.size.width : 0)
                                     .animation(.easeInOut(duration: 1.2), value: estimateAnimation)
+                                    .shadow(
+                                        color: Color.theme.accent.opacity(0.5),
+                                        radius: 1.2,
+                                            x: -2,
+                                            y: 2
+                                        )
                             }
 
                             // Estimated Travel Time and Price
