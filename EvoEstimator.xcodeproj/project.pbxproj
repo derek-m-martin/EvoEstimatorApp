@@ -20,6 +20,8 @@
 		D3F089CC2CBB1F7500CDF2E4 /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3F089CB2CBB1F7500CDF2E4 /* MainView.swift */; };
 		D3F089CE2CBB1F9100CDF2E4 /* RatesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3F089CD2CBB1F9100CDF2E4 /* RatesView.swift */; };
 		D3F089D02CBB923800CDF2E4 /* SplashScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3F089CF2CBB923800CDF2E4 /* SplashScreen.swift */; };
+		D3F089D42CBCE56500CDF2E4 /* AboutPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3F089D32CBCE56500CDF2E4 /* AboutPage.swift */; };
+		D3F089D62CBCE79F00CDF2E4 /* PrivacyPolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3F089D52CBCE79F00CDF2E4 /* PrivacyPolicy.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -40,6 +42,9 @@
 		D3F089CB2CBB1F7500CDF2E4 /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
 		D3F089CD2CBB1F9100CDF2E4 /* RatesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RatesView.swift; sourceTree = "<group>"; };
 		D3F089CF2CBB923800CDF2E4 /* SplashScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashScreen.swift; sourceTree = "<group>"; };
+		D3F089D32CBCE56500CDF2E4 /* AboutPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutPage.swift; sourceTree = "<group>"; };
+		D3F089D52CBCE79F00CDF2E4 /* PrivacyPolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivacyPolicy.swift; sourceTree = "<group>"; };
+		D3F089D72CBCE80600CDF2E4 /* PrivacyPolicyDraft.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = PrivacyPolicyDraft.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -105,6 +110,9 @@
 				D3BB81312CB9B2E200A49903 /* HandleAutofill.swift */,
 				D3BB81332CB9B3C500A49903 /* HandleTravelTime.swift */,
 				D3BB81352CB9F33B00A49903 /* ComputeTripCost.swift */,
+				D3F089D32CBCE56500CDF2E4 /* AboutPage.swift */,
+				D3F089D52CBCE79F00CDF2E4 /* PrivacyPolicy.swift */,
+				D3F089D72CBCE80600CDF2E4 /* PrivacyPolicyDraft.md */,
 			);
 			path = EvoEstimator;
 			sourceTree = "<group>";
@@ -227,12 +235,14 @@
 				D36533E42CB8DDED007C90F8 /* AppDelegate.swift in Sources */,
 				D3F089CC2CBB1F7500CDF2E4 /* MainView.swift in Sources */,
 				D3BB81302CB9AD7D00A49903 /* APIKeys.swift in Sources */,
+				D3F089D62CBCE79F00CDF2E4 /* PrivacyPolicy.swift in Sources */,
 				D3A8BE552C72F2B2001232F9 /* EvoEstimatorApp.swift in Sources */,
 				D32ED5842C8A60FF00140CE2 /* Color.swift in Sources */,
 				D3BB81362CB9F33B00A49903 /* ComputeTripCost.swift in Sources */,
 				D3BB81322CB9B2E200A49903 /* HandleAutofill.swift in Sources */,
 				D3BB81342CB9B3C500A49903 /* HandleTravelTime.swift in Sources */,
 				D3F089CE2CBB1F9100CDF2E4 /* RatesView.swift in Sources */,
+				D3F089D42CBCE56500CDF2E4 /* AboutPage.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
