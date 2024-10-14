@@ -32,11 +32,8 @@ func calculateCost(travelCost: Double, completion: @escaping (Double) -> Void) {
         total = (inMinutes * perMin)
     }
 
-    // Add the trip charge and round before tax
     total += perTripCharge
-    total = total.rounded(toPlaces: 2) // Round before applying tax
-    
-    // Apply tax and round again
+    total = total.rounded(toPlaces: 2)
     total = (total * 1.12).rounded(toPlaces: 2)
     
     DispatchQueue.main.async {
