@@ -9,10 +9,31 @@ import SwiftUI
 
 @main
 struct EvoEstimatorApp: App {
+    @State private var showSplashScreen = true
+    @State private var startOutroAnimation = false
+
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     var body: some Scene {
         WindowGroup {
-            MainView()
+            if showSplashScreen {
+                SplashScreenView(startOutroAnimation: $startOutroAnimation)
+                    .onAppear {
+                        // Trigger the outro animation after 5 seconds
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+                            withAnimation {
+                                startOutroAnimation = true
+                            }
+                        }
+                        // Switch to MainView after the outro animation finishes
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 6) { 
+                            withAnimation {
+                                showSplashScreen = false
+                            }
+                        }
+                    }
+            } else {
+                MainView()
+            }
         }
     }
 }
