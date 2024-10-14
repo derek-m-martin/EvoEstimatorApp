@@ -14,30 +14,30 @@ var dailyCharge = 104.99
 var total = 0.0
 
 func calculateCost(travelCost: Double, completion: @escaping (Double) -> Void) {
-    let inMinutes = travelCost/60
+    let inMinutes = travelCost / 60
     if (inMinutes >= 37 && inMinutes <= 60) {
         total = hourlyCharge
-    }
-    else if (inMinutes > 60 && inMinutes < 360) {
-        let numHours = inMinutes/60
+    } else if (inMinutes > 60 && inMinutes < 360) {
+        let numHours = floor(inMinutes / 60)
         let remaining = inMinutes - (numHours * 60)
         let step1 = (numHours * hourlyCharge)
         if (remaining < 37) {
             total = step1 + (remaining * perMin)
-        }
-        else {
+        } else {
             total = step1 + hourlyCharge
         }
-    }
-    else if (inMinutes >= 360) {
+    } else if (inMinutes >= 360) {
         total = dailyCharge
-    }
-    else {
+    } else {
         total = (inMinutes * perMin)
     }
 
-    total = (total * 1.12)
-    total = total.rounded(toPlaces: 2)
+    // Add the trip charge and round before tax
+    total += perTripCharge
+    total = total.rounded(toPlaces: 2) // Round before applying tax
+    
+    // Apply tax and round again
+    total = (total * 1.12).rounded(toPlaces: 2)
     
     DispatchQueue.main.async {
         completion(total)
