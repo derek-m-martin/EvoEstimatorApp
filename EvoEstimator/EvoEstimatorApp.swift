@@ -19,13 +19,13 @@ struct EvoEstimatorApp: App {
                 SplashScreenView(startOutroAnimation: $startOutroAnimation)
                     .onAppear {
                         // Trigger the outro animation after 5 seconds
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
                             withAnimation {
                                 startOutroAnimation = true
                             }
                         }
                         // Switch to MainView after the outro animation finishes
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 6) { 
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 4.8) { 
                             withAnimation {
                                 showSplashScreen = false
                             }
