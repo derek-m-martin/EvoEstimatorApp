@@ -26,7 +26,8 @@ func estimateTripTime(startAddress: String, endAddress: String, waypoints: [Stri
 
     // Ensure waypoints are properly encoded and joined
     let waypointsEncoded = waypoints.map { $0.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "" }.joined(separator: "|")
-    let waypointsParam = waypointsEncoded.isEmpty ? "" : "&waypoints=optimize:true|\(waypointsEncoded)"
+    let waypointsParam = waypointsEncoded.isEmpty ? "" : "&waypoints=\(waypointsEncoded)"
+
     
     // Updated URL for Directions API
     let urlString = "https://maps.googleapis.com/maps/api/directions/json?origin=\(originsEncoded)&destination=\(destinationsEncoded)\(waypointsParam)&mode=driving&key=\(apiKey)"
