@@ -1,6 +1,10 @@
 # Acknowledgements
 This application makes use of the following third party libraries:
 
+## GoogleMaps
+
+Copyright 2024 Google LLC
+
 ## GooglePlaces
 
 Copyright 2024 Google LLC
