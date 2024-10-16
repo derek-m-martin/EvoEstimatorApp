@@ -12,6 +12,7 @@
 import Foundation
 import SwiftUI
 import GooglePlaces
+import GoogleMaps
 import CoreLocation
 
 struct AutocompleteViewController: UIViewControllerRepresentable {
@@ -19,11 +20,17 @@ struct AutocompleteViewController: UIViewControllerRepresentable {
     @Binding var startLocation: String
     @Binding var endLocation: String
     @Binding var stops: [String]
-    @Binding var currentStopIndex: Int? // Track which stop is being edited
+    @Binding var currentStopIndex: Int?
     
     func makeUIViewController(context: Context) -> GMSAutocompleteViewController {
         let autocompleteController = GMSAutocompleteViewController()
         autocompleteController.delegate = context.coordinator
+        let filter = GMSAutocompleteFilter()
+        let northEast = CLLocationCoordinate2D(latitude: 49.3700, longitude: -123.0200) // North-East of Vancouver
+        let southWest = CLLocationCoordinate2D(latitude: 49.2000, longitude: -123.2500) // South-West of Vancouver
+        filter.locationBias = GMSPlaceRectangularLocationOption(southWest, northEast)
+        autocompleteController.autocompleteFilter = filter
+        
         return autocompleteController
     }
 
@@ -69,3 +76,4 @@ struct AutocompleteViewController: UIViewControllerRepresentable {
         }
     }
 }
+
