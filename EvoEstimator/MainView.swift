@@ -14,12 +14,25 @@ struct MainView: View {
     @State var showingEndLocationPrompt = false
     @State var startLocation: String = ""
     @State var endLocation: String = ""
+    @State var stops: [String] = []
     @State var isPresentingAutocomplete = false
     @State var isStartLocation = true
+    @State var currentStopIndex: Int? = nil
     @State var estimateAnimation = false
     @State var travelTime: String = ""
     @State var travelTimeValue: Double = 0.0
     @State var tripCost: Double = 0.0
+    @State var addText: String = "Add Stops?"
+
+    func resetEstimator() {
+        startLocation = ""
+        endLocation = ""
+        stops = []
+        travelTime = ""
+        tripCost = 0.0
+        estimateAnimation = false
+        addText = "Add Stops?"
+    }
 
     var body: some View {
         NavigationStack {
@@ -44,13 +57,8 @@ struct MainView: View {
                             // Dropdown menu!
                             Menu {
                                 Button("Reset Estimator", role: .destructive) {
-                                    startLocation = ""
-                                    endLocation = ""
-                                    travelTime = ""
-                                    tripCost = 0.0
-                                    estimateAnimation = false
+                                    resetEstimator()
                                 }
-
                                 NavigationLink("Evo's Current Rates", destination: RatesView())
                                 NavigationLink("About the App", destination: AboutView())
                                 NavigationLink("Our Privacy Policy", destination: PrivacyPolicy())
@@ -66,144 +74,167 @@ struct MainView: View {
                         }
                         .padding(.horizontal, geometry.size.width * 0.05)
 
-                        Spacer()
+                        Spacer(minLength: 45)
 
-                        // Main Content
-                        VStack(spacing: geometry.size.height * 0.025) {
-                            // Start Location Button
-                            Button(action: {
-                                isStartLocation = true
-                                isPresentingAutocomplete = true
-                            }) {
-                                Text(startLocation.isEmpty ? "Start Location" : startLocation)
-                                    .padding()
-                                    .font(.system(size: geometry.size.width * 0.05, weight: .semibold))
-                                    .frame(maxWidth: geometry.size.width * 0.8)
-                                    .background(Color.theme.accent)
-                                    .foregroundColor(.white)
-                                    .cornerRadius(geometry.size.width * 0.05)
-                            }
-
-                            // Add Stops?
-                            Button(action: {
-                                // Implement add stops functionality here
-                            }) {
-                                HStack(spacing: geometry.size.width * 0.02) {
-                                    Image("plus")
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fit)
-                                        .frame(width: geometry.size.width * 0.05)
+                        ScrollView {
+                            VStack(spacing: geometry.size.height * 0.025) {
+                                // Start Location Button
+                                Button(action: {
+                                    isStartLocation = true
+                                    isPresentingAutocomplete = true
+                                }) {
+                                    Text(startLocation.isEmpty ? "Start Location" : startLocation)
+                                        .padding()
+                                        .font(.system(size: geometry.size.width * 0.05, weight: .semibold))
+                                        .frame(maxWidth: geometry.size.width * 0.8)
+                                        .background(Color.theme.accent)
                                         .foregroundColor(.white)
-
-                                    Text("Add Stops?")
-                                        .font(.system(size: geometry.size.width * 0.045, weight: .light))
-                                        .foregroundColor(.white)
-                                        .shadow(
-                                            color: Color.theme.accent.opacity(1),
-                                            radius: 1,
-                                                x: -2,
-                                                y: 2
-                                            )
+                                        .cornerRadius(geometry.size.width * 0.05)
+                                        .shadow(color: Color.theme.accent.opacity(1), radius: 5, x: 0, y: 2)
                                 }
-                                .padding(.vertical, geometry.size.height * 0.01)
-                            }
 
-                            // End Location Button
-                            Button(action: {
-                                isStartLocation = false
-                                isPresentingAutocomplete = true
-                            }) {
-                                Text(endLocation.isEmpty ? "End Location" : endLocation)
-                                    .padding()
-                                    .font(.system(size: geometry.size.width * 0.05, weight: .semibold))
-                                    .frame(maxWidth: geometry.size.width * 0.8)
-                                    .background(Color.theme.accent)
-                                    .foregroundColor(.white)
-                                    .cornerRadius(geometry.size.width * 0.05)
-                            }
-
-                            // Get Estimate Button
-                            Button(action: {
-                                estimateTripTime(startAddress: startLocation, endAddress: endLocation) { timeText, timeValue in
-                                    travelTime = timeText
-                                    travelTimeValue = timeValue
-                                    calculateCost(travelCost: timeValue) { cost in
-                                        tripCost = cost
+                                // Stops Buttons
+                                ForEach(stops.indices, id: \.self) { index in
+                                    HStack(spacing: geometry.size.width * 0.02) {
+                                        
+                                        Button(action: {
+                                            stops.remove(at: index)
+                                        }) {
+                                            Image(systemName: "minus.circle")
+                                                .resizable()
+                                                .aspectRatio(contentMode: .fit)
+                                                .frame(width: geometry.size.width * 0.05)
+                                                .foregroundColor(.white)
+                                        }
+                                        
+                                        Button(action: {
+                                            isStartLocation = false
+                                            currentStopIndex = index
+                                            isPresentingAutocomplete = true
+                                        }) {
+                                            Text(stops[index].isEmpty ? "Stop #\(index + 1)" : stops[index])
+                                                .padding()
+                                                .font(.system(size: geometry.size.width * 0.05, weight: .semibold))
+                                                .frame(maxWidth: geometry.size.width * 0.7)
+                                                .background(Color.theme.accent)
+                                                .foregroundColor(.white)
+                                                .cornerRadius(geometry.size.width * 0.05)
+                                                .shadow(color: Color.theme.accent.opacity(1), radius: 5, x: 0, y: 2)
+                                        }
+                                        .padding(.trailing, geometry.size.width * 0.1)
                                     }
                                 }
-                                withAnimation(.easeInOut(duration: 1.2)) {
-                                    estimateAnimation = true
+
+                                // Add Stops Button
+                                Button(action: {
+                                    stops.append("")
+                                    addText = "Even More?"
+                                }) {
+                                    HStack(spacing: geometry.size.width * 0.02) {
+                                        Image("plus")
+                                            .resizable()
+                                            .aspectRatio(contentMode: .fit)
+                                            .frame(width: geometry.size.width * 0.05)
+                                            .foregroundColor(.white)
+                                        
+                                        Text(addText)
+                                            .font(.system(size: geometry.size.width * 0.055, weight: .light))
+                                            .foregroundColor(.white)
+                                    }
+                                    .padding(.vertical, geometry.size.height * 0.01)
                                 }
-                            }) {
-                                Text("Get my Estimate!")
-                                    .padding()
-                                    .font(.system(size: geometry.size.width * 0.05, weight: .semibold))
-                                    .frame(maxWidth: geometry.size.width * 0.8)
-                                    .background(Color.theme.accent)
+
+                                // End Location Button
+                                Button(action: {
+                                    isStartLocation = false
+                                    currentStopIndex = nil
+                                    isPresentingAutocomplete = true
+                                }) {
+                                    Text(endLocation.isEmpty ? "End Location" : endLocation)
+                                        .padding()
+                                        .font(.system(size: geometry.size.width * 0.05, weight: .semibold))
+                                        .frame(maxWidth: geometry.size.width * 0.8)
+                                        .background(Color.theme.accent)
+                                        .foregroundColor(.white)
+                                        .cornerRadius(geometry.size.width * 0.05)
+                                        .shadow(color: Color.theme.accent.opacity(1), radius: 5, x: 0, y: 2)
+                                }
+
+                                Spacer(minLength: -10)
+
+                                Text("All Set? Hit the Button Below!")
+                                    .font(.system(size: geometry.size.width * 0.055, weight: .light))
                                     .foregroundColor(.white)
-                                    .cornerRadius(geometry.size.width * 0.05)
+
+                                // Get Estimate Button
+                                Button(action: {
+                                    estimateTripTime(startAddress: startLocation, endAddress: endLocation, waypoints: stops) { timeText, timeValue in
+                                        travelTime = timeText
+                                        travelTimeValue = timeValue
+                                        calculateCost(travelCost: timeValue) { cost in
+                                            tripCost = cost
+                                        }
+                                    }
+                                    withAnimation(.easeInOut(duration: 1.2)) {
+                                        estimateAnimation = true
+                                    }
+                                }) {
+                                    Text("Get my Estimate!")
+                                        .padding()
+                                        .font(.system(size: geometry.size.width * 0.05, weight: .semibold))
+                                        .frame(maxWidth: geometry.size.width * 0.8)
+                                        .background(Color.theme.accent)
+                                        .foregroundColor(.white)
+                                        .cornerRadius(geometry.size.width * 0.05)
+                                        .shadow(color: Color.theme.accent.opacity(1), radius: 5, x: 0, y: 2)
+                                }
+                                .padding(.top, geometry.size.height * 0.015)
                             }
-                            .padding(.top, geometry.size.height * 0.015)
+                            .padding(.horizontal, geometry.size.width * 0.1)
+
+                            Spacer(minLength: 65)
+
+                            ZStack {
+                                HStack {
+                                    Image("speed_lines")
+                                        .resizable()
+                                        .foregroundColor(.white)
+                                        .aspectRatio(contentMode: .fit)
+                                        .frame(width: geometry.size.width * 0.4)
+                                        .offset(x: estimateAnimation ? geometry.size.width : 0)
+                                        .animation(.easeInOut(duration: 1.2), value: estimateAnimation)
+
+                                    Image(systemName: "car.side")
+                                        .resizable()
+                                        .foregroundStyle(.white)
+                                        .rotation3DEffect(.degrees(180), axis: (x: 0, y: 1, z: 0))
+                                        .aspectRatio(contentMode: .fit)
+                                        .frame(width: geometry.size.width * 0.45)
+                                        .offset(x: estimateAnimation ? geometry.size.width : 0)
+                                        .animation(.easeInOut(duration: 1.2), value: estimateAnimation)
+                                }
+
+                                VStack(spacing: geometry.size.height * 0.01) {
+                                    Text("Estimated Travel Time: \(travelTime)")
+                                        .font(.system(size: geometry.size.width * 0.045, weight: .bold))
+                                        .foregroundColor(Color.theme.accent)
+                                        .offset(x: estimateAnimation ? 0 : -geometry.size.width)
+                                        .animation(.easeInOut(duration: 1.2), value: estimateAnimation)
+
+                                    Text("Estimated Trip Price: $\(String(format: "%.2f", tripCost))")
+                                        .font(.system(size: geometry.size.width * 0.045, weight: .bold))
+                                        .foregroundColor(Color.theme.accent)
+                                        .offset(x: estimateAnimation ? 0 : -geometry.size.width)
+                                        .animation(.easeInOut(duration: 1.2), value: estimateAnimation)
+                                }
+                            }
+                            .padding(.bottom, geometry.size.height * 0.09)
+                            .frame(width: geometry.size.width, height: geometry.size.height * 0.2)
                         }
-                        .padding(.horizontal, geometry.size.width * 0.1)
-
-                        Spacer()
-
-                        // Car/Speed Lines and Estimated Info in ZStack
-                        ZStack {
-                            // Car and Speed Lines Images
-                            HStack {
-                                // Speed Lines Image
-                                Image("speed_lines")
-                                    .resizable()
-                                    .foregroundColor(.white)
-                                    .aspectRatio(contentMode: .fit)
-                                    .frame(width: geometry.size.width * 0.3)
-                                    .offset(x: estimateAnimation ? geometry.size.width : 0)
-                                    .animation(.easeInOut(duration: 1.2), value: estimateAnimation)
-                                    .shadow(
-                                        color: Color.theme.accent.opacity(1),
-                                        radius: 1.2,
-                                            x: -2,
-                                            y: 2
-                                        )
-
-                                // Car Skeleton Image
-                                Image("car-skeleton")
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fit)
-                                    .frame(width: geometry.size.width * 0.4)
-                                    .offset(x: estimateAnimation ? geometry.size.width : 0)
-                                    .animation(.easeInOut(duration: 1.2), value: estimateAnimation)
-                                    .shadow(
-                                        color: Color.theme.accent.opacity(0.5),
-                                        radius: 1.2,
-                                            x: -2,
-                                            y: 2
-                                        )
-                            }
-
-                            // Estimated Travel Time and Price
-                            VStack(spacing: geometry.size.height * 0.01) {
-                                Text("Estimated Travel Time: \(travelTime)")
-                                    .font(.system(size: geometry.size.width * 0.045, weight: .bold))
-                                    .foregroundColor(Color.theme.accent)
-                                    .offset(x: estimateAnimation ? 0 : -geometry.size.width)
-                                    .animation(.easeInOut(duration: 1.2), value: estimateAnimation)
-
-                                Text("Estimated Trip Price: $\(String(format: "%.2f", tripCost))")
-                                    .font(.system(size: geometry.size.width * 0.045, weight: .bold))
-                                    .foregroundColor(Color.theme.accent)
-                                    .offset(x: estimateAnimation ? 0 : -geometry.size.width)
-                                    .animation(.easeInOut(duration: 1.2), value: estimateAnimation)
-                            }
-                        }
-                        .padding(.bottom, geometry.size.height * 0.09)
-                        .frame(width: geometry.size.width, height: geometry.size.height * 0.2)
                     }
                 }
                 .sheet(isPresented: $isPresentingAutocomplete) {
-                    AutocompleteViewController(isStartLocation: $isStartLocation, startLocation: $startLocation, endLocation: $endLocation)
+                    AutocompleteViewController(isStartLocation: $isStartLocation, startLocation: $startLocation, endLocation: $endLocation, stops: $stops, currentStopIndex: $currentStopIndex)
                 }
             }
         }
