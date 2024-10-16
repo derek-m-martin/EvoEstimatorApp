@@ -69,6 +69,7 @@ struct RatesView: View {
                                     .frame(width: geometry.size.width * 0.7)
                                     .padding(.top, 25)
                                     .padding(.horizontal, geometry.size.width * 0.11)
+                                    .shadow(color: Color.theme.accent.opacity(1), radius: 5, x: 0, y: 2)
                                 
                                 // Spacer() between sections
                                 Spacer(minLength: 25)
@@ -179,9 +180,10 @@ struct RatesView: View {
                                     .frame(width: geometry.size.width * 0.7)
                                     .padding(.top, 25)
                                     .padding(.horizontal, geometry.size.width * 0.1)
+                                    .shadow(color: Color.theme.accent.opacity(1), radius: 5, x: 0, y: 2)
                                 
                                 VStack {
-                                    Text("The most important thing to understand is their dynamic pricing model which we specified with the exclamation-marked captions below the prices. Evo prices this way to ensure you always pay the least amount. So while it may seem complicated, it actually benefits you and our EvoEstimator does the calculations the same way, but BEFORE your trip, not after!")
+                                    Text("The most important thing to understand is their dynamic pricing model which we specified with the exclamation-marked captions below the prices. Evo prices this way to ensure you always pay the least amount possible. So while it may seem complicated, it actually benefits you and our EvoEstimator does the calculations the same way, but BEFORE your trip, not after!")
                                         .font(.system(size: geometry.size.width * 0.045, weight: .light))
                                         .foregroundColor(.white)
                                         .multilineTextAlignment(.center)
@@ -195,6 +197,7 @@ struct RatesView: View {
                                     .frame(width: geometry.size.width * 0.7)
                                     .padding(.top, 25)
                                     .padding(.horizontal, geometry.size.width * 0.11)
+                                    .shadow(color: Color.theme.accent.opacity(1), radius: 5, x: 0, y: 2)
                                 
                                 VStack {
                                     Text("Additional Information:")
@@ -210,7 +213,7 @@ struct RatesView: View {
                                         Text("- ")
                                             .font(.system(size: geometry.size.width * 0.08, weight: .heavy))
                                             .foregroundColor(.white)
-                                        + Text("The 30 minute reservation window does is not counted towards your trip duration")
+                                        + Text("The 30 minute reservation window is not counted towards your trip duration")
                                             .font(.system(size: geometry.size.width * 0.05, weight: .light))
                                             .foregroundColor(.white)
                                     }
@@ -222,7 +225,7 @@ struct RatesView: View {
                                         Text("- ")
                                             .font(.system(size: geometry.size.width * 0.08, weight: .heavy))
                                             .foregroundColor(.white)
-                                        + Text("There is 12% tax applied to your total fare + set trip cost at when you end your trip (EvoEstimator accounts for this)")
+                                        + Text("There is 12% tax applied to your total fare + set trip cost when you end your trip (EvoEstimator accounts for this)")
                                             .font(.system(size: geometry.size.width * 0.05, weight: .light))
                                             .foregroundColor(.white)
                                     }
