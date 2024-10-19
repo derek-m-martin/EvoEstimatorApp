@@ -23,6 +23,7 @@ struct MainView: View {
     @State var travelTimeValue: Double = 0.0
     @State var tripCost: Double = 0.0
     @State var addText: String = "Add Stops?"
+    @State var stopCounter: Int = 0
 
     func resetEstimator() {
         startLocation = ""
@@ -32,6 +33,24 @@ struct MainView: View {
         tripCost = 0.0
         estimateAnimation = false
         addText = "Add Stops?"
+    }
+    
+    func changeText() {
+        if stopCounter == 0 {
+            addText = "Add Stops?"
+        }
+        else if stopCounter == 1 {
+            addText = "Another?"
+        }
+        else if stopCounter == 2 {
+            addText = "Even More?"
+        }
+        else if stopCounter == 3 {
+            addText = "Why not walk?"
+        }
+        else if stopCounter == 4 {
+            addText = "Buy a car at this point."
+        }
     }
 
     var body: some View {
@@ -63,13 +82,25 @@ struct MainView: View {
                                 NavigationLink("About the App", destination: AboutView())
                                 NavigationLink("Our Privacy Policy", destination: PrivacyPolicy())
                             } label: {
-                                Image(systemName: "line.horizontal.3")
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fit)
-                                    .frame(width: geometry.size.width * 0.08)
-                                    .foregroundColor(.white)
-                                    .padding(.top, geometry.safeAreaInsets.top + geometry.size.height * 0.02)
-                                    .padding(.trailing, geometry.size.width * 0.05)
+                                
+                                ZStack {
+                                    Image("button_backer")
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fit)
+                                        .frame(width: geometry.size.width * 0.14)
+                                        .foregroundColor(.white)
+                                        .padding(.top, geometry.safeAreaInsets.top + geometry.size.height * 0.02)
+                                        .padding(.trailing, geometry.size.width * 0.05)
+                                        .opacity(0.4)
+                                    
+                                    Image(systemName: "line.horizontal.3")
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fit)
+                                        .frame(width: geometry.size.width * 0.08)
+                                        .foregroundColor(.white)
+                                        .padding(.top, geometry.safeAreaInsets.top + geometry.size.height * 0.02)
+                                        .padding(.trailing, geometry.size.width * 0.05)
+                                }
                             }
                         }
                         .padding(.horizontal, geometry.size.width * 0.05)
@@ -99,6 +130,8 @@ struct MainView: View {
                                         
                                         Button(action: {
                                             stops.remove(at: index)
+                                            stopCounter -= 1
+                                            changeText()
                                         }) {
                                             Image(systemName: "minus.circle")
                                                 .resizable()
@@ -128,7 +161,8 @@ struct MainView: View {
                                 // Add Stops Button
                                 Button(action: {
                                     stops.append("")
-                                    addText = "Even More?"
+                                    stopCounter += 1
+                                    changeText()
                                 }) {
                                     HStack(spacing: geometry.size.width * 0.02) {
                                         Image("plus")
