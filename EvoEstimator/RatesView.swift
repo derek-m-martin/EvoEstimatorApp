@@ -17,12 +17,11 @@ struct RatesView: View {
                     
                     VStack {
                         // Title and DropDown Menu
-                        HStack {
+                        HStack(alignment: .center) {
                             VStack(alignment: .leading, spacing: geometry.size.height * 0.005) {
                                 Text("Evo's Rates Breakdown")
                                     .font(.system(size: geometry.size.width * 0.08, weight: .semibold))
                                     .foregroundColor(.white)
-                                    .padding(.top, geometry.size.height * 0.05)
                                     .frame(maxWidth: geometry.size.width * 0.8, alignment: .leading)
                                     .shadow(
                                         color: Color.theme.accent.opacity(1),
@@ -31,6 +30,7 @@ struct RatesView: View {
                                         y: 2
                                     )
                             }
+                            
                             Spacer()
                             
                             // Dropdown menu
@@ -38,15 +38,26 @@ struct RatesView: View {
                                 NavigationLink("About the App", destination: AboutView())
                                 NavigationLink("Our Privacy Policy", destination: PrivacyPolicy())
                             } label: {
-                                Image(systemName: "line.horizontal.3")
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fit)
-                                    .frame(width: geometry.size.width * 0.08)
-                                    .foregroundColor(.white)
-                                    .padding(.top, geometry.safeAreaInsets.top)
-                                    .padding(.trailing, geometry.size.width * 0.05)
+                                
+                                ZStack {
+                                    Image("button_backer")
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fit)
+                                        .frame(width: geometry.size.width * 0.14)
+                                        .foregroundColor(.white)
+                                        .padding(.trailing, geometry.size.width * 0.05)
+                                        .opacity(0.4)
+                                    
+                                    Image(systemName: "line.horizontal.3")
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fit)
+                                        .frame(width: geometry.size.width * 0.08)
+                                        .foregroundColor(.white)
+                                        .padding(.trailing, geometry.size.width * 0.05)
+                                }
                             }
                         }
+                        .padding(.top, geometry.size.height * 0.03)
                         .padding(.horizontal)
                         
                         Spacer(minLength: 30)
