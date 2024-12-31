@@ -50,7 +50,6 @@ struct RatesView: View {
                                     .multilineTextAlignment(.center)
                                     .padding(.horizontal, geometry.size.width * 0.03)
                                 
-                                // Line Image
                                 Image("rounded_line")
                                     .resizable()
                                     .aspectRatio(contentMode: .fit)
