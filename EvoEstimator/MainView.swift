@@ -12,9 +12,17 @@ import CoreLocation
 struct MainView: View {
     @State var showingStartLocationPrompt = false
     @State var showingEndLocationPrompt = false
+    
+    // Display strings for user
     @State var startLocation: String = ""
     @State var endLocation: String = ""
     @State var stops: [String] = []
+    
+    // Routing strings for Google Directions
+    @State var startLocationForRouting: String = ""
+    @State var endLocationForRouting: String = ""
+    @State var stopsForRouting: [String] = []
+    
     @State var isPresentingAutocomplete = false
     @State var isStartLocation = true
     @State var currentStopIndex: Int? = nil
@@ -29,27 +37,32 @@ struct MainView: View {
         startLocation = ""
         endLocation = ""
         stops = []
+        
+        startLocationForRouting = ""
+        endLocationForRouting = ""
+        stopsForRouting = []
+        
         travelTime = ""
         tripCost = 0.0
         estimateAnimation = false
         addText = "Add Stops?"
+        stopCounter = 0
     }
     
     func changeText() {
-        if stopCounter == 0 {
+        switch stopCounter {
+        case 0:
             addText = "Add Stops?"
-        }
-        else if stopCounter == 1 {
+        case 1:
             addText = "Another?"
-        }
-        else if stopCounter == 2 {
+        case 2:
             addText = "Even More?"
-        }
-        else if stopCounter == 3 {
+        case 3:
             addText = "Why not walk?"
-        }
-        else if stopCounter == 4 {
+        case 4:
             addText = "Buy a car at this point."
+        default:
+            addText = "Alright Go Crazy." // fallback
         }
     }
 
@@ -82,7 +95,6 @@ struct MainView: View {
                                 NavigationLink("About the App", destination: AboutView())
                                 NavigationLink("Our Privacy Policy", destination: PrivacyPolicy())
                             } label: {
-                                
                                 ZStack {
                                     Image("button_backer")
                                         .resizable()
@@ -127,9 +139,9 @@ struct MainView: View {
                                 // Stops Buttons
                                 ForEach(stops.indices, id: \.self) { index in
                                     HStack(spacing: geometry.size.width * 0.02) {
-                                        
                                         Button(action: {
                                             stops.remove(at: index)
+                                            stopsForRouting.remove(at: index)
                                             stopCounter -= 1
                                             changeText()
                                         }) {
@@ -161,6 +173,7 @@ struct MainView: View {
                                 // Add Stops Button
                                 Button(action: {
                                     stops.append("")
+                                    stopsForRouting.append("")
                                     stopCounter += 1
                                     changeText()
                                 }) {
@@ -202,7 +215,12 @@ struct MainView: View {
 
                                 // Get Estimate Button
                                 Button(action: {
-                                    estimateTripTime(startAddress: startLocation, endAddress: endLocation, waypoints: stops) { timeText, timeValue in
+                                    // Use the routing addresses for directions
+                                    estimateTripTime(
+                                        startAddress: startLocationForRouting,
+                                        endAddress: endLocationForRouting,
+                                        waypoints: stopsForRouting
+                                    ) { timeText, timeValue in
                                         travelTime = timeText
                                         travelTimeValue = timeValue
                                         calculateCost(travelCost: timeValue) { cost in
@@ -268,7 +286,18 @@ struct MainView: View {
                     }
                 }
                 .sheet(isPresented: $isPresentingAutocomplete) {
-                    AutocompleteViewController(isStartLocation: $isStartLocation, startLocation: $startLocation, endLocation: $endLocation, stops: $stops, currentStopIndex: $currentStopIndex)
+                    AutocompleteViewController(
+                        isStartLocation: $isStartLocation,
+                        startLocation: $startLocation,
+                        endLocation: $endLocation,
+                        stops: $stops,
+                        currentStopIndex: $currentStopIndex,
+                        
+                        // Pass in the routing equivalents
+                        startLocationForRouting: $startLocationForRouting,
+                        endLocationForRouting: $endLocationForRouting,
+                        stopsForRouting: $stopsForRouting
+                    )
                 }
             }
         }

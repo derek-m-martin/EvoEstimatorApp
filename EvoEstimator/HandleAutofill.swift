@@ -12,7 +12,6 @@
 import Foundation
 import SwiftUI
 import GooglePlaces
-import GoogleMaps
 import CoreLocation
 
 struct AutocompleteViewController: UIViewControllerRepresentable {
@@ -22,13 +21,17 @@ struct AutocompleteViewController: UIViewControllerRepresentable {
     @Binding var stops: [String]
     @Binding var currentStopIndex: Int?
     
+    // Routing strings
+    @Binding var startLocationForRouting: String
+    @Binding var endLocationForRouting: String
+    @Binding var stopsForRouting: [String]
+
     func makeUIViewController(context: Context) -> GMSAutocompleteViewController {
         let autocompleteController = GMSAutocompleteViewController()
         autocompleteController.delegate = context.coordinator
+        
         let filter = GMSAutocompleteFilter()
-        let northEast = CLLocationCoordinate2D(latitude: 49.3700, longitude: -123.0200) // North-East of Vancouver
-        let southWest = CLLocationCoordinate2D(latitude: 49.2000, longitude: -123.2500) // South-West of Vancouver
-        filter.locationBias = GMSPlaceRectangularLocationOption(southWest, northEast)
+        // filter.type = .address  // Optional, if you want to filter for addresses
         autocompleteController.autocompleteFilter = filter
         
         return autocompleteController
@@ -37,7 +40,16 @@ struct AutocompleteViewController: UIViewControllerRepresentable {
     func updateUIViewController(_ uiViewController: GMSAutocompleteViewController, context: Context) {}
 
     func makeCoordinator() -> Coordinator {
-        return Coordinator(isStartLocation: $isStartLocation, startLocation: $startLocation, endLocation: $endLocation, stops: $stops, currentStopIndex: $currentStopIndex)
+        Coordinator(
+            isStartLocation: $isStartLocation,
+            startLocation: $startLocation,
+            endLocation: $endLocation,
+            stops: $stops,
+            currentStopIndex: $currentStopIndex,
+            startLocationForRouting: $startLocationForRouting,
+            endLocationForRouting: $endLocationForRouting,
+            stopsForRouting: $stopsForRouting
+        )
     }
 
     class Coordinator: NSObject, GMSAutocompleteViewControllerDelegate {
@@ -46,27 +58,56 @@ struct AutocompleteViewController: UIViewControllerRepresentable {
         @Binding var endLocation: String
         @Binding var stops: [String]
         @Binding var currentStopIndex: Int?
+        
+        // Routing strings
+        @Binding var startLocationForRouting: String
+        @Binding var endLocationForRouting: String
+        @Binding var stopsForRouting: [String]
 
-        init(isStartLocation: Binding<Bool>, startLocation: Binding<String>, endLocation: Binding<String>, stops: Binding<[String]>, currentStopIndex: Binding<Int?>) {
+        init(isStartLocation: Binding<Bool>,
+             startLocation: Binding<String>,
+             endLocation: Binding<String>,
+             stops: Binding<[String]>,
+             currentStopIndex: Binding<Int?>,
+             startLocationForRouting: Binding<String>,
+             endLocationForRouting: Binding<String>,
+             stopsForRouting: Binding<[String]>) {
+            
             _isStartLocation = isStartLocation
             _startLocation = startLocation
             _endLocation = endLocation
             _stops = stops
             _currentStopIndex = currentStopIndex
+            _startLocationForRouting = startLocationForRouting
+            _endLocationForRouting = endLocationForRouting
+            _stopsForRouting = stopsForRouting
         }
 
-        func viewController(_ viewController: GMSAutocompleteViewController, didAutocompleteWith place: GMSPlace) {
+        func viewController(_ viewController: GMSAutocompleteViewController,
+                            didAutocompleteWith place: GMSPlace) {
+            
+            // Display name
+            let displayName = place.name ?? ""
+            // Formatted address for routing if available,
+            // otherwise fall back to place.name
+            let routingAddress = place.formattedAddress ?? place.name ?? ""
+
             if isStartLocation {
-                startLocation = place.name ?? ""
+                startLocation = displayName
+                startLocationForRouting = routingAddress
             } else if let index = currentStopIndex {
-                stops[index] = place.name ?? "" // Update the correct stop
+                stops[index] = displayName
+                stopsForRouting[index] = routingAddress
             } else {
-                endLocation = place.name ?? ""
+                endLocation = displayName
+                endLocationForRouting = routingAddress
             }
+            
             viewController.dismiss(animated: true, completion: nil)
         }
 
-        func viewController(_ viewController: GMSAutocompleteViewController, didFailAutocompleteWithError error: Error) {
+        func viewController(_ viewController: GMSAutocompleteViewController,
+                            didFailAutocompleteWithError error: Error) {
             print("Error: ", error.localizedDescription)
             viewController.dismiss(animated: true, completion: nil)
         }
@@ -76,4 +117,3 @@ struct AutocompleteViewController: UIViewControllerRepresentable {
         }
     }
 }
-
