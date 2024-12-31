@@ -27,15 +27,22 @@ struct AutocompleteViewController: UIViewControllerRepresentable {
     @Binding var stopsForRouting: [String]
 
     func makeUIViewController(context: Context) -> GMSAutocompleteViewController {
-        let autocompleteController = GMSAutocompleteViewController()
-        autocompleteController.delegate = context.coordinator
+            // Vancouver location bounds in lat/long
+            let seBoundsCorner = CLLocationCoordinate2DMake(49.053671,-122.520286)
+            let nwBoundsCorner = CLLocationCoordinate2DMake(49.385683, -123.305633)
         
-        let filter = GMSAutocompleteFilter()
-        // filter.type = .address  // Optional, if you want to filter for addresses
-        autocompleteController.autocompleteFilter = filter
+            let autocompleteController = GMSAutocompleteViewController()
+            autocompleteController.delegate = context.coordinator
+            
+            let filter = GMSAutocompleteFilter()
+            filter.countries = ["CA"]
         
-        return autocompleteController
-    }
+            filter.locationBias = GMSPlaceRectangularLocationOption(nwBoundsCorner, seBoundsCorner)
+        
+            autocompleteController.autocompleteFilter = filter
+
+            return autocompleteController
+        }
 
     func updateUIViewController(_ uiViewController: GMSAutocompleteViewController, context: Context) {}
 
@@ -86,10 +93,9 @@ struct AutocompleteViewController: UIViewControllerRepresentable {
         func viewController(_ viewController: GMSAutocompleteViewController,
                             didAutocompleteWith place: GMSPlace) {
             
-            // Display name
+            // Display name (short for UI)
             let displayName = place.name ?? ""
-            // Formatted address for routing if available,
-            // otherwise fall back to place.name
+            // Full address for routing if available
             let routingAddress = place.formattedAddress ?? place.name ?? ""
 
             if isStartLocation {
