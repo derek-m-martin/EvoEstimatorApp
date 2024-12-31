@@ -92,7 +92,7 @@ struct MainView: View {
                                     resetEstimator()
                                 }
                                 NavigationLink("Evo's Current Rates", destination: RatesView())
-                                NavigationLink("About the App", destination: AboutView())
+                                NavigationLink("About the Developer/App", destination: AboutView())
                                 NavigationLink("Our Privacy Policy", destination: PrivacyPolicy())
                             } label: {
                                 ZStack {
