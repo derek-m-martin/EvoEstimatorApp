@@ -10,7 +10,7 @@ Information We Collect
 
 User-Provided Information
 
-Entered Addresses: When you use the App to estimate trip costs, you may enter start and end locations. This information is used solely to provide you with the estimated trip cost and is not stored or collected by us.
+Entered Addresses: When you use the App to estimate trip costs, you may enter start and end locations. This information is used solely to provide you with the estimated trip cost and is immediately discarded afterwards and not stored in any way.
 Automatically Collected Information
 
 We do not collect any personal or non-personal information automatically. The App does not use cookies, tracking technologies, or analytics services.
@@ -32,4 +32,4 @@ Changes to This Privacy Policy
 We may update our Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy within the App. Changes are effective immediately upon posting.
 Contact Us
 
-If you have any questions or suggestions about this Privacy Policy, please contact me at derekmartin1005@gmail.com
+If you have any questions or suggestions about this Privacy Policy, please contact derekmartin1005@gmail.com for clarification.

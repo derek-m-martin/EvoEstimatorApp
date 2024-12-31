@@ -22,7 +22,7 @@ struct RatesView: View {
                                 Text("Evo's Rates Breakdown")
                                     .font(.system(size: geometry.size.width * 0.08, weight: .semibold))
                                     .foregroundColor(.white)
-                                    .frame(maxWidth: geometry.size.width * 0.8, alignment: .leading)
+                                    .frame(maxWidth: geometry.size.width, alignment: .center)
                                     .shadow(
                                         color: Color.theme.accent.opacity(1),
                                         radius: 1.2,
@@ -33,29 +33,6 @@ struct RatesView: View {
                             
                             Spacer()
                             
-                            // Dropdown menu
-                            Menu {
-                                NavigationLink("About the App", destination: AboutView())
-                                NavigationLink("Our Privacy Policy", destination: PrivacyPolicy())
-                            } label: {
-                                
-                                ZStack {
-                                    Image("button_backer")
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fit)
-                                        .frame(width: geometry.size.width * 0.14)
-                                        .foregroundColor(.white)
-                                        .padding(.trailing, geometry.size.width * 0.05)
-                                        .opacity(0.4)
-                                    
-                                    Image(systemName: "line.horizontal.3")
-                                        .resizable()
-                                        .aspectRatio(contentMode: .fit)
-                                        .frame(width: geometry.size.width * 0.08)
-                                        .foregroundColor(.white)
-                                        .padding(.trailing, geometry.size.width * 0.05)
-                                }
-                            }
                         }
                         .padding(.top, geometry.size.height * 0.03)
                         .padding(.horizontal)
