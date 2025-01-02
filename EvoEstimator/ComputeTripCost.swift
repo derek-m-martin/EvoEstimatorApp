@@ -15,6 +15,9 @@ var total = 0.0
 
 func calculateCost(travelCost: Double, completion: @escaping (Double) -> Void) {
     let inMinutes = travelCost / 60
+    if (travelCost == 0) {
+        total = 0
+    }
     if (inMinutes >= 37 && inMinutes <= 60) {
         total = hourlyCharge
     } else if (inMinutes > 60 && inMinutes < 360) {

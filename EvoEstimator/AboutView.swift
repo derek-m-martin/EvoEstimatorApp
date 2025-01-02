@@ -71,7 +71,7 @@ struct AboutView: View {
                                         .padding(.horizontal, geometry.size.width * 0.11)
                                         .shadow(color: Color.theme.accent.opacity(1), radius: 3, x: 0, y: 2)
                                     
-                                    Text("When I'm not buried head deep in XCode working on this, studying for exams, or working my job I enjoy the outdoors (Vancouver duh) and am usually hiking, snowboarding, or mountain biking much to the dismay of my Mom who worries about me from across the country.")
+                                    Text("When I'm not buried head deep in XCode working on this, studying for exams, or working my job I enjoy the outdoors and am usually hiking, snowboarding, or mountain biking much to the dismay of my Mom who worries about me from across the country.")
                                         .font(.system(size: geometry.size.width * 0.045, weight: .light))
                                         .foregroundColor(.white)
                                         .multilineTextAlignment(.center)

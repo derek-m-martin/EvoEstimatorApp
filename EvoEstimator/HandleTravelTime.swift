@@ -23,7 +23,7 @@ func estimateTripTime(
     // Basic validation to avoid empty addresses
     guard !startAddress.isEmpty, !endAddress.isEmpty else {
         DispatchQueue.main.async {
-            completion("Missing start/end addresses", 0)
+            completion("Missing Address", 0)
         }
         return
     }
