@@ -11,37 +11,65 @@ var perMin: Double = 0.49
 var perTripCharge: Double = 1.25
 var hourlyCharge: Double = 17.99
 var dailyCharge = 104.99
-var total = 0.0
 
 func calculateCost(travelCost: Double, completion: @escaping (Double) -> Void) {
+    // Convert travelCost (seconds) to minutes
     let inMinutes = travelCost / 60
-    if (travelCost == 0) {
-        total = 0
-    }
-    if (inMinutes >= 37 && inMinutes <= 60) {
-        total = hourlyCharge
-    } else if (inMinutes > 60 && inMinutes < 360) {
-        let numHours = floor(inMinutes / 60)
-        let remaining = inMinutes - (numHours * 60)
-        let step1 = (numHours * hourlyCharge)
-        if (remaining < 37) {
-            total = step1 + (remaining * perMin)
-        } else {
-            total = step1 + hourlyCharge
+
+    // If travel time is zero or invalid, cost is zero
+    if inMinutes <= 0 {
+        DispatchQueue.main.async {
+            completion(0)
         }
-    } else if (inMinutes >= 360) {
-        total = dailyCharge
-    } else {
-        total = (inMinutes * perMin)
+        return
     }
 
-    total += perTripCharge
-    total = total.rounded(toPlaces: 2)
-    total = (total * 1.12).rounded(toPlaces: 2)
-    
+    let fullDays = floor(inMinutes / 1440)
+    let leftoverMinutes = inMinutes.truncatingRemainder(dividingBy: 1440)
+
+    var totalCost = fullDays * dailyCharge
+
+    let leftoverDayCost = costForLessThanOneDay(leftoverMinutes)
+    totalCost += leftoverDayCost
+
+    totalCost += perTripCharge
+
+    totalCost = (totalCost * 1.12).rounded(toPlaces: 2)
+
     DispatchQueue.main.async {
-        completion(total)
+        completion(totalCost)
     }
+}
+
+private func costForLessThanOneDay(_ inMinutes: Double) -> Double {
+    var partialDayCost: Double = 0.0
+
+    if inMinutes <= 0 {
+        return 0
+    }
+
+    if inMinutes >= 37 && inMinutes <= 60 {
+        partialDayCost = hourlyCharge
+
+    } else if inMinutes > 60 && inMinutes < 360 {
+        let numHours = floor(inMinutes / 60)
+        let remaining = inMinutes - (numHours * 60)
+        let baseHourCost = numHours * hourlyCharge
+
+        if remaining < 37 {
+            partialDayCost = baseHourCost + (remaining * perMin)
+        } else {
+            partialDayCost = baseHourCost + hourlyCharge
+        }
+
+    } else if inMinutes >= 360 {
+        partialDayCost = dailyCharge
+
+    } else {
+        partialDayCost = inMinutes * perMin
+    }
+
+    return partialDayCost.rounded(toPlaces: 2)
 }
 
 extension Double {
@@ -50,7 +78,3 @@ extension Double {
         return (self * multiplier).rounded() / multiplier
     }
 }
-
-
-
-

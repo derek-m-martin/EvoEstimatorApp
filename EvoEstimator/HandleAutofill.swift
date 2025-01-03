@@ -5,10 +5,6 @@
 //  Created by Derek Martin on 2024-10-11.
 //
 
-// ***********************
-// Handles the autofill functionality of the start/end location buttons
-// ***********************
-
 import Foundation
 import SwiftUI
 import GooglePlaces
@@ -27,22 +23,21 @@ struct AutocompleteViewController: UIViewControllerRepresentable {
     @Binding var stopsForRouting: [String]
 
     func makeUIViewController(context: Context) -> GMSAutocompleteViewController {
-            // Vancouver location bounds in lat/long
-            let seBoundsCorner = CLLocationCoordinate2DMake(49.053671,-122.520286)
-            let nwBoundsCorner = CLLocationCoordinate2DMake(49.385683, -123.305633)
+        // Vancouver location bounds in lat/long
+        let seBoundsCorner = CLLocationCoordinate2DMake(49.053671,-122.520286)
+        let nwBoundsCorner = CLLocationCoordinate2DMake(49.385683, -123.305633)
         
-            let autocompleteController = GMSAutocompleteViewController()
-            autocompleteController.delegate = context.coordinator
-            
-            let filter = GMSAutocompleteFilter()
-            filter.countries = ["CA"]
+        let autocompleteController = GMSAutocompleteViewController()
+        autocompleteController.delegate = context.coordinator
         
-            filter.locationBias = GMSPlaceRectangularLocationOption(nwBoundsCorner, seBoundsCorner)
+        let filter = GMSAutocompleteFilter()
+        filter.countries = ["CA"]
+        filter.locationBias = GMSPlaceRectangularLocationOption(nwBoundsCorner, seBoundsCorner)
         
-            autocompleteController.autocompleteFilter = filter
+        autocompleteController.autocompleteFilter = filter
 
-            return autocompleteController
-        }
+        return autocompleteController
+    }
 
     func updateUIViewController(_ uiViewController: GMSAutocompleteViewController, context: Context) {}
 

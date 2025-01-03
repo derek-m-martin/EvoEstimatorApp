@@ -32,7 +32,10 @@ struct MainView: View {
     @State var tripCost: Double = 0.0
     @State var addText: String = "Add Stops?"
     @State var stopCounter: Int = 0
-
+    
+    // Track if an error has occurred from Google's API
+    @State var errorOccurred: Bool = false
+    
     func resetEstimator() {
         startLocation = ""
         endLocation = ""
@@ -47,6 +50,7 @@ struct MainView: View {
         estimateAnimation = false
         addText = "Add Stops?"
         stopCounter = 0
+        errorOccurred = false
     }
     
     func changeText() {
@@ -215,16 +219,28 @@ struct MainView: View {
 
                                 // Get Estimate Button
                                 Button(action: {
+                                    // Reset error status
+                                    errorOccurred = false
+                                    
                                     // Use the routing addresses for directions
                                     estimateTripTime(
                                         startAddress: startLocationForRouting,
                                         endAddress: endLocationForRouting,
                                         waypoints: stopsForRouting
                                     ) { timeText, timeValue in
-                                        travelTime = timeText
-                                        travelTimeValue = timeValue
-                                        calculateCost(travelCost: timeValue) { cost in
-                                            tripCost = cost
+                                        // Check if the returned timeText indicates an error
+                                        if timeText.lowercased().contains("error") || timeValue == 0 {
+                                            errorOccurred = true
+                                            // Clear any old data
+                                            travelTime = ""
+                                            travelTimeValue = 0.0
+                                            tripCost = 0.0
+                                        } else {
+                                            travelTime = timeText
+                                            travelTimeValue = timeValue
+                                            calculateCost(travelCost: timeValue) { cost in
+                                                tripCost = cost
+                                            }
                                         }
                                     }
                                     withAnimation(.easeInOut(duration: 1.2)) {
@@ -266,18 +282,27 @@ struct MainView: View {
                                         .animation(.easeInOut(duration: 1.2), value: estimateAnimation)
                                 }
 
-                                VStack(spacing: geometry.size.height * 0.01) {
-                                    Text("Estimated Travel Time: \(travelTime)")
-                                        .font(.system(size: geometry.size.width * 0.045, weight: .bold))
-                                        .foregroundColor(Color.theme.accent)
+                                // Show either error message or results
+                                if errorOccurred {
+                                    Text("An Error Has Occurred")
+                                        .font(.system(size: geometry.size.width * 0.05, weight: .bold))
+                                        .foregroundColor(.red)
                                         .offset(x: estimateAnimation ? 0 : -geometry.size.width)
                                         .animation(.easeInOut(duration: 1.2), value: estimateAnimation)
+                                } else {
+                                    VStack(spacing: geometry.size.height * 0.01) {
+                                        Text("Estimated Travel Time: \(travelTime)")
+                                            .font(.system(size: geometry.size.width * 0.045, weight: .bold))
+                                            .foregroundColor(Color.theme.accent)
+                                            .offset(x: estimateAnimation ? 0 : -geometry.size.width)
+                                            .animation(.easeInOut(duration: 1.2), value: estimateAnimation)
 
-                                    Text("Estimated Trip Price: $\(String(format: "%.2f", tripCost))")
-                                        .font(.system(size: geometry.size.width * 0.045, weight: .bold))
-                                        .foregroundColor(Color.theme.accent)
-                                        .offset(x: estimateAnimation ? 0 : -geometry.size.width)
-                                        .animation(.easeInOut(duration: 1.2), value: estimateAnimation)
+                                        Text("Estimated Trip Price: $\(String(format: "%.2f", tripCost))")
+                                            .font(.system(size: geometry.size.width * 0.045, weight: .bold))
+                                            .foregroundColor(Color.theme.accent)
+                                            .offset(x: estimateAnimation ? 0 : -geometry.size.width)
+                                            .animation(.easeInOut(duration: 1.2), value: estimateAnimation)
+                                    }
                                 }
                             }
                             .padding(.bottom, geometry.size.height * 0.09)

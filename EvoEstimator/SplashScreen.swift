@@ -140,18 +140,7 @@ struct SplashScreenView: View {
             .onChange(of: startOutroAnimation) {
                 if startOutroAnimation {
                     withAnimation(.easeInOut(duration: 1.5)) {
-                        
-//                        xOffsetTopE1 = -geometry.size.width
-//                        xOffsetTopE2 = -geometry.size.width + 0.1
-//                        xOffsetTopE3 = -geometry.size.width
-//                        xOffsetTopE4 = -geometry.size.width
-//
-//                        xOffsetBottomE1 = geometry.size.width
-//                        xOffsetBottomE2 = geometry.size.width - 0.09
-//                        xOffsetBottomE3 = geometry.size.width
-//                        xOffsetBottomE4 = geometry.size.width
-
-                        opacity = 0 
+                        opacity = 0
                     }
                 }
             }

@@ -5,10 +5,6 @@
 //  Created by Derek Martin on 2024-10-11.
 //
 
-// ***********************
-// Handles the call to the google routes api in order to get the travel time
-// ***********************
-
 import Foundation
 import SwiftUI
 import GooglePlaces
@@ -23,7 +19,7 @@ func estimateTripTime(
     // Basic validation to avoid empty addresses
     guard !startAddress.isEmpty, !endAddress.isEmpty else {
         DispatchQueue.main.async {
-            completion("Missing Address", 0)
+            completion("Missing Address Error", 0)
         }
         return
     }
@@ -50,7 +46,7 @@ func estimateTripTime(
     guard let url = URL(string: urlString) else {
         print("Invalid URL")
         DispatchQueue.main.async {
-            completion("Invalid URL", 0)
+            completion("Invalid URL Error", 0)
         }
         return
     }
@@ -67,7 +63,7 @@ func estimateTripTime(
         guard let data = data else {
             print("No data received")
             DispatchQueue.main.async {
-                completion("No data received", 0)
+                completion("No data received Error", 0)
             }
             return
         }
