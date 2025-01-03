@@ -8,29 +8,44 @@
 import SwiftUI
 import MapKit
 import CoreLocation
+import Polyline
+
+struct MapPinData {
+    let coordinate: CLLocationCoordinate2D
+    let title: String
+}
 
 struct RouteMapView: UIViewRepresentable {
-    
-    func updateUIView(_ uiView: MKMapView, context: Context) {
-        // placeholder for if it needs updating, requirement of mapkit
-    }
-    
     let encodedPolyline: String
-    
+    let pins: [MapPinData]
+
     func makeUIView(context: Context) -> MKMapView {
         let mapView = MKMapView()
         mapView.delegate = context.coordinator
-        
+
         let coordinates = decodePolyline(encodedPolyline)
 
         let polyline = MKPolyline(coordinates: coordinates, count: coordinates.count)
         mapView.addOverlay(polyline)
 
-        mapView.setVisibleMapRect(polyline.boundingMapRect,
-                                  edgePadding: UIEdgeInsets(top: 40, left: 40, bottom: 40, right: 40),
-                                  animated: false)
-        
+        mapView.setVisibleMapRect(
+            polyline.boundingMapRect,
+            edgePadding: UIEdgeInsets(top: 40, left: 40, bottom: 40, right: 40),
+            animated: false
+        )
+
+        for pin in pins {
+            let annotation = MKPointAnnotation()
+            annotation.coordinate = pin.coordinate
+            annotation.title = pin.title
+            mapView.addAnnotation(annotation)
+        }
+
         return mapView
+    }
+    
+    func updateUIView(_ uiView: MKMapView, context: Context) {
+        // placeholder function required by mapkit or else will error!!!!!!
     }
     
     func makeCoordinator() -> Coordinator {
@@ -47,52 +62,28 @@ struct RouteMapView: UIViewRepresentable {
             }
             return MKOverlayRenderer(overlay: overlay)
         }
+
+        func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
+            if annotation is MKUserLocation { return nil }
+            
+            let identifier = "MapPin"
+            var annotationView = mapView.dequeueReusableAnnotationView(withIdentifier: identifier)
+            
+            if annotationView == nil {
+                annotationView = MKMarkerAnnotationView(annotation: annotation, reuseIdentifier: identifier)
+                annotationView?.canShowCallout = true
+            } else {
+                annotationView?.annotation = annotation
+            }
+            
+            return annotationView
+        }
     }
     
+    // pulled off the internet as all it does is decode how Google's API compresses polylines (lat/long coordinate pairs)
+    // credit to my man raphael: https://swiftpackageindex.com/raphaelmor/Polyline
     private func decodePolyline(_ encodedString: String) -> [CLLocationCoordinate2D] {
-        var coordinates: [CLLocationCoordinate2D] = []
-        let utf8String = encodedString.utf8
-        var index = utf8String.startIndex
-        let endIndex = utf8String.endIndex
-        
-        var lat: Int32 = 0
-        var lng: Int32 = 0
-        
-        while index < endIndex {
-            var result: Int32 = 0
-            var shift: Int32 = 0
-            var byte: Int32
-            
-            repeat {
-                byte = Int32(utf8String[index]) - 63
-                utf8String.formIndex(after: &index)
-                result |= (byte & 0x1F) << shift
-                shift += 5
-            } while byte >= 0x20
-            
-            let dlat = ((result & 1) != 0 ? ~(result >> 1) : (result >> 1))
-            lat &+= dlat
-            
-            result = 0
-            shift = 0
-            
-            repeat {
-                guard index < endIndex else { break }
-                byte = Int32(utf8String[index]) - 63
-                utf8String.formIndex(after: &index)
-                result |= (byte & 0x1F) << shift
-                shift += 5
-            } while byte >= 0x20
-            
-            let dlng = ((result & 1) != 0 ? ~(result >> 1) : (result >> 1))
-            lng &+= dlng
-            
-            let finalLat = Double(lat) / 1E5
-            let finalLng = Double(lng) / 1E5
-            
-            coordinates.append(CLLocationCoordinate2D(latitude: finalLat, longitude: finalLng))
-        }
-        return coordinates
+        let polyline = Polyline(encodedPolyline: encodedString)
+        return polyline.coordinates ?? []
     }
 }
-

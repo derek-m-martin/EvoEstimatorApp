@@ -7,5 +7,6 @@ target 'EvoEstimator' do
 
 pod 'GooglePlaces', '9.1.0'
 pod 'GoogleMaps'
+pod 'Polyline', '5.0'
 
 end

@@ -132,6 +132,7 @@
 				D3A8BE4E2C72F2B2001232F9 /* Frameworks */,
 				D3A8BE4F2C72F2B2001232F9 /* Resources */,
 				A6A19B9EF493E6E5B0176BBE /* [CP] Copy Pods Resources */,
+				2F3296AA1A080C8BB76A0F7A /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -188,6 +189,23 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		2F3296AA1A080C8BB76A0F7A /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-EvoEstimator/Pods-EvoEstimator-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-EvoEstimator/Pods-EvoEstimator-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-EvoEstimator/Pods-EvoEstimator-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		3EB3B36FD3E254B1F52C8C4B /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
