@@ -16,15 +16,16 @@ struct AutocompleteViewController: UIViewControllerRepresentable {
     @Binding var endLocation: String
     @Binding var stops: [String]
     @Binding var currentStopIndex: Int?
-    
-    // Routing strings
     @Binding var startLocationForRouting: String
     @Binding var endLocationForRouting: String
     @Binding var stopsForRouting: [String]
+    @Binding var startCoordinate: CLLocationCoordinate2D?
+    @Binding var endCoordinate: CLLocationCoordinate2D?
+    @Binding var stopsCoordinates: [CLLocationCoordinate2D?]
 
     func makeUIViewController(context: Context) -> GMSAutocompleteViewController {
-        // Vancouver location bounds in lat/long
-        let seBoundsCorner = CLLocationCoordinate2DMake(49.053671,-122.520286)
+        // vancouvers lat/long for location biasing
+        let seBoundsCorner = CLLocationCoordinate2DMake(49.053671, -122.520286)
         let nwBoundsCorner = CLLocationCoordinate2DMake(49.385683, -123.305633)
         
         let autocompleteController = GMSAutocompleteViewController()
@@ -42,66 +43,39 @@ struct AutocompleteViewController: UIViewControllerRepresentable {
     func updateUIViewController(_ uiViewController: GMSAutocompleteViewController, context: Context) {}
 
     func makeCoordinator() -> Coordinator {
-        Coordinator(
-            isStartLocation: $isStartLocation,
-            startLocation: $startLocation,
-            endLocation: $endLocation,
-            stops: $stops,
-            currentStopIndex: $currentStopIndex,
-            startLocationForRouting: $startLocationForRouting,
-            endLocationForRouting: $endLocationForRouting,
-            stopsForRouting: $stopsForRouting
-        )
+        Coordinator(self)
     }
 
     class Coordinator: NSObject, GMSAutocompleteViewControllerDelegate {
-        @Binding var isStartLocation: Bool
-        @Binding var startLocation: String
-        @Binding var endLocation: String
-        @Binding var stops: [String]
-        @Binding var currentStopIndex: Int?
-        
-        // Routing strings
-        @Binding var startLocationForRouting: String
-        @Binding var endLocationForRouting: String
-        @Binding var stopsForRouting: [String]
+        var parent: AutocompleteViewController
 
-        init(isStartLocation: Binding<Bool>,
-             startLocation: Binding<String>,
-             endLocation: Binding<String>,
-             stops: Binding<[String]>,
-             currentStopIndex: Binding<Int?>,
-             startLocationForRouting: Binding<String>,
-             endLocationForRouting: Binding<String>,
-             stopsForRouting: Binding<[String]>) {
-            
-            _isStartLocation = isStartLocation
-            _startLocation = startLocation
-            _endLocation = endLocation
-            _stops = stops
-            _currentStopIndex = currentStopIndex
-            _startLocationForRouting = startLocationForRouting
-            _endLocationForRouting = endLocationForRouting
-            _stopsForRouting = stopsForRouting
+        init(_ parent: AutocompleteViewController) {
+            self.parent = parent
         }
 
         func viewController(_ viewController: GMSAutocompleteViewController,
                             didAutocompleteWith place: GMSPlace) {
-            
-            // Display name (short for UI)
-            let displayName = place.name ?? ""
-            // Full address for routing if available
-            let routingAddress = place.formattedAddress ?? place.name ?? ""
 
-            if isStartLocation {
-                startLocation = displayName
-                startLocationForRouting = routingAddress
-            } else if let index = currentStopIndex {
-                stops[index] = displayName
-                stopsForRouting[index] = routingAddress
+            let displayName = place.name ?? ""
+            let routingAddress = place.formattedAddress ?? place.name ?? ""
+            let coordinate = place.coordinate
+
+            if parent.isStartLocation {
+                parent.startLocation = displayName
+                parent.startLocationForRouting = routingAddress
+                parent.startCoordinate = coordinate
+
+            } else if let index = parent.currentStopIndex {
+                parent.stops[index] = displayName
+                parent.stopsForRouting[index] = routingAddress
+                if parent.stopsCoordinates.indices.contains(index) {
+                    parent.stopsCoordinates[index] = coordinate
+                }
+
             } else {
-                endLocation = displayName
-                endLocationForRouting = routingAddress
+                parent.endLocation = displayName
+                parent.endLocationForRouting = routingAddress
+                parent.endCoordinate = coordinate
             }
             
             viewController.dismiss(animated: true, completion: nil)

@@ -5,12 +5,12 @@ PODS:
   - GoogleMaps/Maps (9.1.1):
     - GoogleMaps/Base
   - GooglePlaces (9.1.0)
-  - Polyline (5.0.0)
+  - Polyline (5.1.0)
 
 DEPENDENCIES:
   - GoogleMaps
   - GooglePlaces (= 9.1.0)
-  - Polyline (= 5.0)
+  - Polyline (= 5.1.0)
 
 SPEC REPOS:
   trunk:
@@ -21,8 +21,8 @@ SPEC REPOS:
 SPEC CHECKSUMS:
   GoogleMaps: 80ea184ed6bf44139f383a8b0e248ba3ec1cc8c9
   GooglePlaces: 00c43ad62c888354fe0bc5ce09181b2f6ce8b6d1
-  Polyline: 535633672809931574c61960350e12d087f35757
+  Polyline: 2a1f29f87f8d9b7de868940f4f76deb8c678a5b1
 
-PODFILE CHECKSUM: fbf5c9d531c1c2a1af60254debb6a5f27c0e997a
+PODFILE CHECKSUM: 0d243f8cbe2740baec49baa26fefce578d92fa0a
 
 COCOAPODS: 1.15.2
