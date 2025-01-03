@@ -14,12 +14,12 @@ func estimateTripTime(
     startAddress: String,
     endAddress: String,
     waypoints: [String] = [],
-    completion: @escaping (String, Double) -> Void
+    completion: @escaping (String, Double, String?) -> Void
 ) {
-    // Basic validation to avoid empty addresses
+    // Basic validation
     guard !startAddress.isEmpty, !endAddress.isEmpty else {
         DispatchQueue.main.async {
-            completion("Missing Address Error", 0)
+            completion("Missing Address Error", 0, nil)
         }
         return
     }
@@ -44,9 +44,8 @@ func estimateTripTime(
     print("Generated URL: \(urlString)")
 
     guard let url = URL(string: urlString) else {
-        print("Invalid URL")
         DispatchQueue.main.async {
-            completion("Invalid URL Error", 0)
+            completion("Invalid URL Error", 0, nil)
         }
         return
     }
@@ -55,7 +54,7 @@ func estimateTripTime(
         if let error = error {
             print("Error fetching data: \(error.localizedDescription)")
             DispatchQueue.main.async {
-                completion("Error fetching data", 0)
+                completion("Error fetching data", 0, nil)
             }
             return
         }
@@ -63,15 +62,13 @@ func estimateTripTime(
         guard let data = data else {
             print("No data received")
             DispatchQueue.main.async {
-                completion("No data received Error", 0)
+                completion("No data received Error", 0, nil)
             }
             return
         }
 
         do {
             if let json = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
-                print("API Response: \(json)")
-                
                 // Check status from Google
                 if let status = json["status"] as? String, status != "OK" {
                     print("Google API Error: \(status)")
@@ -79,23 +76,38 @@ func estimateTripTime(
                         print("Error Message: \(errorMessage)")
                     }
                     DispatchQueue.main.async {
-                        completion("Google API Error: \(status)", 0)
+                        completion("Google API Error: \(status)", 0, nil)
                     }
                     return
                 }
 
-                // Parse route legs for total duration
-                if let routes = json["routes"] as? [[String: Any]],
-                   let firstRoute = routes.first,
-                   let legs = firstRoute["legs"] as? [[String: Any]] {
-                    
+                // Get the first route
+                guard
+                    let routes = json["routes"] as? [[String: Any]],
+                    let firstRoute = routes.first
+                else {
+                    DispatchQueue.main.async {
+                        completion("No routes found", 0, nil)
+                    }
+                    return
+                }
+                
+                // Grab overview_polyline
+                var encodedPolyline: String? = nil
+                if let overviewPolyline = firstRoute["overview_polyline"] as? [String: Any],
+                   let points = overviewPolyline["points"] as? String {
+                    encodedPolyline = points
+                }
+
+                // Sum durations from legs
+                if let legs = firstRoute["legs"] as? [[String: Any]] {
                     var totalDurationValue: Double = 0
                     for leg in legs {
                         guard
                             let duration = leg["duration"] as? [String: Any],
                             let durationValue = duration["value"] as? Double
                         else {
-                            print("Missing duration for leg: \(leg)")
+                            // skip incomplete leg
                             continue
                         }
                         totalDurationValue += durationValue
@@ -103,19 +115,19 @@ func estimateTripTime(
 
                     let formattedDuration = formatDuration(seconds: totalDurationValue)
                     DispatchQueue.main.async {
-                        completion(formattedDuration, totalDurationValue)
+                        completion(formattedDuration, totalDurationValue, encodedPolyline)
                     }
                 } else {
-                    print("Unexpected JSON format or missing routes/legs")
+                    print("Unexpected JSON format or missing legs")
                     DispatchQueue.main.async {
-                        completion("No routes found", 0)
+                        completion("No routes found", 0, nil)
                     }
                 }
             }
         } catch {
             print("Error parsing JSON: \(error.localizedDescription)")
             DispatchQueue.main.async {
-                completion("Error parsing JSON", 0)
+                completion("Error parsing JSON", 0, nil)
             }
         }
     }.resume()
