@@ -33,9 +33,12 @@ struct MainView: View {
     @State var addText: String = "Add Stops?"
     @State var stopCounter: Int = 0
     
-    // Track if an error has occurred from Google's API
+    // Track if an error has occurred
     @State var errorOccurred: Bool = false
     
+    // NEW: to store the encoded polyline from Google Directions
+    @State private var encodedPolyline: String? = nil
+
     func resetEstimator() {
         startLocation = ""
         endLocation = ""
@@ -51,6 +54,9 @@ struct MainView: View {
         addText = "Add Stops?"
         stopCounter = 0
         errorOccurred = false
+
+        // reset the polyline
+        encodedPolyline = nil
     }
     
     func changeText() {
@@ -78,7 +84,7 @@ struct MainView: View {
                     Color.black.ignoresSafeArea()
 
                     VStack {
-                        // Title and Reset Button
+                        // Title and menu
                         HStack {
                             VStack(alignment: .leading, spacing: geometry.size.height * 0.005) {
                                 Image("icon")
@@ -90,7 +96,6 @@ struct MainView: View {
 
                             Spacer()
 
-                            // Dropdown menu!
                             Menu {
                                 Button("Reset Estimator", role: .destructive) {
                                     resetEstimator()
@@ -219,28 +224,27 @@ struct MainView: View {
 
                                 // Get Estimate Button
                                 Button(action: {
-                                    // Reset error status
-                                    errorOccurred = false
                                     
-                                    // Use the routing addresses for directions
+                                    errorOccurred = false
+
                                     estimateTripTime(
                                         startAddress: startLocationForRouting,
                                         endAddress: endLocationForRouting,
                                         waypoints: stopsForRouting
-                                    ) { timeText, timeValue in
-                                        // Check if the returned timeText indicates an error
+                                    ) { timeText, timeValue, polyline in
                                         if timeText.lowercased().contains("error") || timeValue == 0 {
                                             errorOccurred = true
-                                            // Clear any old data
                                             travelTime = ""
                                             travelTimeValue = 0.0
                                             tripCost = 0.0
+                                            encodedPolyline = nil
                                         } else {
                                             travelTime = timeText
                                             travelTimeValue = timeValue
                                             calculateCost(travelCost: timeValue) { cost in
                                                 tripCost = cost
                                             }
+                                            encodedPolyline = polyline
                                         }
                                     }
                                     withAnimation(.easeInOut(duration: 1.2)) {
@@ -262,6 +266,7 @@ struct MainView: View {
 
                             Spacer(minLength: 65)
 
+                            // Existing "car + speed_lines" animation and results
                             ZStack {
                                 HStack {
                                     Image("speed_lines")
@@ -282,7 +287,6 @@ struct MainView: View {
                                         .animation(.easeInOut(duration: 1.2), value: estimateAnimation)
                                 }
 
-                                // Show either error message or results
                                 if errorOccurred {
                                     Text("An Error Has Occurred")
                                         .font(.system(size: geometry.size.width * 0.05, weight: .bold))
@@ -305,8 +309,19 @@ struct MainView: View {
                                     }
                                 }
                             }
-                            .padding(.bottom, geometry.size.height * 0.09)
+                            .padding(.bottom, geometry.size.height * 0.03)
                             .frame(width: geometry.size.width, height: geometry.size.height * 0.2)
+
+                            if let validPolyline = encodedPolyline, !validPolyline.isEmpty, !errorOccurred {
+                                RouteMapView(encodedPolyline: validPolyline)
+                                    .frame(
+                                        width: geometry.size.width * 0.8,
+                                        height: geometry.size.height * 0.3
+                                    )
+                                    .clipShape(RoundedRectangle(cornerRadius: geometry.size.width * 0.05))
+                                    .shadow(color: Color.theme.accent.opacity(1), radius: 5, x: 0, y: 2)
+                                    .padding(.bottom, 30)
+                            }
                         }
                     }
                 }
@@ -318,7 +333,6 @@ struct MainView: View {
                         stops: $stops,
                         currentStopIndex: $currentStopIndex,
                         
-                        // Pass in the routing equivalents
                         startLocationForRouting: $startLocationForRouting,
                         endLocationForRouting: $endLocationForRouting,
                         stopsForRouting: $stopsForRouting
