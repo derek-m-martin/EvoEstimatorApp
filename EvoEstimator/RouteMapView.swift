@@ -22,31 +22,24 @@ struct RouteMapView: UIViewRepresentable {
     func makeUIView(context: Context) -> MKMapView {
         let mapView = MKMapView()
         mapView.delegate = context.coordinator
-
-        let coordinates = decodePolyline(encodedPolyline)
-
-        let polyline = MKPolyline(coordinates: coordinates, count: coordinates.count)
+        let coords = decodePolyline(encodedPolyline)
+        let polyline = MKPolyline(coordinates: coords, count: coords.count)
         mapView.addOverlay(polyline)
-
         mapView.setVisibleMapRect(
             polyline.boundingMapRect,
             edgePadding: UIEdgeInsets(top: 40, left: 40, bottom: 40, right: 40),
             animated: false
         )
-
         for pin in pins {
             let annotation = MKPointAnnotation()
             annotation.coordinate = pin.coordinate
             annotation.title = pin.title
             mapView.addAnnotation(annotation)
         }
-
         return mapView
     }
     
-    func updateUIView(_ uiView: MKMapView, context: Context) {
-        // placeholder function required by mapkit or else will error!!!!!!
-    }
+    func updateUIView(_ uiView: MKMapView, context: Context) {}
     
     func makeCoordinator() -> Coordinator {
         Coordinator()
@@ -54,36 +47,31 @@ struct RouteMapView: UIViewRepresentable {
     
     class Coordinator: NSObject, MKMapViewDelegate {
         func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
-            if let polyline = overlay as? MKPolyline {
-                let renderer = MKPolylineRenderer(polyline: polyline)
+            if let poly = overlay as? MKPolyline {
+                let renderer = MKPolylineRenderer(polyline: poly)
                 renderer.strokeColor = .systemBlue
                 renderer.lineWidth = 5
                 return renderer
             }
             return MKOverlayRenderer(overlay: overlay)
         }
-
+        
         func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
             if annotation is MKUserLocation { return nil }
-            
-            let identifier = "MapPin"
-            var annotationView = mapView.dequeueReusableAnnotationView(withIdentifier: identifier)
-            
-            if annotationView == nil {
-                annotationView = MKMarkerAnnotationView(annotation: annotation, reuseIdentifier: identifier)
-                annotationView?.canShowCallout = true
+            let id = "MapPin"
+            var av = mapView.dequeueReusableAnnotationView(withIdentifier: id)
+            if av == nil {
+                av = MKMarkerAnnotationView(annotation: annotation, reuseIdentifier: id)
+                av?.canShowCallout = true
             } else {
-                annotationView?.annotation = annotation
+                av?.annotation = annotation
             }
-            
-            return annotationView
+            return av
         }
     }
     
-    // pulled off the internet as all it does is decode how Google's API compresses polylines (lat/long coordinate pairs)
-    // credit to my man raphael: https://swiftpackageindex.com/raphaelmor/Polyline
-    private func decodePolyline(_ encodedString: String) -> [CLLocationCoordinate2D] {
-        let polyline = Polyline(encodedPolyline: encodedString)
-        return polyline.coordinates ?? []
+    private func decodePolyline(_ str: String) -> [CLLocationCoordinate2D] {
+        let line = Polyline(encodedPolyline: str)
+        return line.coordinates ?? []
     }
 }

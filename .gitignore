@@ -37,11 +37,9 @@ build/
 GoogleMaps/
 GooglePlaces/
 GoogleMapsResources/
-Polyline/
 
 Pods-*/input-files
 Pods-*/output-files
-Pods-*/frameworks
 
 !*.swift
 !*.png

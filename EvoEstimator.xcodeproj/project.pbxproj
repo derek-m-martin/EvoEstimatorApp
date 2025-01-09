@@ -13,6 +13,8 @@
 		D32ED5892C8B88E300140CE2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D3A8BE662C88F4DB001232F9 /* Assets.xcassets */; };
 		D36533E42CB8DDED007C90F8 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D36533E32CB8DDED007C90F8 /* AppDelegate.swift */; };
 		D39122612D2787ED0019C204 /* RouteMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D39122602D2787ED0019C204 /* RouteMapView.swift */; };
+		D39122632D2889910019C204 /* StopDurationPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = D39122622D2889910019C204 /* StopDurationPicker.swift */; };
+		D39122652D2F14680019C204 /* PickerViewTemplate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D39122642D2F14680019C204 /* PickerViewTemplate.swift */; };
 		D3A8BE552C72F2B2001232F9 /* EvoEstimatorApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3A8BE542C72F2B2001232F9 /* EvoEstimatorApp.swift */; };
 		D3BB81302CB9AD7D00A49903 /* APIKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3BB812F2CB9AD7D00A49903 /* APIKeys.swift */; };
 		D3BB81322CB9B2E200A49903 /* HandleAutofill.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3BB81312CB9B2E200A49903 /* HandleAutofill.swift */; };
@@ -33,6 +35,8 @@
 		D32ED5872C8A62DC00140CE2 /* Arya W00 Triple Slant.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Arya W00 Triple Slant.ttf"; path = "EvoEstimator/Arya W00 Triple Slant.ttf"; sourceTree = "<group>"; };
 		D36533E32CB8DDED007C90F8 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D39122602D2787ED0019C204 /* RouteMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteMapView.swift; sourceTree = "<group>"; };
+		D39122622D2889910019C204 /* StopDurationPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopDurationPicker.swift; sourceTree = "<group>"; };
+		D39122642D2F14680019C204 /* PickerViewTemplate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PickerViewTemplate.swift; sourceTree = "<group>"; };
 		D3A8BE512C72F2B2001232F9 /* EvoEstimator.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = EvoEstimator.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D3A8BE542C72F2B2001232F9 /* EvoEstimatorApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EvoEstimatorApp.swift; sourceTree = "<group>"; };
 		D3A8BE662C88F4DB001232F9 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -116,6 +120,8 @@
 				D3F089D52CBCE79F00CDF2E4 /* PrivacyPolicy.swift */,
 				D39122602D2787ED0019C204 /* RouteMapView.swift */,
 				D3F089D72CBCE80600CDF2E4 /* PrivacyPolicyDraft.md */,
+				D39122622D2889910019C204 /* StopDurationPicker.swift */,
+				D39122642D2F14680019C204 /* PickerViewTemplate.swift */,
 			);
 			path = EvoEstimator;
 			sourceTree = "<group>";
@@ -258,11 +264,13 @@
 				D3F089CC2CBB1F7500CDF2E4 /* MainView.swift in Sources */,
 				D3BB81302CB9AD7D00A49903 /* APIKeys.swift in Sources */,
 				D3F089D62CBCE79F00CDF2E4 /* PrivacyPolicy.swift in Sources */,
+				D39122652D2F14680019C204 /* PickerViewTemplate.swift in Sources */,
 				D3A8BE552C72F2B2001232F9 /* EvoEstimatorApp.swift in Sources */,
 				D32ED5842C8A60FF00140CE2 /* Color.swift in Sources */,
 				D3BB81362CB9F33B00A49903 /* ComputeTripCost.swift in Sources */,
 				D3BB81322CB9B2E200A49903 /* HandleAutofill.swift in Sources */,
 				D3BB81342CB9B3C500A49903 /* HandleTravelTime.swift in Sources */,
+				D39122632D2889910019C204 /* StopDurationPicker.swift in Sources */,
 				D3F089CE2CBB1F9100CDF2E4 /* RatesView.swift in Sources */,
 				D3F089D42CBCE56500CDF2E4 /* AboutView.swift in Sources */,
 			);
