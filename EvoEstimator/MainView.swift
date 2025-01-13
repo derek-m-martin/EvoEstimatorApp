@@ -30,7 +30,7 @@ struct MainView: View {
     @State private var errorOccurred: Bool = false
     @State private var showStopDurationPicker = false
     @State private var stopDurationIndex: Int? = nil
-
+    @State private var isMapFullscreen = false
     @State private var encodedPolyline: String? = nil
     @State private var startCoordinate: CLLocationCoordinate2D?
     @State private var endCoordinate: CLLocationCoordinate2D?
@@ -108,7 +108,7 @@ struct MainView: View {
             GeometryReader { geometry in
                 ZStack {
                     Color.black.ignoresSafeArea()
-                    VStack {
+                    VStack(spacing: geometry.size.height * 0.025) {
                         HStack {
                             VStack(alignment: .leading, spacing: geometry.size.height * 0.005) {
                                 Image("icon")
@@ -131,10 +131,9 @@ struct MainView: View {
                                         .resizable()
                                         .aspectRatio(contentMode: .fit)
                                         .frame(width: geometry.size.width * 0.14)
-                                        .foregroundColor(.white)
+                                        .opacity(0.4)
                                         .padding(.top, geometry.safeAreaInsets.top + geometry.size.height * 0.02)
                                         .padding(.trailing, geometry.size.width * 0.05)
-                                        .opacity(0.4)
                                     Image(systemName: "line.horizontal.3")
                                         .resizable()
                                         .aspectRatio(contentMode: .fit)
@@ -334,24 +333,39 @@ struct MainView: View {
                             if let validPolyline = encodedPolyline,
                                !validPolyline.isEmpty,
                                !errorOccurred {
-                                RouteMapView(
+                                ToggleableMapView(
                                     encodedPolyline: validPolyline,
-                                    pins: mapPins
-                                )
-                                .frame(
+                                    pins: mapPins,
                                     width: geometry.size.width * 0.8,
-                                    height: geometry.size.height * 0.3
-                                )
-                                .clipShape(RoundedRectangle(cornerRadius: geometry.size.width * 0.05))
-                                .shadow(
-                                    color: Color.theme.accent.opacity(1),
-                                    radius: 5,
-                                    x: 0,
-                                    y: 2
+                                    height: geometry.size.height * 0.3,
+                                    cornerRadius: geometry.size.width * 0.05,
+                                    shadowColor: Color.theme.accent.opacity(1),
+                                    shadowRadius: 5,
+                                    shadowX: 0,
+                                    shadowY: 2,
+                                    isFullscreen: $isMapFullscreen
                                 )
                                 .padding(.bottom, 30)
                             }
                         }
+                    }
+                    if isMapFullscreen {
+                        Color.black.opacity(0.5)
+                            .ignoresSafeArea()
+                            .onTapGesture {
+                                withAnimation {
+                                    isMapFullscreen = false
+                                }
+                            }
+                        RouteMapView(encodedPolyline: encodedPolyline ?? "", pins: mapPins)
+                            .scaledToFill()
+                            .ignoresSafeArea()
+                            .onTapGesture {
+                                withAnimation {
+                                    isMapFullscreen = false
+                                }
+                            }
+                            .zIndex(1)
                     }
                 }
                 .sheet(isPresented: $isPresentingAutocomplete) {

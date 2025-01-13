@@ -11,6 +11,7 @@
 		D32ED5842C8A60FF00140CE2 /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = D32ED5832C8A60FF00140CE2 /* Color.swift */; };
 		D32ED5882C8B86E200140CE2 /* Arya W00 Triple Slant.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D32ED5872C8A62DC00140CE2 /* Arya W00 Triple Slant.ttf */; };
 		D32ED5892C8B88E300140CE2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D3A8BE662C88F4DB001232F9 /* Assets.xcassets */; };
+		D33DC31E2D35A8CB00844B15 /* MapViewToggler.swift in Sources */ = {isa = PBXBuildFile; fileRef = D33DC31D2D35A8CB00844B15 /* MapViewToggler.swift */; };
 		D36533E42CB8DDED007C90F8 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D36533E32CB8DDED007C90F8 /* AppDelegate.swift */; };
 		D39122612D2787ED0019C204 /* RouteMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D39122602D2787ED0019C204 /* RouteMapView.swift */; };
 		D39122632D2889910019C204 /* StopDurationPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = D39122622D2889910019C204 /* StopDurationPicker.swift */; };
@@ -33,6 +34,7 @@
 		7C8B10F5153996742081DA39 /* Pods-EvoEstimator.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-EvoEstimator.release.xcconfig"; path = "Target Support Files/Pods-EvoEstimator/Pods-EvoEstimator.release.xcconfig"; sourceTree = "<group>"; };
 		D32ED5832C8A60FF00140CE2 /* Color.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
 		D32ED5872C8A62DC00140CE2 /* Arya W00 Triple Slant.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Arya W00 Triple Slant.ttf"; path = "EvoEstimator/Arya W00 Triple Slant.ttf"; sourceTree = "<group>"; };
+		D33DC31D2D35A8CB00844B15 /* MapViewToggler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewToggler.swift; sourceTree = "<group>"; };
 		D36533E32CB8DDED007C90F8 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D39122602D2787ED0019C204 /* RouteMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteMapView.swift; sourceTree = "<group>"; };
 		D39122622D2889910019C204 /* StopDurationPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopDurationPicker.swift; sourceTree = "<group>"; };
@@ -122,6 +124,7 @@
 				D3F089D72CBCE80600CDF2E4 /* PrivacyPolicyDraft.md */,
 				D39122622D2889910019C204 /* StopDurationPicker.swift */,
 				D39122642D2F14680019C204 /* PickerViewTemplate.swift */,
+				D33DC31D2D35A8CB00844B15 /* MapViewToggler.swift */,
 			);
 			path = EvoEstimator;
 			sourceTree = "<group>";
@@ -270,6 +273,7 @@
 				D3BB81362CB9F33B00A49903 /* ComputeTripCost.swift in Sources */,
 				D3BB81322CB9B2E200A49903 /* HandleAutofill.swift in Sources */,
 				D3BB81342CB9B3C500A49903 /* HandleTravelTime.swift in Sources */,
+				D33DC31E2D35A8CB00844B15 /* MapViewToggler.swift in Sources */,
 				D39122632D2889910019C204 /* StopDurationPicker.swift in Sources */,
 				D3F089CE2CBB1F9100CDF2E4 /* RatesView.swift in Sources */,
 				D3F089D42CBCE56500CDF2E4 /* AboutView.swift in Sources */,
