@@ -282,8 +282,8 @@ struct MainView: View {
                                 }
                                 .padding(.top, geometry.size.height * 0.015)
                             }
-                            .padding(.horizontal, geometry.size.width * 0.1)
-                            Spacer(minLength: 65)
+                            .padding(.horizontal, geometry.size.width * 0.01)
+                            Spacer(minLength: 10)
                             ZStack {
                                 HStack {
                                     Image("speed_lines")
@@ -328,7 +328,6 @@ struct MainView: View {
                                     }
                                 }
                             }
-                            .padding(.bottom, geometry.size.height * 0.03)
                             .frame(width: geometry.size.width, height: geometry.size.height * 0.2)
                             if let validPolyline = encodedPolyline,
                                !validPolyline.isEmpty,
