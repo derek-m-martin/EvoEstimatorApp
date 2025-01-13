@@ -30,6 +30,7 @@ struct MainView: View {
     @State private var errorOccurred: Bool = false
     @State private var showStopDurationPicker = false
     @State private var stopDurationIndex: Int? = nil
+    @State private var stopDurationCheck: [Bool] = []
     @State private var isMapFullscreen = false
     @State private var encodedPolyline: String? = nil
     @State private var startCoordinate: CLLocationCoordinate2D?
@@ -367,6 +368,7 @@ struct MainView: View {
                             .zIndex(1)
                     }
                 }
+                
                 .sheet(isPresented: $isPresentingAutocomplete) {
                     AutocompleteViewController(
                         isStartLocation: $isStartLocation,
