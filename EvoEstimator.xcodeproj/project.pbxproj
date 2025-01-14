@@ -35,6 +35,7 @@
 		D32ED5832C8A60FF00140CE2 /* Color.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
 		D32ED5872C8A62DC00140CE2 /* Arya W00 Triple Slant.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Arya W00 Triple Slant.ttf"; path = "EvoEstimator/Arya W00 Triple Slant.ttf"; sourceTree = "<group>"; };
 		D33DC31D2D35A8CB00844B15 /* MapViewToggler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewToggler.swift; sourceTree = "<group>"; };
+		D33DC3222D35F7E700844B15 /* ci_post_clone.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = ci_post_clone.sh; sourceTree = "<group>"; };
 		D36533E32CB8DDED007C90F8 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D39122602D2787ED0019C204 /* RouteMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteMapView.swift; sourceTree = "<group>"; };
 		D39122622D2889910019C204 /* StopDurationPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopDurationPicker.swift; sourceTree = "<group>"; };
@@ -84,9 +85,18 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		D33DC3212D35F77B00844B15 /* ci_scripts */ = {
+			isa = PBXGroup;
+			children = (
+				D33DC3222D35F7E700844B15 /* ci_post_clone.sh */,
+			);
+			path = ci_scripts;
+			sourceTree = "<group>";
+		};
 		D3A8BE482C72F2B2001232F9 = {
 			isa = PBXGroup;
 			children = (
+				D33DC3212D35F77B00844B15 /* ci_scripts */,
 				D32ED5872C8A62DC00140CE2 /* Arya W00 Triple Slant.ttf */,
 				D3A8BE532C72F2B2001232F9 /* EvoEstimator */,
 				D3A8BE522C72F2B2001232F9 /* Products */,
