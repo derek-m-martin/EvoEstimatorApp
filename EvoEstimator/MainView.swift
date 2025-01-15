@@ -30,7 +30,6 @@ struct MainView: View {
     @State private var errorOccurred: Bool = false
     @State private var showStopDurationPicker = false
     @State private var stopDurationIndex: Int? = nil
-    @State private var stopDurationCheck: [Bool] = []
     @State private var isMapFullscreen = false
     @State private var encodedPolyline: String? = nil
     @State private var startCoordinate: CLLocationCoordinate2D?
@@ -146,7 +145,7 @@ struct MainView: View {
                             }
                         }
                         .padding(.horizontal, geometry.size.width * 0.05)
-                        Spacer(minLength: 45)
+                        Spacer(minLength: 5)
                         ScrollView {
                             VStack(spacing: geometry.size.height * 0.025) {
                                 Button {
@@ -186,18 +185,21 @@ struct MainView: View {
                                             Text(stops[i].isEmpty ? "Stop #\(i + 1)" : stops[i])
                                                 .padding()
                                                 .font(.system(size: geometry.size.width * 0.05, weight: .semibold))
-                                                .frame(maxWidth: geometry.size.width * 0.7)
+                                                .frame(maxWidth: geometry.size.width * 0.5)
                                                 .background(Color.theme.accent)
                                                 .foregroundColor(.white)
                                                 .cornerRadius(geometry.size.width * 0.05)
                                                 .shadow(color: Color.theme.accent.opacity(1), radius: 5, x: 0, y: 2)
                                         }
-                                        Button("Modify Duration") {
-                                            stopDurationIndex = i
-                                            showStopDurationPicker = true
+                                        
+                                        if !stops[i].isEmpty && stopDurations[i] >= 0 {
+                                            Button("Modify\n Duration") {
+                                                stopDurationIndex = i
+                                                showStopDurationPicker = true
+                                            }
+                                            .font(.system(size: geometry.size.width * 0.04))
+                                            .foregroundColor(.white)
                                         }
-                                        .font(.system(size: geometry.size.width * 0.04))
-                                        .foregroundColor(.white)
                                     }
                                 }
                                 Button {
@@ -284,7 +286,7 @@ struct MainView: View {
                                 .padding(.top, geometry.size.height * 0.015)
                             }
                             .padding(.horizontal, geometry.size.width * 0.01)
-                            Spacer(minLength: 10)
+                            Spacer(minLength: 25)
                             ZStack {
                                 HStack {
                                     Image("speed_lines")
@@ -385,6 +387,7 @@ struct MainView: View {
                         endCoordinate: $endCoordinate,
                         stopsCoordinates: $stopsCoordinates
                     )
+                    .interactiveDismissDisabled()
                 }
                 .sheet(isPresented: $showStopDurationPicker) {
                     if let stopIndex = stopDurationIndex {
@@ -392,6 +395,7 @@ struct MainView: View {
                             currentStopDuration: $stopDurations[stopIndex],
                             showOrNot: $showStopDurationPicker
                         )
+                        .interactiveDismissDisabled()
                     }
                 }
             }
