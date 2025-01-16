@@ -110,7 +110,6 @@ struct SplashScreenView: View {
                 xOffsetBottomE3 = geometry.size.width * 0.07
                 xOffsetBottomE4 = geometry.size.width * 0.07
 
-                // Initialize Y Offsets for vertical movement
                 yOffsetTopE1 = -1.0
                 yOffsetTopE2 = -1.0
                 yOffsetTopE3 = -1.0

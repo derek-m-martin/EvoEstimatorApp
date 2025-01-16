@@ -371,7 +371,7 @@ struct MainView: View {
                     }
                 }
                 
-                .sheet(isPresented: $isPresentingAutocomplete) {
+                .fullScreenCover(isPresented: $isPresentingAutocomplete) {
                     AutocompleteViewController(
                         isStartLocation: $isStartLocation,
                         startLocation: $startLocation,
@@ -389,7 +389,7 @@ struct MainView: View {
                     )
                     .interactiveDismissDisabled()
                 }
-                .sheet(isPresented: $showStopDurationPicker) {
+                .fullScreenCover(isPresented: $showStopDurationPicker) {
                     if let stopIndex = stopDurationIndex {
                         StopPickerView(
                             currentStopDuration: $stopDurations[stopIndex],
