@@ -11,6 +11,8 @@ import CoreLocation
 import MapKit
 
 struct MainView: View {
+    @State private var fadeToBlack = false
+    @State private var showResultView = false
     @State private var startLocation: String = ""
     @State private var endLocation: String = ""
     @State private var stops: [String] = []
@@ -281,9 +283,22 @@ struct MainView: View {
                                             } ?? []
                                         }
                                     }
+                                    
                                     withAnimation(.easeInOut(duration: 1.2)) {
                                         estimateAnimation = true
                                     }
+
+                                    withAnimation(.easeInOut(duration: 1.0)) {
+                                        fadeToBlack = true
+                                    }
+
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) {
+                                        showResultView = true
+                                        withAnimation(.easeInOut(duration: 1.0)) {
+                                            fadeToBlack = false
+                                        }
+                                    }
+                                    
                                 } label: {
                                     Text("Get my Estimate!")
                                         .padding()
@@ -339,11 +354,33 @@ struct MainView: View {
                         }
                     }
                 }
+                if fadeToBlack {
+                    Color.black
+                        .ignoresSafeArea()
+                        .transition(.opacity)
+                }
+            }
+            .fullScreenCover(isPresented: $showResultView) {
+                ResultView(
+                    errorOccurred: errorOccurred,
+                    travelTime: travelTime,
+                    travelTimeValue: travelTimeValue,
+                    tripCost: tripCost,
+                    finalStopSeconds: finalStopSeconds,
+                    startLocation: startLocation,
+                    endLocation: endLocation,
+                    stops: stops,
+                    startCoordinate: startCoordinate,
+                    endCoordinate: endCoordinate,
+                    stopsCoordinates: stopsCoordinates,
+                    primaryPolyline: primaryPolyline,
+                    alternativePolylines: alternativePolylines
+
+                )
             }
         }
     }
 }
-
 
 #Preview {
     MainView()
