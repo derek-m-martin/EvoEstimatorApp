@@ -23,28 +23,34 @@ struct RouteMapView: UIViewRepresentable {
     func makeUIView(context: Context) -> MKMapView {
         let mapView = MKMapView()
         mapView.delegate = context.coordinator
+        mapView.showsUserLocation = true
+        mapView.isZoomEnabled = true
+        mapView.isScrollEnabled = true
         return mapView
     }
 
     func updateUIView(_ uiView: MKMapView, context: Context) {
-        uiView.removeOverlays(uiView.overlays) // Clear previous overlays
+        uiView.removeOverlays(uiView.overlays)
+        uiView.removeAnnotations(uiView.annotations)
 
-        // main route (quickest)
+        // Decode the primary polyline and add it to the map
         let primaryCoords = decodePolyline(primaryPolyline)
-        let primaryPolyline = MKPolyline(coordinates: primaryCoords, count: primaryCoords.count)
-        primaryPolyline.title = "primary"
-        uiView.addOverlay(primaryPolyline)
+        let primaryPolylineOverlay = MKPolyline(coordinates: primaryCoords, count: primaryCoords.count)
+        primaryPolylineOverlay.title = "fastest"
+        uiView.addOverlay(primaryPolylineOverlay)
 
-        for (index, route) in alternativePolylines.enumerated() {
-            let alternativeCoords = decodePolyline(route)
-            let alternativePolyline = MKPolyline(coordinates: alternativeCoords, count: alternativeCoords.count)
-            alternativePolyline.title = "alternative\(index)"
-            uiView.addOverlay(alternativePolyline)
+        if let shortestPolyline = alternativePolylines.first {
+            let shortestCoords = decodePolyline(shortestPolyline)
+            let shortestPolylineOverlay = MKPolyline(coordinates: shortestCoords, count: shortestCoords.count)
+            shortestPolylineOverlay.title = "shortest"
+            uiView.addOverlay(shortestPolylineOverlay)
         }
 
+        // Adjust map to fit all overlays
         let mapRect = uiView.overlays.reduce(MKMapRect.null) { $0.union($1.boundingMapRect) }
-        uiView.setVisibleMapRect(mapRect, edgePadding: UIEdgeInsets(top: 40, left: 40, bottom: 40, right: 40), animated: false)
+        uiView.setVisibleMapRect(mapRect, edgePadding: UIEdgeInsets(top: 40, left: 40, bottom: 40, right: 40), animated: true)
 
+        // Add pins for start, stops, and end locations
         for pin in pins {
             let annotation = MKPointAnnotation()
             annotation.coordinate = pin.coordinate
@@ -65,12 +71,12 @@ struct RouteMapView: UIViewRepresentable {
 
             let renderer = MKPolylineRenderer(polyline: polyline)
 
-            if polyline.title == "primary" {
+            if polyline.title == "fastest" {
                 renderer.strokeColor = .systemBlue
                 renderer.lineWidth = 5
-            } else if polyline.title?.contains("0") == true {
-                renderer.strokeColor = .systemPurple.withAlphaComponent(1)
-                renderer.lineWidth = 3
+            } else if polyline.title == "shortest" {
+                renderer.strokeColor = .systemPurple
+                renderer.lineWidth = 5
             }
             return renderer
         }

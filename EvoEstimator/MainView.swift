@@ -1,4 +1,4 @@
-
+//
 //  MainView.swift
 //  EvoEstimator
 //
@@ -278,9 +278,9 @@ struct MainView: View {
                                             travelTimeValue = timeValue
                                             primaryPolyline = polylines?.first
                                             alternativePolylines = Array(polylines?.dropFirst() ?? [])
-                                            costEstimates = polylines?.enumerated().map { index, _ in
-                                                Double.random(in: 10.0...50.0)
-                                            } ?? []
+                                            calculateCost(travelCost: timeValue, stopCost: arr) { cost in
+                                                tripCost = cost
+                                            }
                                         }
                                     }
                                     
@@ -361,4 +361,3 @@ struct MainView: View {
         }
     }
 }
-

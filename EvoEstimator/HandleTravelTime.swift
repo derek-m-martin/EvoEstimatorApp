@@ -25,23 +25,24 @@ func estimateTripTime(
     }
     
     let apiKey = APIKeys.googleAPIKey
-
     let originsEncoded = startAddress.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
     let destinationsEncoded = endAddress.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
     let waypointsEncoded = waypoints
         .map { $0.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "" }
         .joined(separator: "%7C")
     let waypointsParam = waypointsEncoded.isEmpty ? "" : "&waypoints=\(waypointsEncoded)"
+    
     let urlString = """
     https://maps.googleapis.com/maps/api/directions/json?origin=\(originsEncoded)&destination=\(destinationsEncoded)\(waypointsParam)&mode=driving&alternatives=true&key=\(apiKey)
     """
+    
     guard let url = URL(string: urlString) else {
         DispatchQueue.main.async {
             completion("Invalid URL Error", 0, nil)
         }
         return
     }
-
+    
     URLSession.shared.dataTask(with: url) { data, response, error in
         if error != nil {
             DispatchQueue.main.async {
@@ -63,38 +64,45 @@ func estimateTripTime(
                     }
                     return
                 }
-                guard
-                    let routes = json["routes"] as? [[String: Any]]
-                else {
+                guard let routes = json["routes"] as? [[String: Any]], !routes.isEmpty else {
                     DispatchQueue.main.async {
                         completion("No routes found", 0, nil)
                     }
                     return
                 }
-
-                let allRoutesPolylines = routes.compactMap { route in
-                    (route["overview_polyline"] as? [String: Any])?["points"] as? String
-                }
-
-                guard let firstRoute = routes.first else {
-                    DispatchQueue.main.async {
-                        completion("No routes found", 0, nil)
+                
+                var allRoutesPolylines: [String] = []
+                var shortestRoutePolyline: String?
+                var shortestDistance: Double = Double.infinity
+                var fastestRouteDuration: Double = 0
+                
+                for route in routes {
+                    if let polyline = (route["overview_polyline"] as? [String: Any])?["points"] as? String {
+                        allRoutesPolylines.append(polyline)
                     }
-                    return
-                }
+                    
+                    if let legs = route["legs"] as? [[String: Any]],
+                       let firstLeg = legs.first,
+                       let distanceInfo = firstLeg["distance"] as? [String: Any],
+                       let distanceValue = distanceInfo["value"] as? Double,
+                       let durationInfo = firstLeg["duration"] as? [String: Any],
+                       let durationValue = durationInfo["value"] as? Double {
 
-                var totalDurationValue: Double = 0
-                if let legs = firstRoute["legs"] as? [[String: Any]] {
-                    for leg in legs {
-                        if let duration = leg["duration"] as? [String: Any],
-                           let durationValue = duration["value"] as? Double {
-                            totalDurationValue += durationValue
+                        if fastestRouteDuration == 0 {
+                            fastestRouteDuration = durationValue
+                        }
+
+                        if distanceValue < shortestDistance {
+                            shortestDistance = distanceValue
+                            shortestRoutePolyline = (route["overview_polyline"] as? [String: Any])?["points"] as? String
                         }
                     }
                 }
-                let formattedDuration = formatDuration(seconds: totalDurationValue, arr: stoppedTime)
+                
+                let formattedDuration = formatDuration(seconds: fastestRouteDuration, arr: stoppedTime)
+                
                 DispatchQueue.main.async {
-                    completion(formattedDuration, totalDurationValue, allRoutesPolylines)
+                    completion(formattedDuration, fastestRouteDuration, [allRoutesPolylines.first ?? "", shortestRoutePolyline ?? ""])
                 }
             }
         } catch {
