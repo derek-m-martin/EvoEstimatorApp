@@ -23,10 +23,10 @@ struct ResultView: View {
     let stopsCoordinates: [CLLocationCoordinate2D?]
     let primaryPolyline: String?
     let alternativePolylines: [String]
-    
+
     @State private var isMapFullscreen = false
     @State private var showDirectionsOptions = false
-    @State private var showOverlayBlack = true
+    @State private var fadeOpacity: Double = 1.0  
 
     func formatStopDuration(_ totalSeconds: Int) -> String {
         let days = totalSeconds / 86400
@@ -40,34 +40,15 @@ struct ResultView: View {
         return components.joined(separator: ", ")
     }
 
-    private var mapPins: [MapPinData] {
-        var pins = [MapPinData]()
-        if let startCoord = startCoordinate, !startLocation.isEmpty {
-            pins.append(MapPinData(coordinate: startCoord, title: startLocation))
-        }
-        for (i, stopName) in stops.enumerated() {
-            if stopsCoordinates.indices.contains(i),
-               let coord = stopsCoordinates[i],
-               !stopName.isEmpty {
-                pins.append(MapPinData(coordinate: coord, title: stopName))
-            }
-        }
-        if let endCoord = endCoordinate, !endLocation.isEmpty {
-            pins.append(MapPinData(coordinate: endCoord, title: endLocation))
-        }
-        return pins
-    }
-
-    // MARK: - Body
     var body: some View {
         GeometryReader { geometry in
-            // This ZStack is basically your old result block from MainView
             ZStack {
+                Color.black.ignoresSafeArea()
+
                 if errorOccurred {
                     Text("An Error Has Occurred")
                         .font(.system(size: geometry.size.width * 0.05, weight: .bold))
                         .foregroundColor(.red)
-
                 } else {
                     VStack(spacing: geometry.size.height * 0.03) {
                         VStack(spacing: geometry.size.height * 0.01) {
@@ -113,7 +94,7 @@ struct ResultView: View {
                             ToggleableMapView(
                                 primaryPolyline: validPolyline,
                                 alternativePolylines: alternativePolylines,
-                                mapPins: mapPins,
+                                mapPins: [],
                                 width: geometry.size.width * 0.8,
                                 height: geometry.size.height * 0.3,
                                 cornerRadius: geometry.size.width * 0.05,
@@ -127,33 +108,14 @@ struct ResultView: View {
                         }
                     }
                 }
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(Color.black.ignoresSafeArea())
 
-            if isMapFullscreen {
-                Color.black.opacity(0.5)
-                    .ignoresSafeArea()
-                    .onTapGesture {
-                        withAnimation {
-                            isMapFullscreen = false
+                Color.black.ignoresSafeArea()
+                    .opacity(fadeOpacity)
+                    .onAppear {
+                        withAnimation(.easeInOut(duration: 1.5)) {
+                            fadeOpacity = 0.0
                         }
                     }
-                if let primaryPolyline {
-                    RouteMapView(
-                        primaryPolyline: primaryPolyline,
-                        alternativePolylines: alternativePolylines,
-                        pins: mapPins
-                    )
-                    .scaledToFill()
-                    .ignoresSafeArea()
-                    .onTapGesture {
-                        withAnimation {
-                            isMapFullscreen = false
-                        }
-                    }
-                    .zIndex(1)
-                }
             }
         }
     }

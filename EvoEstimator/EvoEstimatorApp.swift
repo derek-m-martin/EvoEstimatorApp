@@ -32,7 +32,7 @@ struct EvoEstimatorApp: App {
                         }
                     }
             } else {
-                MainView()
+                ViewHandler()
             }
         }
     }

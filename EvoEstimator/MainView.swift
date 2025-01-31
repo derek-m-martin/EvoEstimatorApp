@@ -11,35 +11,35 @@ import CoreLocation
 import MapKit
 
 struct MainView: View {
-    @State private var fadeToBlack = false
-    @State private var showResultView = false
-    @State private var startLocation: String = ""
-    @State private var endLocation: String = ""
-    @State private var stops: [String] = []
+    @Binding var showResultView: Bool
+    @Binding var fadeToBlack: Bool
+    @Binding var errorOccurred: Bool
+    @Binding var travelTime: String
+    @Binding var travelTimeValue: Double
+    @Binding var tripCost: Double
+    @Binding var finalStopSeconds: Int
+    @Binding var startLocation: String
+    @Binding var endLocation: String
+    @Binding var stops: [String]
+    @Binding var startCoordinate: CLLocationCoordinate2D?
+    @Binding var endCoordinate: CLLocationCoordinate2D?
+    @Binding var stopsCoordinates: [CLLocationCoordinate2D?]
+    @Binding var primaryPolyline: String?
+    @Binding var alternativePolylines: [String]
     @State private var startLocationForRouting: String = ""
     @State private var endLocationForRouting: String = ""
     @State private var stopsForRouting: [String] = []
     @State private var stopDurations: [Int] = []
-    @State private var finalStopSeconds: Int = 0
     @State private var isPresentingAutocomplete = false
     @State private var isStartLocation = true
     @State private var currentStopIndex: Int? = nil
     @State private var estimateAnimation = false
-    @State private var travelTime: String = ""
-    @State private var travelTimeValue: Double = 0.0
-    @State private var tripCost: Double = 0.0
     @State private var addText: String = "Add Stops?"
     @State private var stopCounter: Int = 0
-    @State private var errorOccurred: Bool = false
     @State private var showStopDurationPicker = false
     @State private var stopDurationIndex: Int? = nil
     @State private var isMapFullscreen = false
-    @State private var primaryPolyline: String? = nil
-    @State private var alternativePolylines: [String] = []
     @State private var costEstimates: [Double] = []
-    @State private var startCoordinate: CLLocationCoordinate2D?
-    @State private var endCoordinate: CLLocationCoordinate2D?
-    @State private var stopsCoordinates: [CLLocationCoordinate2D?] = []
     @State private var showDirectionsOptions = false
     
     private var mapPins: [MapPinData] {
@@ -284,16 +284,15 @@ struct MainView: View {
                                         }
                                     }
                                     
-                                    withAnimation(.easeInOut(duration: 1.2)) {
-                                        estimateAnimation = true
-                                    }
-
                                     withAnimation(.easeInOut(duration: 1.0)) {
                                         fadeToBlack = true
                                     }
-
-                                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) {
+                                    
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
                                         showResultView = true
+                                    }
+                                    
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.8) {
                                         withAnimation(.easeInOut(duration: 1.0)) {
                                             fadeToBlack = false
                                         }
@@ -319,7 +318,6 @@ struct MainView: View {
                                 
                                     .padding(.top, geometry.size.height * 0.015)
                             }
-                            // HEREHEREHEREHEREHEREHEREHEREHERE
                             .padding(.horizontal, geometry.size.width * 0.01)
                             Spacer(minLength: 25)
                             
@@ -360,29 +358,7 @@ struct MainView: View {
                         .transition(.opacity)
                 }
             }
-            .fullScreenCover(isPresented: $showResultView) {
-                ResultView(
-                    errorOccurred: errorOccurred,
-                    travelTime: travelTime,
-                    travelTimeValue: travelTimeValue,
-                    tripCost: tripCost,
-                    finalStopSeconds: finalStopSeconds,
-                    startLocation: startLocation,
-                    endLocation: endLocation,
-                    stops: stops,
-                    startCoordinate: startCoordinate,
-                    endCoordinate: endCoordinate,
-                    stopsCoordinates: stopsCoordinates,
-                    primaryPolyline: primaryPolyline,
-                    alternativePolylines: alternativePolylines
-
-                )
-            }
         }
     }
-}
-
-#Preview {
-    MainView()
 }
 
