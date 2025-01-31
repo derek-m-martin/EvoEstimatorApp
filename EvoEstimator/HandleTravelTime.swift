@@ -43,7 +43,7 @@ func estimateTripTime(
     }
 
     URLSession.shared.dataTask(with: url) { data, response, error in
-        if let error = error {
+        if error != nil {
             DispatchQueue.main.async {
                 completion("Error fetching data", 0, nil)
             }

@@ -31,7 +31,7 @@ struct UserTipsView: View {
                 .padding()
                 .frame(maxWidth: .infinity)
                 .fixedSize(horizontal: false, vertical: true)
-                .background(Color.theme.accent)
+                .background(Color.theme.background)
                 .cornerRadius(12)
                 .shadow(radius: 5)
                 .padding(.horizontal)
