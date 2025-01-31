@@ -41,26 +41,27 @@ struct ViewHandler: View {
                     startCoordinate: startCoordinate,
                     endCoordinate: endCoordinate,
                     stopsCoordinates: stopsCoordinates,
-                    primaryPolyline: primaryPolyline,
-                    alternativePolylines: alternativePolylines
+                    primaryPolyline: primaryPolyline
                 )
                 .transition(.opacity)
             } else {
-                MainView(showResultView: $showResultView,
-                         fadeToBlack: $fadeToBlack,
-                         errorOccurred: $errorOccurred,
-                         travelTime: $travelTime,
-                         travelTimeValue: $travelTimeValue,
-                         tripCost: $tripCost,
-                         finalStopSeconds: $finalStopSeconds,
-                         startLocation: $startLocation,
-                         endLocation: $endLocation,
-                         stops: $stops,
-                         startCoordinate: $startCoordinate,
-                         endCoordinate: $endCoordinate,
-                         stopsCoordinates: $stopsCoordinates,
-                         primaryPolyline: $primaryPolyline,
-                         alternativePolylines: $alternativePolylines)
+                MainView(
+                    showResultView: $showResultView,
+                    fadeToBlack: $fadeToBlack,
+                    errorOccurred: $errorOccurred,
+                    travelTime: $travelTime,
+                    travelTimeValue: $travelTimeValue,
+                    tripCost: $tripCost,
+                    finalStopSeconds: $finalStopSeconds,
+                    startLocation: $startLocation,
+                    endLocation: $endLocation,
+                    stops: $stops,
+                    startCoordinate: $startCoordinate,
+                    endCoordinate: $endCoordinate,
+                    stopsCoordinates: $stopsCoordinates,
+                    primaryPolyline: $primaryPolyline,
+                    alternativePolylines: $alternativePolylines
+                )
                 .transition(.opacity)
             }
             
@@ -73,6 +74,6 @@ struct ViewHandler: View {
     }
 }
 
-#Preview() {
+#Preview {
     ViewHandler()
 }

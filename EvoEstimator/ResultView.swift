@@ -22,17 +22,8 @@ struct ResultView: View {
     let endCoordinate: CLLocationCoordinate2D?
     let stopsCoordinates: [CLLocationCoordinate2D?]
     let primaryPolyline: String?
-    let alternativePolylines: [String]
     
-    @State private var isMapFullscreen = false
     @State private var showDirectionsOptions = false
-    @State private var selectedRouteType: RouteType = .fastest
-    @State private var selectedPolyline: String?
-    
-    enum RouteType {
-        case fastest
-        case shortest
-    }
     
     var mapPins: [MapPinData] {
         var pins = [MapPinData]()
@@ -52,66 +43,33 @@ struct ResultView: View {
     
     var body: some View {
         VStack(spacing: 20) {
-            if let validPolyline = selectedPolyline, !errorOccurred {
+            if let validPolyline = primaryPolyline, !errorOccurred {
                 RouteMapView(
                     primaryPolyline: validPolyline,
                     alternativePolylines: [],
                     pins: mapPins
                 )
-                .frame(width: UIScreen.main.bounds.width * 0.9, height: UIScreen.main.bounds.height * 0.3)
+                .frame(width: UIScreen.main.bounds.width * 0.9,
+                       height: UIScreen.main.bounds.height * 0.3)
                 .cornerRadius(15)
                 .shadow(color: Color.theme.accent.opacity(1), radius: 5, x: 0, y: 2)
             } else {
                 Text("No Route Available")
                     .foregroundColor(.red)
             }
-            
-            HStack(spacing: 20) {
-                Button(action: {
-                    selectedRouteType = .fastest
-                    selectedPolyline = primaryPolyline
-                }) {
-                    Text("Fastest \nTrip")
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(selectedRouteType == .fastest ? Color.blue : Color.gray.opacity(0.3))
-                        .foregroundColor(.white)
-                        .cornerRadius(10)
-                }
-                
-                Button(action: {
-                    if let shortestRoute = alternativePolylines.first {
-                        selectedRouteType = .shortest
-                        selectedPolyline = shortestRoute
-                    }
-                }) {
-                    Text("Shortest \nTrip Distance")
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background((alternativePolylines.first != nil) ? (selectedRouteType == .shortest ? Color.blue : Color.gray.opacity(0.3)) : Color.gray.opacity(0.3))
-                        .foregroundColor(.white)
-                        .cornerRadius(10)
-                }
-                .disabled(alternativePolylines.first == nil)
-            }
-            .padding(.horizontal, 20)
-            
             VStack(spacing: 10) {
                 Text("Estimated Travel Time: \(travelTime)")
                     .font(.headline)
                     .foregroundColor(Color.theme.accent)
-                
                 Text("Estimated Stop Duration: \(formatStopDuration(finalStopSeconds))")
                     .font(.headline)
                     .foregroundColor(Color.theme.accent)
-                
                 Text("Estimated Trip Price: $\(String(format: "%.2f", tripCost))")
                     .font(.headline)
                     .foregroundColor(Color.theme.accent)
             }
             .padding(.horizontal, 20)
             .padding(.top, 10)
-            
             Button {
                 showDirectionsOptions = true
             } label: {
@@ -129,14 +87,10 @@ struct ResultView: View {
                 Button("Google Maps") { openInGoogleMaps() }
                 Button("Cancel", role: .cancel) { }
             }
-            
             Spacer()
         }
         .padding(.top, 20)
         .background(Color.black.ignoresSafeArea())
-        .onAppear {
-            selectedPolyline = primaryPolyline
-        }
     }
     
     func formatStopDuration(_ totalSeconds: Int) -> String {
@@ -152,19 +106,15 @@ struct ResultView: View {
     }
 }
 
-// the functionality for opening the route in google/apple maps
 extension ResultView {
     func openInAppleMaps() {
         guard let startCoord = startCoordinate, let endCoord = endCoordinate else { return }
-        
         var mapItems = [MKMapItem]()
         let startPlacemark = MKPlacemark(coordinate: startCoord)
         let startItem = MKMapItem(placemark: startPlacemark)
         startItem.name = startLocation
         mapItems.append(startItem)
-        
         for (i, stopName) in stops.enumerated() {
-            guard !stopName.isEmpty else { continue }
             if stopsCoordinates.indices.contains(i), let coord = stopsCoordinates[i] {
                 let stopPlacemark = MKPlacemark(coordinate: coord)
                 let stopItem = MKMapItem(placemark: stopPlacemark)
@@ -172,12 +122,10 @@ extension ResultView {
                 mapItems.append(stopItem)
             }
         }
-        
         let endPlacemark = MKPlacemark(coordinate: endCoord)
         let endItem = MKMapItem(placemark: endPlacemark)
         endItem.name = endLocation
         mapItems.append(endItem)
-        
         let launchOptions = [MKLaunchOptionsDirectionsModeKey: MKLaunchOptionsDirectionsModeDriving]
         MKMapItem.openMaps(with: mapItems, launchOptions: launchOptions)
     }
@@ -185,11 +133,9 @@ extension ResultView {
     func openInGoogleMaps() {
         let baseScheme = "comgooglemaps://"
         let webFallback = "https://maps.google.com/"
-        
         func encode(_ s: String) -> String {
             s.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? s
         }
-        
         if let url = URL(string: baseScheme), UIApplication.shared.canOpenURL(url) {
             var urlString = "comgooglemaps://?saddr=\(encode(startLocation))"
             if stops.isEmpty {
@@ -199,7 +145,6 @@ extension ResultView {
                 stopsString += "+to:\(encode(endLocation))"
                 urlString += "&daddr=" + stopsString
             }
-            
             urlString += "&directionsmode=driving"
             if let directionsURL = URL(string: urlString) {
                 UIApplication.shared.open(directionsURL)
@@ -213,7 +158,6 @@ extension ResultView {
     }
 }
 
-// filler stuff so i can preview what it looks like
 #Preview {
     ResultView(
         errorOccurred: false,
@@ -227,7 +171,6 @@ extension ResultView {
         startCoordinate: CLLocationCoordinate2D(latitude: 40.7128, longitude: -74.0060),
         endCoordinate: CLLocationCoordinate2D(latitude: 42.3601, longitude: -71.0589),
         stopsCoordinates: [CLLocationCoordinate2D(latitude: 41.7658, longitude: -72.6734)],
-        primaryPolyline: "somePrimaryEncodedPolylineString",
-        alternativePolylines: ["someAlternativeEncodedPolylineString"]
+        primaryPolyline: "somePrimaryEncodedPolylineString"
     )
 }

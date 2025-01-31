@@ -42,6 +42,11 @@ struct MainView: View {
     @State private var costEstimates: [Double] = []
     @State private var showDirectionsOptions = false
     
+    @State private var fastestTravelTimeText: String = ""
+    @State private var fastestTravelDuration: Double = 0.0
+    @State private var shortestTravelTimeText: String = ""
+    @State private var shortestTravelDuration: Double = 0.0
+    
     private var mapPins: [MapPinData] {
         var pins = [MapPinData]()
         if let startCoord = startCoordinate, !startLocation.isEmpty {
@@ -107,6 +112,13 @@ struct MainView: View {
         if minutes > 0 { components.append("\(minutes) minute\(minutes == 1 ? "" : "s")") }
         if components.isEmpty { return "0 minutes" }
         return components.joined(separator: ", ")
+    }
+    
+    func stopCostArray() -> [Int] {
+        let days = finalStopSeconds / 86400
+        let hours = (finalStopSeconds % 86400) / 3600
+        let minutes = (finalStopSeconds % 3600) / 60
+        return [days, hours, minutes]
     }
     
     var body: some View {
@@ -200,7 +212,6 @@ struct MainView: View {
                                                 .cornerRadius(geometry.size.width * 0.05)
                                                 .shadow(color: Color.theme.accent.opacity(1), radius: 5, x: 0, y: 2)
                                         }
-                                        
                                         if !stops[i].isEmpty && stopDurations[i] >= 0 {
                                             Button("Modify\n Duration") {
                                                 stopDurationIndex = i
@@ -265,8 +276,8 @@ struct MainView: View {
                                         endAddress: endLocationForRouting,
                                         waypoints: stopsForRouting,
                                         stoppedTime: arr
-                                    ) { timeText, timeValue, polylines in
-                                        if timeText.lowercased().contains("error") || timeValue == 0 {
+                                    ) { fastestText, fastestTime, shortestText, shortestTime, polylines in
+                                        if fastestText.lowercased().contains("error") || fastestTime == 0 {
                                             errorOccurred = true
                                             travelTime = ""
                                             travelTimeValue = 0
@@ -274,30 +285,30 @@ struct MainView: View {
                                             primaryPolyline = nil
                                         } else {
                                             errorOccurred = false
-                                            travelTime = timeText
-                                            travelTimeValue = timeValue
+                                            travelTime = fastestText
+                                            travelTimeValue = fastestTime
                                             primaryPolyline = polylines?.first
                                             alternativePolylines = Array(polylines?.dropFirst() ?? [])
-                                            calculateCost(travelCost: timeValue, stopCost: arr) { cost in
+                                            calculateCost(travelCost: fastestTime, stopCost: arr) { cost in
                                                 tripCost = cost
                                             }
+                                            fastestTravelTimeText = fastestText
+                                            fastestTravelDuration = fastestTime
+                                            shortestTravelTimeText = shortestText
+                                            shortestTravelDuration = shortestTime
                                         }
                                     }
-                                    
                                     withAnimation(.easeInOut(duration: 1.0)) {
                                         fadeToBlack = true
                                     }
-                                    
                                     DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
                                         showResultView = true
                                     }
-                                    
                                     DispatchQueue.main.asyncAfter(deadline: .now() + 1.8) {
                                         withAnimation(.easeInOut(duration: 1.0)) {
                                             fadeToBlack = false
                                         }
                                     }
-                                    
                                 } label: {
                                     Text("Get my Estimate!")
                                         .padding()
@@ -311,18 +322,14 @@ struct MainView: View {
                                                 .stroke(Color.darkBlue, lineWidth: 3)
                                         )
                                 }
-                                
                                 UserTipsView()
                                     .frame(maxWidth: .infinity)
                                     .padding(.top, 20)
-                                
                                     .padding(.top, geometry.size.height * 0.015)
                             }
                             .padding(.horizontal, geometry.size.width * 0.01)
                             Spacer(minLength: 25)
-                            
                         }
-                        
                         .fullScreenCover(isPresented: $isPresentingAutocomplete) {
                             AutocompleteViewController(
                                 isStartLocation: $isStartLocation,
