@@ -1,10 +1,3 @@
-//
-//  ResultView.swift
-//  EvoEstimator
-//
-//  Created by Derek Martin on 2025-01-30.
-//
-
 import SwiftUI
 import MapKit
 import CoreLocation
@@ -24,6 +17,7 @@ struct ResultView: View {
     let primaryPolyline: String?
     
     @State private var showDirectionsOptions = false
+    @State private var isMapFullscreen = false
     
     var mapPins: [MapPinData] {
         var pins = [MapPinData]()
@@ -53,6 +47,9 @@ struct ResultView: View {
                        height: UIScreen.main.bounds.height * 0.3)
                 .cornerRadius(15)
                 .shadow(color: Color.theme.accent.opacity(1), radius: 5, x: 0, y: 2)
+                .onTapGesture {
+                    isMapFullscreen = true
+                }
             } else {
                 Text("No Route Available")
                     .foregroundColor(.red)
@@ -91,6 +88,23 @@ struct ResultView: View {
         }
         .padding(.top, 20)
         .background(Color.black.ignoresSafeArea())
+        .fullScreenCover(isPresented: $isMapFullscreen) {
+            ZStack(alignment: .topTrailing) {
+                if let validPolyline = primaryPolyline, !errorOccurred {
+                    RouteMapView(
+                        primaryPolyline: validPolyline,
+                        alternativePolylines: [],
+                        pins: mapPins
+                    )
+                    .ignoresSafeArea()
+                    .onTapGesture() {
+                        isMapFullscreen = false
+                    }
+                } else {
+                    Color.black.ignoresSafeArea()
+                }
+            }
+        }
     }
     
     func formatStopDuration(_ totalSeconds: Int) -> String {
