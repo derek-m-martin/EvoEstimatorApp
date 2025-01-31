@@ -15,7 +15,7 @@ func estimateTripTime(
     endAddress: String,
     waypoints: [String] = [],
     stoppedTime: [Int],
-    completion: @escaping (String, Double, String?) -> Void
+    completion: @escaping (String, Double, [String]?) -> Void
 ) {
     guard !startAddress.isEmpty, !endAddress.isEmpty else {
         DispatchQueue.main.async {
@@ -33,7 +33,7 @@ func estimateTripTime(
         .joined(separator: "%7C")
     let waypointsParam = waypointsEncoded.isEmpty ? "" : "&waypoints=\(waypointsEncoded)"
     let urlString = """
-    https://maps.googleapis.com/maps/api/directions/json?origin=\(originsEncoded)&destination=\(destinationsEncoded)\(waypointsParam)&mode=driving&key=\(apiKey)
+    https://maps.googleapis.com/maps/api/directions/json?origin=\(originsEncoded)&destination=\(destinationsEncoded)\(waypointsParam)&mode=driving&alternatives=true&key=\(apiKey)
     """
     guard let url = URL(string: urlString) else {
         DispatchQueue.main.async {
@@ -64,35 +64,37 @@ func estimateTripTime(
                     return
                 }
                 guard
-                    let routes = json["routes"] as? [[String: Any]],
-                    let firstRoute = routes.first
+                    let routes = json["routes"] as? [[String: Any]]
                 else {
                     DispatchQueue.main.async {
                         completion("No routes found", 0, nil)
                     }
                     return
                 }
-                var encodedPolyline: String? = nil
-                if let overview = firstRoute["overview_polyline"] as? [String: Any],
-                   let points = overview["points"] as? String {
-                    encodedPolyline = points
+
+                let allRoutesPolylines = routes.compactMap { route in
+                    (route["overview_polyline"] as? [String: Any])?["points"] as? String
                 }
+
+                guard let firstRoute = routes.first else {
+                    DispatchQueue.main.async {
+                        completion("No routes found", 0, nil)
+                    }
+                    return
+                }
+
+                var totalDurationValue: Double = 0
                 if let legs = firstRoute["legs"] as? [[String: Any]] {
-                    var totalDurationValue: Double = 0
                     for leg in legs {
                         if let duration = leg["duration"] as? [String: Any],
                            let durationValue = duration["value"] as? Double {
                             totalDurationValue += durationValue
                         }
                     }
-                    let formattedDuration = formatDuration(seconds: totalDurationValue, arr: stoppedTime)
-                    DispatchQueue.main.async {
-                        completion(formattedDuration, totalDurationValue, encodedPolyline)
-                    }
-                } else {
-                    DispatchQueue.main.async {
-                        completion("No routes found", 0, nil)
-                    }
+                }
+                let formattedDuration = formatDuration(seconds: totalDurationValue, arr: stoppedTime)
+                DispatchQueue.main.async {
+                    completion(formattedDuration, totalDurationValue, allRoutesPolylines)
                 }
             }
         } catch {

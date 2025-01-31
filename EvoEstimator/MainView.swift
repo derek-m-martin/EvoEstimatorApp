@@ -8,6 +8,7 @@
 import SwiftUI
 import GooglePlaces
 import CoreLocation
+import MapKit
 
 struct MainView: View {
     @State private var startLocation: String = ""
@@ -31,11 +32,14 @@ struct MainView: View {
     @State private var showStopDurationPicker = false
     @State private var stopDurationIndex: Int? = nil
     @State private var isMapFullscreen = false
-    @State private var encodedPolyline: String? = nil
+    @State private var primaryPolyline: String? = nil
+    @State private var alternativePolylines: [String] = []
+    @State private var costEstimates: [Double] = []
     @State private var startCoordinate: CLLocationCoordinate2D?
     @State private var endCoordinate: CLLocationCoordinate2D?
     @State private var stopsCoordinates: [CLLocationCoordinate2D?] = []
-
+    @State private var showDirectionsOptions = false
+    
     private var mapPins: [MapPinData] {
         var pins = [MapPinData]()
         if let startCoord = startCoordinate, !startLocation.isEmpty {
@@ -53,7 +57,7 @@ struct MainView: View {
         }
         return pins
     }
-
+    
     func resetEstimator() {
         startLocation = ""
         endLocation = ""
@@ -70,12 +74,12 @@ struct MainView: View {
         addText = "Add Stops?"
         stopCounter = 0
         errorOccurred = false
-        encodedPolyline = nil
+        primaryPolyline = nil
         startCoordinate = nil
         endCoordinate = nil
         stopsCoordinates = []
     }
-
+    
     func changeText() {
         switch stopCounter {
         case 0: addText = "Add Stops?"
@@ -86,11 +90,11 @@ struct MainView: View {
         default: addText = "Alright Go Crazy."
         }
     }
-
+    
     var totalStopSeconds: Int {
         stopDurations.reduce(0, +)
     }
-
+    
     func formatStopDuration(_ totalSeconds: Int) -> String {
         let days = totalSeconds / 86400
         let hours = (totalSeconds % 86400) / 3600
@@ -102,7 +106,7 @@ struct MainView: View {
         if components.isEmpty { return "0 minutes" }
         return components.joined(separator: ", ")
     }
-
+    
     var body: some View {
         NavigationStack {
             GeometryReader { geometry in
@@ -146,7 +150,6 @@ struct MainView: View {
                         }
                         .padding(.horizontal, geometry.size.width * 0.05)
                         Spacer(minLength: 5)
-                        ScrollView {
                             VStack(spacing: geometry.size.height * 0.025) {
                                 Button {
                                     isStartLocation = true
@@ -159,7 +162,10 @@ struct MainView: View {
                                         .background(Color.theme.accent)
                                         .foregroundColor(.white)
                                         .cornerRadius(geometry.size.width * 0.05)
-                                        .shadow(color: Color.theme.accent.opacity(1), radius: 5, x: 0, y: 2)
+                                        .background(
+                                            RoundedRectangle(cornerRadius: geometry.size.width * 0.05)
+                                                .stroke(Color.darkBlue, lineWidth: 3)
+                                        )
                                 }
                                 ForEach(stops.indices, id: \.self) { i in
                                     HStack(spacing: geometry.size.width * 0.02) {
@@ -234,14 +240,17 @@ struct MainView: View {
                                         .background(Color.theme.accent)
                                         .foregroundColor(.white)
                                         .cornerRadius(geometry.size.width * 0.05)
-                                        .shadow(color: Color.theme.accent.opacity(1), radius: 5, x: 0, y: 2)
+                                        .background(
+                                            RoundedRectangle(cornerRadius: geometry.size.width * 0.05)
+                                                .stroke(Color.darkBlue, lineWidth: 3)
+                                        )
                                 }
                                 Spacer(minLength: -10)
                                 Text("All Set? Hit the Button Below!")
                                     .font(.system(size: geometry.size.width * 0.055, weight: .light))
                                     .foregroundColor(.white)
                                 Button {
-                                    encodedPolyline = nil
+                                    primaryPolyline = nil
                                     errorOccurred = false
                                     let d = totalStopSeconds / 86400
                                     let hh = (totalStopSeconds % 86400) / 3600
@@ -253,21 +262,22 @@ struct MainView: View {
                                         endAddress: endLocationForRouting,
                                         waypoints: stopsForRouting,
                                         stoppedTime: arr
-                                    ) { timeText, timeValue, polyline in
+                                    ) { timeText, timeValue, polylines in
                                         if timeText.lowercased().contains("error") || timeValue == 0 {
                                             errorOccurred = true
                                             travelTime = ""
                                             travelTimeValue = 0
                                             tripCost = 0
-                                            encodedPolyline = nil
+                                            primaryPolyline = nil
                                         } else {
                                             errorOccurred = false
                                             travelTime = timeText
                                             travelTimeValue = timeValue
-                                            calculateCost(travelCost: timeValue, stopCost: arr) { cost in
-                                                tripCost = cost
-                                            }
-                                            encodedPolyline = polyline
+                                            primaryPolyline = polylines?.first
+                                            alternativePolylines = Array(polylines?.dropFirst() ?? [])
+                                            costEstimates = polylines?.enumerated().map { index, _ in
+                                                Double.random(in: 10.0...50.0)
+                                            } ?? []
                                         }
                                     }
                                     withAnimation(.easeInOut(duration: 1.2)) {
@@ -281,30 +291,21 @@ struct MainView: View {
                                         .background(Color.theme.accent)
                                         .foregroundColor(.white)
                                         .cornerRadius(geometry.size.width * 0.05)
-                                        .shadow(color: Color.theme.accent.opacity(1), radius: 5, x: 0, y: 2)
+                                        .background(
+                                            RoundedRectangle(cornerRadius: geometry.size.width * 0.05)
+                                                .stroke(Color.darkBlue, lineWidth: 3)
+                                        )
                                 }
+                                
+                                UserTipsView()
+                                    .frame(maxWidth: .infinity)
+                                    .padding(.top, 20)
+                                
                                 .padding(.top, geometry.size.height * 0.015)
                             }
                             .padding(.horizontal, geometry.size.width * 0.01)
                             Spacer(minLength: 25)
                             ZStack {
-                                HStack {
-                                    Image("speed_lines")
-                                        .resizable()
-                                        .foregroundColor(.white)
-                                        .aspectRatio(contentMode: .fit)
-                                        .frame(width: geometry.size.width * 0.4)
-                                        .offset(x: estimateAnimation ? geometry.size.width : 0)
-                                        .animation(.easeInOut(duration: 1.2), value: estimateAnimation)
-                                    Image(systemName: "car.side")
-                                        .resizable()
-                                        .foregroundStyle(.white)
-                                        .rotation3DEffect(.degrees(180), axis: (x: 0, y: 1, z: 0))
-                                        .aspectRatio(contentMode: .fit)
-                                        .frame(width: geometry.size.width * 0.45)
-                                        .offset(x: estimateAnimation ? geometry.size.width : 0)
-                                        .animation(.easeInOut(duration: 1.2), value: estimateAnimation)
-                                }
                                 if errorOccurred {
                                     Text("An Error Has Occurred")
                                         .font(.system(size: geometry.size.width * 0.05, weight: .bold))
@@ -312,44 +313,69 @@ struct MainView: View {
                                         .offset(x: estimateAnimation ? 0 : -geometry.size.width)
                                         .animation(.easeInOut(duration: 1.2), value: estimateAnimation)
                                 } else {
-                                    VStack(spacing: geometry.size.height * 0.01) {
-                                        Text("Estimated Travel Time: \(travelTime)")
-                                            .font(.system(size: geometry.size.width * 0.045, weight: .bold))
-                                            .foregroundColor(Color.theme.accent)
-                                            .offset(x: estimateAnimation ? 0 : -geometry.size.width)
-                                            .animation(.easeInOut(duration: 1.2), value: estimateAnimation)
-                                        Text("Estimated Stop Duration: \(formatStopDuration(finalStopSeconds))")
-                                            .font(.system(size: geometry.size.width * 0.045, weight: .bold))
-                                            .foregroundColor(Color.theme.accent)
-                                            .offset(x: estimateAnimation ? 0 : -geometry.size.width)
-                                            .animation(.easeInOut(duration: 1.2), value: estimateAnimation)
-                                        Text("Estimated Trip Price: $\(String(format: "%.2f", tripCost))")
-                                            .font(.system(size: geometry.size.width * 0.045, weight: .bold))
-                                            .foregroundColor(Color.theme.accent)
-                                            .offset(x: estimateAnimation ? 0 : -geometry.size.width)
-                                            .animation(.easeInOut(duration: 1.2), value: estimateAnimation)
+                                    
+                                    VStack(spacing: geometry.size.height * 0.03) {
+                                        
+                                        VStack(spacing: geometry.size.height * 0.01) {
+                                            Text("Estimated Travel Time: \(travelTime)")
+                                                .font(.system(size: geometry.size.width * 0.045, weight: .bold))
+                                                .foregroundColor(Color.theme.accent)
+                                                .offset(x: estimateAnimation ? 0 : -geometry.size.width)
+                                                .animation(.easeInOut(duration: 1.2), value: estimateAnimation)
+                                            Text("Estimated Stop Duration: \(formatStopDuration(finalStopSeconds))")
+                                                .font(.system(size: geometry.size.width * 0.045, weight: .bold))
+                                                .foregroundColor(Color.theme.accent)
+                                                .offset(x: estimateAnimation ? 0 : -geometry.size.width)
+                                                .animation(.easeInOut(duration: 1.2), value: estimateAnimation)
+                                            Text("Estimated Trip Price: $\(String(format: "%.2f", tripCost))")
+                                                .font(.system(size: geometry.size.width * 0.045, weight: .bold))
+                                                .foregroundColor(Color.theme.accent)
+                                                .offset(x: estimateAnimation ? 0 : -geometry.size.width)
+                                                .animation(.easeInOut(duration: 1.2), value: estimateAnimation)
+                                        }
+                                        if !errorOccurred && !travelTime.isEmpty {
+                                            Button {
+                                                showDirectionsOptions = true
+                                            } label: {
+                                                Text("Get Directions")
+                                                    .padding()
+                                                    .font(.system(size: geometry.size.width * 0.05, weight: .semibold))
+                                                    .frame(maxWidth: geometry.size.width * 0.55)
+                                                    .background(Color.theme.accent)
+                                                    .foregroundColor(.white)
+                                                    .cornerRadius(geometry.size.width * 0.05)
+                                                    .background(
+                                                        RoundedRectangle(cornerRadius: geometry.size.width * 0.05)
+                                                            .stroke(Color.theme.accent, lineWidth: 3)
+                                                    )
+                                            }
+                                            .confirmationDialog("Open with?", isPresented: $showDirectionsOptions) {
+                                                Button("Apple Maps") { openInAppleMaps() }
+                                                Button("Google Maps") { openInGoogleMaps() }
+                                                Button("Cancel", role: .cancel) { }
+                                            }
+                                        }
+                                        if let validPolyline = primaryPolyline,
+                                           !validPolyline.isEmpty,
+                                           !errorOccurred {
+                                            ToggleableMapView(
+                                                primaryPolyline: primaryPolyline ?? "",
+                                                alternativePolylines: alternativePolylines,
+                                                mapPins: mapPins,
+                                                width: geometry.size.width * 0.8,
+                                                height: geometry.size.height * 0.3,
+                                                cornerRadius: geometry.size.width * 0.05,
+                                                shadowColor: Color.theme.accent.opacity(1),
+                                                shadowRadius: 5,
+                                                shadowX: 0,
+                                                shadowY: 2,
+                                                isFullscreen: $isMapFullscreen
+                                            )
+                                            .padding(.bottom, 30)
+                                        }
                                     }
                                 }
                             }
-                            .frame(width: geometry.size.width, height: geometry.size.height * 0.2)
-                            if let validPolyline = encodedPolyline,
-                               !validPolyline.isEmpty,
-                               !errorOccurred {
-                                ToggleableMapView(
-                                    encodedPolyline: validPolyline,
-                                    pins: mapPins,
-                                    width: geometry.size.width * 0.8,
-                                    height: geometry.size.height * 0.3,
-                                    cornerRadius: geometry.size.width * 0.05,
-                                    shadowColor: Color.theme.accent.opacity(1),
-                                    shadowRadius: 5,
-                                    shadowX: 0,
-                                    shadowY: 2,
-                                    isFullscreen: $isMapFullscreen
-                                )
-                                .padding(.bottom, 30)
-                            }
-                        }
                     }
                     if isMapFullscreen {
                         Color.black.opacity(0.5)
@@ -359,7 +385,12 @@ struct MainView: View {
                                     isMapFullscreen = false
                                 }
                             }
-                        RouteMapView(encodedPolyline: encodedPolyline ?? "", pins: mapPins)
+                        if let primaryPolyline = primaryPolyline {
+                            RouteMapView(
+                                primaryPolyline: primaryPolyline,
+                                alternativePolylines: alternativePolylines,
+                                pins: mapPins
+                            )
                             .scaledToFill()
                             .ignoresSafeArea()
                             .onTapGesture {
@@ -368,6 +399,7 @@ struct MainView: View {
                                 }
                             }
                             .zIndex(1)
+                        }
                     }
                 }
                 
@@ -398,6 +430,95 @@ struct MainView: View {
                         .interactiveDismissDisabled()
                     }
                 }
+            }
+        }
+    }
+}
+
+extension MainView {
+    
+    func openInAppleMaps() {
+        
+        guard let startCoord = startCoordinate,
+              let endCoord   = endCoordinate else {
+            return
+        }
+        
+        var mapItems = [MKMapItem]()
+        
+        let startPlacemark = MKPlacemark(coordinate: startCoord)
+        let startItem      = MKMapItem(placemark: startPlacemark)
+        startItem.name     = startLocation
+        mapItems.append(startItem)
+        
+        for (i, stopName) in stops.enumerated() {
+            guard !stopName.isEmpty else { continue }
+            
+            if stopsCoordinates.indices.contains(i),
+               let coord = stopsCoordinates[i] {
+                let stopPlacemark = MKPlacemark(coordinate: coord)
+                let stopItem      = MKMapItem(placemark: stopPlacemark)
+                stopItem.name     = stopName
+                mapItems.append(stopItem)
+            } else {
+            }
+        }
+        
+        let endPlacemark = MKPlacemark(coordinate: endCoord)
+        let endItem      = MKMapItem(placemark: endPlacemark)
+        endItem.name     = endLocation
+        mapItems.append(endItem)
+        
+        let launchOptions = [MKLaunchOptionsDirectionsModeKey: MKLaunchOptionsDirectionsModeDriving]
+        MKMapItem.openMaps(with: mapItems, launchOptions: launchOptions)
+    }
+    
+    func openInGoogleMaps() {
+        
+        let baseScheme  = "comgooglemaps://"
+        let webFallback = "https://maps.google.com/"
+        
+        func encode(_ s: String) -> String {
+            return s.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? s
+        }
+        
+        if let url = URL(string: baseScheme), UIApplication.shared.canOpenURL(url) {
+            
+            var urlString = "comgooglemaps://?saddr=\(encode(startLocationForRouting))"
+            
+            if stops.isEmpty {
+                urlString += "&daddr=\(encode(endLocationForRouting))"
+            } else {
+                
+                var encounteredFirstStop = false
+                
+                var stopsString = ""
+                for stopName in stops {
+                    guard !stopName.isEmpty else { continue }
+                    
+                    if !encounteredFirstStop {
+                        stopsString += "\(encode(stopName))"
+                        encounteredFirstStop = true
+                    } else {
+                        stopsString += "+to:\(encode(stopName))"
+                    }
+                }
+                
+                stopsString += "+to:\(encode(endLocationForRouting))"
+                
+                urlString += "&daddr=" + stopsString
+            }
+            
+            urlString += "&directionsmode=driving"
+            
+            if let directionsURL = URL(string: urlString) {
+                UIApplication.shared.open(directionsURL)
+            }
+        } else {
+            
+            let urlString = "\(webFallback)?saddr=\(encode(startLocationForRouting))&daddr=\(encode(endLocationForRouting))"
+            if let fallbackURL = URL(string: urlString) {
+                UIApplication.shared.open(fallbackURL)
             }
         }
     }

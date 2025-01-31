@@ -10,8 +10,9 @@ import SwiftUI
 import MapKit
 
 struct ToggleableMapView: View {
-    let encodedPolyline: String
-    let pins: [MapPinData]
+    let primaryPolyline: String
+    let alternativePolylines: [String]
+    let mapPins: [MapPinData]
     let width: CGFloat
     let height: CGFloat
     let cornerRadius: CGFloat
@@ -22,7 +23,11 @@ struct ToggleableMapView: View {
     @Binding var isFullscreen: Bool
 
     var body: some View {
-        RouteMapView(encodedPolyline: encodedPolyline, pins: pins)
+        RouteMapView(
+            primaryPolyline: primaryPolyline,
+            alternativePolylines: alternativePolylines,
+            pins: mapPins
+        )
             .frame(width: width, height: height)
             .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
             .shadow(

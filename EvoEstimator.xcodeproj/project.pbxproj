@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		433B5DBD29EF663D63A038F7 /* Pods_EvoEstimator.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 17D62E144F442A1FB76455B5 /* Pods_EvoEstimator.framework */; };
+		D30998FF2D4C4B5E009E2257 /* UserTips.swift in Sources */ = {isa = PBXBuildFile; fileRef = D30998FE2D4C4B5E009E2257 /* UserTips.swift */; };
 		D32ED5842C8A60FF00140CE2 /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = D32ED5832C8A60FF00140CE2 /* Color.swift */; };
 		D32ED5882C8B86E200140CE2 /* Arya W00 Triple Slant.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D32ED5872C8A62DC00140CE2 /* Arya W00 Triple Slant.ttf */; };
 		D32ED5892C8B88E300140CE2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D3A8BE662C88F4DB001232F9 /* Assets.xcassets */; };
@@ -32,6 +33,7 @@
 		0689375A80EE9034E3D4729B /* Pods-EvoEstimator.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-EvoEstimator.debug.xcconfig"; path = "Target Support Files/Pods-EvoEstimator/Pods-EvoEstimator.debug.xcconfig"; sourceTree = "<group>"; };
 		17D62E144F442A1FB76455B5 /* Pods_EvoEstimator.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_EvoEstimator.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		7C8B10F5153996742081DA39 /* Pods-EvoEstimator.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-EvoEstimator.release.xcconfig"; path = "Target Support Files/Pods-EvoEstimator/Pods-EvoEstimator.release.xcconfig"; sourceTree = "<group>"; };
+		D30998FE2D4C4B5E009E2257 /* UserTips.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserTips.swift; sourceTree = "<group>"; };
 		D32ED5832C8A60FF00140CE2 /* Color.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
 		D32ED5872C8A62DC00140CE2 /* Arya W00 Triple Slant.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Arya W00 Triple Slant.ttf"; path = "EvoEstimator/Arya W00 Triple Slant.ttf"; sourceTree = "<group>"; };
 		D33DC31D2D35A8CB00844B15 /* MapViewToggler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewToggler.swift; sourceTree = "<group>"; };
@@ -135,6 +137,7 @@
 				D39122622D2889910019C204 /* StopDurationPicker.swift */,
 				D39122642D2F14680019C204 /* PickerViewTemplate.swift */,
 				D33DC31D2D35A8CB00844B15 /* MapViewToggler.swift */,
+				D30998FE2D4C4B5E009E2257 /* UserTips.swift */,
 			);
 			path = EvoEstimator;
 			sourceTree = "<group>";
@@ -279,6 +282,7 @@
 				D3F089D62CBCE79F00CDF2E4 /* PrivacyPolicy.swift in Sources */,
 				D39122652D2F14680019C204 /* PickerViewTemplate.swift in Sources */,
 				D3A8BE552C72F2B2001232F9 /* EvoEstimatorApp.swift in Sources */,
+				D30998FF2D4C4B5E009E2257 /* UserTips.swift in Sources */,
 				D32ED5842C8A60FF00140CE2 /* Color.swift in Sources */,
 				D3BB81362CB9F33B00A49903 /* ComputeTripCost.swift in Sources */,
 				D3BB81322CB9B2E200A49903 /* HandleAutofill.swift in Sources */,
