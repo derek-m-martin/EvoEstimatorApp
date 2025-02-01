@@ -26,9 +26,12 @@ struct MainView: View {
     @Binding var stopsCoordinates: [CLLocationCoordinate2D?]
     @Binding var primaryPolyline: String?
     @Binding var alternativePolylines: [String]
+    
+    // These are the full addresses used for API calls.
     @State private var startLocationForRouting: String = ""
     @State private var endLocationForRouting: String = ""
     @State private var stopsForRouting: [String] = []
+    
     @State private var stopDurations: [Int] = []
     @State private var isPresentingAutocomplete = false
     @State private var isStartLocation = true
@@ -41,12 +44,17 @@ struct MainView: View {
     @State private var isMapFullscreen = false
     @State private var costEstimates: [Double] = []
     @State private var showDirectionsOptions = false
-    
     @State private var fastestTravelTimeText: String = ""
     @State private var fastestTravelDuration: Double = 0.0
     @State private var shortestTravelTimeText: String = ""
     @State private var shortestTravelDuration: Double = 0.0
     
+    // New state for saving/loading trips.
+    @State private var showingSaveTripView = false
+    @State private var showingTripSelector = false
+    @StateObject private var tripStorage = TripStorage()
+    
+    // Computed property for map pins.
     private var mapPins: [MapPinData] {
         var pins = [MapPinData]()
         if let startCoord = startCoordinate, !startLocation.isEmpty {
@@ -121,6 +129,50 @@ struct MainView: View {
         return [days, hours, minutes]
     }
     
+    /// Geocode the loaded routing addresses so that map pins for the start, each stop, and the end are displayed.
+    func geocodeLoadedTrip() {
+        // Reset coordinates
+        startCoordinate = nil
+        endCoordinate = nil
+        stopsCoordinates = Array(repeating: nil, count: stopsForRouting.count)
+        
+        // Use a new geocoder for each request.
+        CLGeocoder().geocodeAddressString(startLocationForRouting) { placemarks, error in
+            if let coordinate = placemarks?.first?.location?.coordinate {
+                DispatchQueue.main.async {
+                    self.startCoordinate = coordinate
+                }
+            } else {
+                print("Failed to geocode start address: \(error?.localizedDescription ?? "unknown error")")
+            }
+        }
+        
+        CLGeocoder().geocodeAddressString(endLocationForRouting) { placemarks, error in
+            if let coordinate = placemarks?.first?.location?.coordinate {
+                DispatchQueue.main.async {
+                    self.endCoordinate = coordinate
+                }
+            } else {
+                print("Failed to geocode end address: \(error?.localizedDescription ?? "unknown error")")
+            }
+        }
+        
+        // Geocode each stop individually.
+        for (index, stop) in stopsForRouting.enumerated() {
+            CLGeocoder().geocodeAddressString(stop) { placemarks, error in
+                if let coordinate = placemarks?.first?.location?.coordinate {
+                    DispatchQueue.main.async {
+                        if self.stopsCoordinates.indices.contains(index) {
+                            self.stopsCoordinates[index] = coordinate
+                        }
+                    }
+                } else {
+                    print("Failed to geocode stop: \(stop) error: \(error?.localizedDescription ?? "unknown error")")
+                }
+            }
+        }
+    }
+    
     var body: some View {
         NavigationStack {
             GeometryReader { geometry in
@@ -136,6 +188,7 @@ struct MainView: View {
                                     .padding(.top, geometry.size.height * 0.06)
                             }
                             Spacer()
+                            // Updated menu including "Save Route" and "Saved Trips"
                             Menu {
                                 Button("Reset Estimator", role: .destructive) {
                                     resetEstimator()
@@ -143,6 +196,13 @@ struct MainView: View {
                                 NavigationLink("Evo's Current Rates", destination: RatesView())
                                 NavigationLink("About the Developer/App", destination: AboutView())
                                 NavigationLink("Our Privacy Policy", destination: PrivacyPolicy())
+                                Divider()
+                                Button("Save Route") {
+                                    showingSaveTripView = true
+                                }
+                                Button("Saved Trips") {
+                                    showingTripSelector = true
+                                }
                             } label: {
                                 ZStack {
                                     Image("button_backer")
@@ -271,6 +331,7 @@ struct MainView: View {
                                     let mm = (totalStopSeconds % 3600) / 60
                                     finalStopSeconds = totalStopSeconds
                                     let arr = [d, hh, mm]
+                                    // Use routing addresses for the API call.
                                     estimateTripTime(
                                         startAddress: startLocationForRouting,
                                         endAddress: endLocationForRouting,
@@ -364,6 +425,37 @@ struct MainView: View {
                         .ignoresSafeArea()
                         .transition(.opacity)
                 }
+            }
+        }
+        // Sheet for saving a trip.
+        .sheet(isPresented: $showingSaveTripView) {
+            SaveTripView(
+                tripStorage: tripStorage,
+                currentDisplayStart: startLocation,
+                currentDisplayEnd: endLocation,
+                currentDisplayStops: stops,
+                currentRoutingStart: startLocationForRouting.isEmpty ? startLocation : startLocationForRouting,
+                currentRoutingEnd: endLocationForRouting.isEmpty ? endLocation : endLocationForRouting,
+                currentRoutingStops: stopsForRouting.isEmpty ? stops : stopsForRouting,
+                currentStopDurations: stopDurations
+            )
+        }
+        // Sheet for loading a saved trip.
+        .sheet(isPresented: $showingTripSelector) {
+            TripSelectorView(tripStorage: tripStorage) { selectedTrip in
+                // Update display variables.
+                startLocation = selectedTrip.displayStartLocation
+                endLocation = selectedTrip.displayEndLocation
+                stops = selectedTrip.displayStops
+                stopDurations = selectedTrip.stopDurations
+                
+                // Update routing variables for API calls.
+                startLocationForRouting = selectedTrip.routingStartLocation
+                endLocationForRouting = selectedTrip.routingEndLocation
+                stopsForRouting = selectedTrip.routingStops
+                
+                // After loading a trip, update the map pins.
+                geocodeLoadedTrip()
             }
         }
     }
