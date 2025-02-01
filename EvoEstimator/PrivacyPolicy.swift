@@ -4,6 +4,7 @@
 //
 //  Created by Derek Martin on 2024-10-13.
 //
+//
 
 import SwiftUI
 
@@ -12,11 +13,9 @@ struct PrivacyPolicy: View {
         NavigationStack {
             GeometryReader { geometry in
                 ZStack {
-                    // Background color
                     Color.black.ignoresSafeArea()
                     
                     VStack {
-                        // Title
                         HStack(alignment: .center) {
                             VStack(alignment: .leading, spacing: geometry.size.height * 0.005) {
                                 Text("Privacy Policy")
@@ -35,39 +34,31 @@ struct PrivacyPolicy: View {
                         }
                         .padding(.top, geometry.size.height * 0.03)
                         .padding(.horizontal)
-                        
-                        // Scrollable content
+
                         ScrollView {
                             VStack(alignment: .center, spacing: 25) {
-                                // Privacy Policy Content
-                                
-                                Text("Last updated: December 31st, 2024")
+
+                                Text("Last updated: January 31st, 2025")
                                     .font(.system(size: geometry.size.width * 0.045, weight: .light))
                                     .foregroundColor(.white)
                                     .padding(.bottom, 5)
                                     .padding(.top,10)
-                                
+
                                 Group {
-            
                                     Text("Introduction")
                                         .font(.system(size: geometry.size.width * 0.06, weight: .heavy))
                                         .foregroundColor(.white)
                                     
-                                    Text("EvoEstimator is committed to protecting your privacy. This Privacy Policy describes how we collect, use, and disclose information when you use our mobile application (the \"App\"). By using the App, you agree to the collection and use of information in accordance with this policy.")
-                                        .font(.system(size: geometry.size.width * 0.045, weight: .light))
-                                        .foregroundColor(.white)
-                                        .multilineTextAlignment(.center)
+                                    Text("""
+EvoEstimator is committed to protecting your privacy. This Privacy Policy describes how we collect, use, and disclose information when you use our mobile application (the "App"). By using the App, you agree to the collection and use of information in accordance with this policy.
+""")
+                                    .font(.system(size: geometry.size.width * 0.045, weight: .light))
+                                    .foregroundColor(.white)
+                                    .multilineTextAlignment(.center)
                                 }
                                 
-                                Image("rounded_line")
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fit)
-                                    .frame(width: geometry.size.width * 0.7)
-                                    .padding(.top, 15)
-                                    .padding(.bottom, 15)
-                                    .padding(.horizontal, geometry.size.width * 0.11)
-                                    .shadow(color: Color.theme.accent.opacity(1), radius: 5, x: 0, y: 2)
-                                
+                                dividerLine(geometry: geometry)
+
                                 Group {
                                     Text("Information We Collect")
                                         .font(.system(size: geometry.size.width * 0.06, weight: .heavy))
@@ -77,153 +68,152 @@ struct PrivacyPolicy: View {
                                         .font(.system(size: geometry.size.width * 0.055, weight: .semibold))
                                         .foregroundColor(.white)
                                     
-                                    Text("Entered Addresses: When you use the App to estimate trip costs, you may enter start and end locations. This information is used solely to provide you with the estimated trip cost and is immediately discarded afterwards and not stored in any way.")
-                                        .font(.system(size: geometry.size.width * 0.045, weight: .light))
-                                        .foregroundColor(.white)
-                                        .multilineTextAlignment(.center)
+                                    Text("""
+• Entered Addresses: When you use the App to estimate trip costs, you may enter start/end locations and optional stops. This information is used solely to provide you with an estimated trip cost.
+• Local Trip Saving: You may choose to save a trip, which stores the trip details (start/end locations, stops, and stop durations) locally on your device. This information is never uploaded to any server or shared with third parties.
+""")
+                                    .font(.system(size: geometry.size.width * 0.045, weight: .light))
+                                    .foregroundColor(.white)
+                                    .multilineTextAlignment(.center)
                                     
                                     Text("Automatically Collected Information")
                                         .font(.system(size: geometry.size.width * 0.055, weight: .semibold))
                                         .foregroundColor(.white)
-                                        .multilineTextAlignment(.center)
                                     
-                                    Text("We do not collect any personal or non-personal information automatically. The App does not use cookies, tracking technologies, or analytics services.")
-                                        .font(.system(size: geometry.size.width * 0.045, weight: .light))
-                                        .foregroundColor(.white)
-                                        .multilineTextAlignment(.center)
+                                    Text("""
+We do not collect any personal or non-personal information automatically. The App does not use cookies, tracking technologies, or analytics services.
+""")
+                                    .font(.system(size: geometry.size.width * 0.045, weight: .light))
+                                    .foregroundColor(.white)
+                                    .multilineTextAlignment(.center)
                                 }
                                 
-                                Image("rounded_line")
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fit)
-                                    .frame(width: geometry.size.width * 0.7)
-                                    .padding(.top, 15)
-                                    .padding(.bottom, 15)
-                                    .padding(.horizontal, geometry.size.width * 0.11)
-                                    .shadow(color: Color.theme.accent.opacity(1), radius: 5, x: 0, y: 2)
-                                
+                                dividerLine(geometry: geometry)
+
                                 Group {
                                     Text("How We Use Your Information")
                                         .font(.system(size: geometry.size.width * 0.06, weight: .heavy))
                                         .foregroundColor(.white)
                                     
-                                    Text("Provide Services: The addresses you enter are used in real-time to call Google's Places and Distance Matrix APIs to calculate trip estimates.")
-                                        .font(.system(size: geometry.size.width * 0.045, weight: .light))
-                                        .foregroundColor(.white)
-                                        .multilineTextAlignment(.center)
-                                    
-                                    Text("No Storage: We do not store, retain, or collect any of the addresses or data you input into the App on any backend servers or databases.")
-                                        .font(.system(size: geometry.size.width * 0.045, weight: .light))
-                                        .foregroundColor(.white)
-                                        .multilineTextAlignment(.center)
+                                    Text("""
+• Provide Services: The addresses you enter are used in real-time with Google's Places and Distance Matrix APIs to calculate trip estimates.
+• Local Trip Storage: If you choose to save a trip, the details are stored locally on your device for your convenience and future reference. We do not have access to this locally stored information.
+""")
+                                    .font(.system(size: geometry.size.width * 0.045, weight: .light))
+                                    .foregroundColor(.white)
+                                    .multilineTextAlignment(.center)
                                 }
                                 
-                                Image("rounded_line")
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fit)
-                                    .frame(width: geometry.size.width * 0.7)
-                                    .padding(.top, 15)
-                                    .padding(.bottom, 15)
-                                    .padding(.horizontal, geometry.size.width * 0.11)
-                                    .shadow(color: Color.theme.accent.opacity(1), radius: 5, x: 0, y: 2)
-                                
+                                dividerLine(geometry: geometry)
+                            
                                 Group {
                                     Text("Third-Party Services")
                                         .font(.system(size: geometry.size.width * 0.06, weight: .heavy))
                                         .foregroundColor(.white)
                                     
-                                    Text("Google APIs: The App utilizes Google's Places and Distance Matrix APIs to process the addresses you provide. Your use of these services is subject to Google's Privacy Policy. We do not control and are not responsible for the content or practices of Google's services.")
-                                        .font(.system(size: geometry.size.width * 0.045, weight: .light))
-                                        .foregroundColor(.white)
-                                        .multilineTextAlignment(.center)
+                                    Text("""
+Google APIs: The App utilizes Google's Places and Distance Matrix APIs to process the addresses you provide. Your use of these services is subject to Google's Privacy Policy. We do not control and are not responsible for the content or practices of Google's services.
+""")
+                                    .font(.system(size: geometry.size.width * 0.045, weight: .light))
+                                    .foregroundColor(.white)
+                                    .multilineTextAlignment(.center)
                                 }
                                 
-                                Image("rounded_line")
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fit)
-                                    .frame(width: geometry.size.width * 0.7)
-                                    .padding(.top, 15)
-                                    .padding(.bottom, 15)
-                                    .padding(.horizontal, geometry.size.width * 0.11)
-                                    .shadow(color: Color.theme.accent.opacity(1), radius: 5, x: 0, y: 2)
-                                
+                                dividerLine(geometry: geometry)
+
                                 Group {
                                     Text("Data Security")
                                         .font(.system(size: geometry.size.width * 0.06, weight: .heavy))
                                         .foregroundColor(.white)
                                     
-                                    Text("While we do not store your data, we strive to use commercially acceptable means to protect the information transmitted during the use of the App. However, please remember that no method of transmission over the internet is 100% secure.")
-                                        .font(.system(size: geometry.size.width * 0.045, weight: .light))
-                                        .foregroundColor(.white)
-                                        .multilineTextAlignment(.center)
+                                    Text("""
+We take reasonable measures to protect any information you input into the App during trip estimation. However, no method of transmission over the internet or method of electronic storage is 100% secure.
+""")
+                                    .font(.system(size: geometry.size.width * 0.045, weight: .light))
+                                    .foregroundColor(.white)
+                                    .multilineTextAlignment(.center)
                                 }
                                 
-                                Image("rounded_line")
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fit)
-                                    .frame(width: geometry.size.width * 0.7)
-                                    .padding(.top, 15)
-                                    .padding(.bottom, 15)
-                                    .padding(.horizontal, geometry.size.width * 0.11)
-                                    .shadow(color: Color.theme.accent.opacity(1), radius: 5, x: 0, y: 2)
+                                dividerLine(geometry: geometry)
+
+                                Group {
+                                    Text("Data Retention & Deletion")
+                                        .font(.system(size: geometry.size.width * 0.06, weight: .heavy))
+                                        .foregroundColor(.white)
+                                    
+                                    Text("""
+Trip details (start/end locations, stops, stop durations) are stored locally on your device only when you explicitly choose to save them. You can delete saved trips any time within the App’s “Saved Trips” section. Uninstalling the App will also remove all locally stored data.
+""")
+                                    .font(.system(size: geometry.size.width * 0.045, weight: .light))
+                                    .foregroundColor(.white)
+                                    .multilineTextAlignment(.center)
+                                }
                                 
+                                dividerLine(geometry: geometry)
+
                                 Group {
                                     Text("Children's Privacy")
                                         .font(.system(size: geometry.size.width * 0.06, weight: .heavy))
                                         .foregroundColor(.white)
                                     
-                                    Text("Our App does not address anyone under the age of 13. We do not knowingly collect personal identifiable information from children under 13.")
-                                        .font(.system(size: geometry.size.width * 0.045, weight: .light))
-                                        .foregroundColor(.white)
-                                        .multilineTextAlignment(.center)
+                                    Text("""
+Our App does not address anyone under the age of 13. We do not knowingly collect personal identifiable information from children under 13.
+""")
+                                    .font(.system(size: geometry.size.width * 0.045, weight: .light))
+                                    .foregroundColor(.white)
+                                    .multilineTextAlignment(.center)
                                 }
                                 
-                                Image("rounded_line")
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fit)
-                                    .frame(width: geometry.size.width * 0.7)
-                                    .padding(.top, 15)
-                                    .padding(.bottom, 15)
-                                    .padding(.horizontal, geometry.size.width * 0.11)
-                                    .shadow(color: Color.theme.accent.opacity(1), radius: 5, x: 0, y: 2)
-                                
+                                dividerLine(geometry: geometry)
+
                                 Group {
                                     Text("Changes to This Privacy Policy")
                                         .font(.system(size: geometry.size.width * 0.06, weight: .heavy))
                                         .foregroundColor(.white)
                                     
-                                    Text("We may update our Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy within the App. Changes are effective immediately upon posting.")
-                                        .font(.system(size: geometry.size.width * 0.045, weight: .light))
-                                        .foregroundColor(.white)
-                                        .multilineTextAlignment(.center)
+                                    Text("""
+We may update our Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy within the App. Changes are effective immediately upon posting.
+""")
+                                    .font(.system(size: geometry.size.width * 0.045, weight: .light))
+                                    .foregroundColor(.white)
+                                    .multilineTextAlignment(.center)
                                 }
                                 
-                                Image("rounded_line")
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fit)
-                                    .frame(width: geometry.size.width * 0.7)
-                                    .padding(.top, 15)
-                                    .padding(.bottom, 15)
-                                    .padding(.horizontal, geometry.size.width * 0.11)
-                                    .shadow(color: Color.theme.accent.opacity(1), radius: 5, x: 0, y: 2)
-                                
+                                dividerLine(geometry: geometry)
+
                                 Group {
                                     Text("Contact")
                                         .font(.system(size: geometry.size.width * 0.06, weight: .heavy))
                                         .foregroundColor(.white)
                                     
-                                    Text("If you have any questions or suggestions about this Privacy Policy, please contact derekmartin1005@gmail.com for clarification.")
-                                        .font(.system(size: geometry.size.width * 0.045, weight: .light))
-                                        .foregroundColor(.white)
-                                        .multilineTextAlignment(.center)
+                                    Text("""
+If you have any questions or suggestions about this Privacy Policy, please contact:
+• derekmartin1005@gmail.com
+""")
+                                    .font(.system(size: geometry.size.width * 0.045, weight: .light))
+                                    .foregroundColor(.white)
+                                    .multilineTextAlignment(.center)
                                 }
                             }
                         }
+                        .padding(.bottom, geometry.size.height * 0.02)
                     }
                     .padding(.horizontal)
                 }
             }
         }
+    }
+    
+    @ViewBuilder
+    private func dividerLine(geometry: GeometryProxy) -> some View {
+        Image("rounded_line")
+            .resizable()
+            .aspectRatio(contentMode: .fit)
+            .frame(width: geometry.size.width * 0.7)
+            .padding(.top, 15)
+            .padding(.bottom, 15)
+            .padding(.horizontal, geometry.size.width * 0.11)
+            .shadow(color: Color.theme.accent.opacity(1), radius: 5, x: 0, y: 2)
     }
 }
 
