@@ -1,3 +1,10 @@
+//
+//  ResultView.swift
+//  EvoEstimator
+//
+//  Created by Derek Martin on 2025-01-30.
+//
+
 import SwiftUI
 import MapKit
 import CoreLocation
@@ -11,13 +18,19 @@ struct ResultView: View {
     let startLocation: String
     let endLocation: String
     let stops: [String]
+    let routingStart: String
+    let routingEnd: String
+    let routingStops: [String]
     let startCoordinate: CLLocationCoordinate2D?
     let endCoordinate: CLLocationCoordinate2D?
     let stopsCoordinates: [CLLocationCoordinate2D?]
     let primaryPolyline: String?
-    
+    @Binding var showResultView: Bool
+    @Binding var fadeToBlack: Bool
     @State private var showDirectionsOptions = false
     @State private var isMapFullscreen = false
+    
+    var onCloseEstimate: (() -> Void)?
     
     var mapPins: [MapPinData] {
         var pins = [MapPinData]()
@@ -36,75 +49,170 @@ struct ResultView: View {
     }
     
     var body: some View {
-        VStack(spacing: 20) {
-            if let validPolyline = primaryPolyline, !errorOccurred {
-                RouteMapView(
-                    primaryPolyline: validPolyline,
-                    alternativePolylines: [],
-                    pins: mapPins
-                )
-                .frame(width: UIScreen.main.bounds.width * 0.9,
-                       height: UIScreen.main.bounds.height * 0.3)
-                .cornerRadius(15)
-                .shadow(color: Color.theme.accent.opacity(1), radius: 5, x: 0, y: 2)
-                .onTapGesture {
-                    isMapFullscreen = true
-                }
-            } else {
-                Text("No Route Available")
-                    .foregroundColor(.red)
-            }
-            VStack(spacing: 10) {
-                Text("Estimated Travel Time: \(travelTime)")
-                    .font(.headline)
-                    .foregroundColor(Color.theme.accent)
-                Text("Estimated Stop Duration: \(formatStopDuration(finalStopSeconds))")
-                    .font(.headline)
-                    .foregroundColor(Color.theme.accent)
-                Text("Estimated Trip Price: $\(String(format: "%.2f", tripCost))")
-                    .font(.headline)
-                    .foregroundColor(Color.theme.accent)
-            }
-            .padding(.horizontal, 20)
-            .padding(.top, 10)
-            Button {
-                showDirectionsOptions = true
-            } label: {
-                Text("Get Directions")
-                    .padding()
-                    .frame(maxWidth: .infinity)
-                    .background(Color.theme.accent)
-                    .foregroundColor(.white)
-                    .cornerRadius(10)
-                    .font(.system(size: 18, weight: .semibold))
-            }
-            .padding(.horizontal, 20)
-            .confirmationDialog("Open with?", isPresented: $showDirectionsOptions) {
-                Button("Apple Maps") { openInAppleMaps() }
-                Button("Google Maps") { openInGoogleMaps() }
-                Button("Cancel", role: .cancel) { }
-            }
-            Spacer()
-        }
-        .padding(.top, 20)
-        .background(Color.black.ignoresSafeArea())
-        .fullScreenCover(isPresented: $isMapFullscreen) {
-            ZStack(alignment: .topTrailing) {
+        GeometryReader { geometry in
+            Color.black.ignoresSafeArea()
+            VStack(spacing: 20) {
                 if let validPolyline = primaryPolyline, !errorOccurred {
                     RouteMapView(
                         primaryPolyline: validPolyline,
                         alternativePolylines: [],
                         pins: mapPins
                     )
-                    .ignoresSafeArea()
-                    .onTapGesture() {
-                        isMapFullscreen = false
+                    .frame(width: geometry.size.width * 0.8,
+                           height: geometry.size.height * 0.4)
+                    .cornerRadius(20)
+                    .shadow(color: Color.theme.accent.opacity(1), radius: 5, x: 0, y: 2)
+                    .onTapGesture {
+                        isMapFullscreen = true
                     }
                 } else {
-                    Color.black.ignoresSafeArea()
+                    Text("No Route Available")
+                        .foregroundColor(.red)
+                }
+                
+                VStack(spacing: 0) {
+                    Text("Route")
+                        .font(.headline)
+                        .foregroundColor(.white)
+                        .padding(.bottom, 5)
+                    
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 8) {
+                            ForEach(buildRouteElements(), id: \.self) { element in
+                                HStack(spacing: 4) {
+                                    Text(element.text)
+                                        .foregroundColor(.white)
+                                        .font(.headline)
+                                    if element.showArrow {
+                                        Image(systemName: "arrow.right")
+                                            .foregroundColor(.white)
+                                    }
+                                }
+                            }
+                        }
+                        .padding()
+                    }
+                    .frame(maxWidth: geometry.size.width * 0.8)
+                    .background(Color.theme.accent.opacity(0.9))
+                    .cornerRadius(20)
+                }
+                .padding(.top, 20)
+                .padding(.horizontal, 20)
+
+                VStack(spacing: 0) {
+                    Text("Estimates")
+                        .font(.headline)
+                        .foregroundColor(.white)
+                        .padding(.bottom, 5)
+                    
+                    VStack(spacing: 10) {
+                        Text("Travel Time: \(travelTime)")
+                            .font(.headline)
+                            .foregroundColor(.white)
+                        Text("Stop Duration: \(formatStopDuration(finalStopSeconds))")
+                            .font(.headline)
+                            .foregroundColor(.white)
+                        Text("Trip Price: $\(String(format: "%.2f", tripCost))")
+                            .font(.headline)
+                            .foregroundColor(.white)
+                    }
+                    .padding()
+                    .frame(maxWidth: geometry.size.width * 0.7)
+                    .background(Color.theme.accent.opacity(0.9))
+                    .cornerRadius(20)
+                }
+                .padding(.bottom, 30)
+                .padding(.top, 15)
+                .padding(.horizontal, 20)
+                
+                HStack(spacing: 20) {
+                    Button {
+                        showDirectionsOptions = true
+                    } label: {
+                        Text("Get Directions")
+                            .padding()
+                            .frame(maxWidth: geometry.size.width * 0.4)
+                            .background(Color.green.opacity(0.5))
+                            .foregroundColor(.white)
+                            .cornerRadius(20)
+                            .font(.headline)
+                    }
+                    
+                    .confirmationDialog("Open with?", isPresented: $showDirectionsOptions) {
+                        Button("Apple Maps") { openInAppleMaps() }
+                        Button("Google Maps") { openInGoogleMaps() }
+                        Button("Cancel", role: .cancel) { }
+                    }
+                    
+                    Button {
+                        withAnimation(.easeInOut(duration: 1.0)) {
+                            fadeToBlack = true
+                        }
+                        
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                            showResultView = false
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
+                                withAnimation(.easeInOut(duration: 1.0)) {
+                                    fadeToBlack = false
+                                }
+                                onCloseEstimate?()
+                            }
+                        }
+                    } label: {
+                        Text("Close Estimate")
+                            .padding()
+                            .frame(maxWidth: geometry.size.width * 0.4)
+                            .background(Color.red.opacity(0.5))
+                            .foregroundColor(.white)
+                            .cornerRadius(20)
+                            .font(.headline)
+                    }
+                }
+                
+                Spacer()
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+            .padding(.top, 30)
+            .background(Color.black.ignoresSafeArea())
+            .fullScreenCover(isPresented: $isMapFullscreen) {
+                ZStack(alignment: .topTrailing) {
+                    if let validPolyline = primaryPolyline, !errorOccurred {
+                        RouteMapView(
+                            primaryPolyline: validPolyline,
+                            alternativePolylines: [],
+                            pins: mapPins
+                        )
+                        .ignoresSafeArea()
+                        .onTapGesture {
+                            isMapFullscreen = false
+                        }
+                    } else {
+                        Color.black.ignoresSafeArea()
+                    }
                 }
             }
         }
+    }
+    
+    private struct RouteElement: Hashable {
+        let text: String
+        let showArrow: Bool
+    }
+
+    private func buildRouteElements() -> [RouteElement] {
+        var elements: [RouteElement] = []
+
+        elements.append(RouteElement(text: startLocation, showArrow: !stops.isEmpty || !endLocation.isEmpty))
+
+        for (index, stop) in stops.enumerated() {
+            elements.append(RouteElement(text: stop, showArrow: index < stops.count - 1 || !endLocation.isEmpty))
+        }
+
+        if !endLocation.isEmpty {
+            elements.append(RouteElement(text: endLocation, showArrow: false))
+        }
+        
+        return elements
     }
     
     func formatStopDuration(_ totalSeconds: Int) -> String {
@@ -122,48 +230,48 @@ struct ResultView: View {
 
 extension ResultView {
     func openInAppleMaps() {
-        guard let startCoord = startCoordinate, let endCoord = endCoordinate else { return }
-        var mapItems = [MKMapItem]()
-        let startPlacemark = MKPlacemark(coordinate: startCoord)
-        let startItem = MKMapItem(placemark: startPlacemark)
-        startItem.name = startLocation
-        mapItems.append(startItem)
-        for (i, stopName) in stops.enumerated() {
-            if stopsCoordinates.indices.contains(i), let coord = stopsCoordinates[i] {
-                let stopPlacemark = MKPlacemark(coordinate: coord)
-                let stopItem = MKMapItem(placemark: stopPlacemark)
-                stopItem.name = stopName
-                mapItems.append(stopItem)
+        if let startCoord = startCoordinate, let endCoord = endCoordinate {
+            let urlString = String(
+                format: "http://maps.apple.com/?saddr=%f,%f&daddr=%f,%f",
+                startCoord.latitude,
+                startCoord.longitude,
+                endCoord.latitude,
+                endCoord.longitude
+            )
+            
+            if let url = URL(string: urlString) {
+                UIApplication.shared.open(url)
             }
         }
-        let endPlacemark = MKPlacemark(coordinate: endCoord)
-        let endItem = MKMapItem(placemark: endPlacemark)
-        endItem.name = endLocation
-        mapItems.append(endItem)
-        let launchOptions = [MKLaunchOptionsDirectionsModeKey: MKLaunchOptionsDirectionsModeDriving]
-        MKMapItem.openMaps(with: mapItems, launchOptions: launchOptions)
     }
     
     func openInGoogleMaps() {
-        let baseWebURL = "https://www.google.com/maps/dir/?api=1"
-        func encode(_ s: String) -> String {
-            s.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? s
-        }
-        
-        let origin = encode(startLocation)
-        let destination = encode(endLocation)
-        var urlString = ""
-        
-        if stops.isEmpty {
-            urlString = "\(baseWebURL)&origin=\(origin)&destination=\(destination)&travelmode=driving"
-        } else {
-            // Use '|' to separate waypoints for the web URL
-            let waypoints = stops.compactMap { encode($0) }.joined(separator: "|")
-            urlString = "\(baseWebURL)&origin=\(origin)&destination=\(destination)&waypoints=\(waypoints)&travelmode=driving"
-        }
-        
-        if let url = URL(string: urlString) {
-            UIApplication.shared.open(url)
+        if let startCoord = startCoordinate, let endCoord = endCoordinate {
+            var urlComponents = URLComponents(string: "https://www.google.com/maps/dir/")
+            
+            var queryItems = [
+                URLQueryItem(name: "api", value: "1"),
+                URLQueryItem(name: "origin", value: "\(startCoord.latitude),\(startCoord.longitude)"),
+                URLQueryItem(name: "destination", value: "\(endCoord.latitude),\(endCoord.longitude)"),
+                URLQueryItem(name: "travelmode", value: "driving")
+            ]
+            
+            if !stopsCoordinates.isEmpty {
+                let waypointCoords = stopsCoordinates.compactMap { coord -> String? in
+                    guard let coord = coord else { return nil }
+                    return "\(coord.latitude),\(coord.longitude)"
+                }
+                
+                if !waypointCoords.isEmpty {
+                    queryItems.append(URLQueryItem(name: "waypoints", value: waypointCoords.joined(separator: "|")))
+                }
+            }
+            
+            urlComponents?.queryItems = queryItems
+            
+            if let url = urlComponents?.url {
+                UIApplication.shared.open(url)
+            }
         }
     }
 }
@@ -178,9 +286,16 @@ extension ResultView {
         startLocation: "New York, NY",
         endLocation: "Boston, MA",
         stops: ["Hartford, CT"],
+        routingStart: "New York, NY",
+        routingEnd: "Boston, MA",
+        routingStops: ["Hartford, CT"],
         startCoordinate: CLLocationCoordinate2D(latitude: 40.7128, longitude: -74.0060),
         endCoordinate: CLLocationCoordinate2D(latitude: 42.3601, longitude: -71.0589),
-        stopsCoordinates: [CLLocationCoordinate2D(latitude: 41.7658, longitude: -72.6734)],
-        primaryPolyline: "somePrimaryEncodedPolylineString"
+        stopsCoordinates: [
+            CLLocationCoordinate2D(latitude: 41.7658, longitude: -72.6734)
+        ],
+        primaryPolyline: "somePrimaryEncodedPolylineString",
+        showResultView: .constant(true),
+        fadeToBlack: .constant(false)
     )
 }

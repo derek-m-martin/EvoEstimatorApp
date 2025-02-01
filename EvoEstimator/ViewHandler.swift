@@ -26,6 +26,22 @@ struct ViewHandler: View {
     @State private var primaryPolyline: String?
     @State private var alternativePolylines: [String] = []
     
+    func resetEstimator() {
+        errorOccurred = false
+        travelTime = ""
+        travelTimeValue = 0.0
+        tripCost = 0.0
+        finalStopSeconds = 0
+        startLocation = ""
+        endLocation = ""
+        stops = []
+        startCoordinate = nil
+        endCoordinate = nil
+        stopsCoordinates = []
+        primaryPolyline = nil
+        alternativePolylines = []
+    }
+    
     var body: some View {
         ZStack {
             if showResultView {
@@ -38,10 +54,18 @@ struct ViewHandler: View {
                     startLocation: startLocation,
                     endLocation: endLocation,
                     stops: stops,
+                    routingStart: startLocation,
+                    routingEnd: endLocation,
+                    routingStops: stops,
                     startCoordinate: startCoordinate,
                     endCoordinate: endCoordinate,
                     stopsCoordinates: stopsCoordinates,
-                    primaryPolyline: primaryPolyline
+                    primaryPolyline: primaryPolyline,
+                    showResultView: $showResultView,
+                    fadeToBlack: $fadeToBlack,
+                    onCloseEstimate: {
+                        resetEstimator()
+                    }
                 )
                 .transition(.opacity)
             } else {
@@ -71,6 +95,8 @@ struct ViewHandler: View {
                     .transition(.opacity)
             }
         }
+        .animation(.easeInOut(duration: 0.3), value: showResultView)
+        .animation(.easeInOut(duration: 0.3), value: fadeToBlack)
     }
 }
 
