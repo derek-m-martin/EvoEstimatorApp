@@ -145,29 +145,25 @@ extension ResultView {
     }
     
     func openInGoogleMaps() {
-        let baseScheme = "comgooglemaps://"
-        let webFallback = "https://maps.google.com/"
+        let baseWebURL = "https://www.google.com/maps/dir/?api=1"
         func encode(_ s: String) -> String {
             s.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? s
         }
-        if let url = URL(string: baseScheme), UIApplication.shared.canOpenURL(url) {
-            var urlString = "comgooglemaps://?saddr=\(encode(startLocation))"
-            if stops.isEmpty {
-                urlString += "&daddr=\(encode(endLocation))"
-            } else {
-                var stopsString = stops.compactMap { encode($0) }.joined(separator: "+to:")
-                stopsString += "+to:\(encode(endLocation))"
-                urlString += "&daddr=" + stopsString
-            }
-            urlString += "&directionsmode=driving"
-            if let directionsURL = URL(string: urlString) {
-                UIApplication.shared.open(directionsURL)
-            }
+        
+        let origin = encode(startLocation)
+        let destination = encode(endLocation)
+        var urlString = ""
+        
+        if stops.isEmpty {
+            urlString = "\(baseWebURL)&origin=\(origin)&destination=\(destination)&travelmode=driving"
         } else {
-            let urlString = "\(webFallback)?saddr=\(encode(startLocation))&daddr=\(encode(endLocation))"
-            if let fallbackURL = URL(string: urlString) {
-                UIApplication.shared.open(fallbackURL)
-            }
+            // Use '|' to separate waypoints for the web URL
+            let waypoints = stops.compactMap { encode($0) }.joined(separator: "|")
+            urlString = "\(baseWebURL)&origin=\(origin)&destination=\(destination)&waypoints=\(waypoints)&travelmode=driving"
+        }
+        
+        if let url = URL(string: urlString) {
+            UIApplication.shared.open(url)
         }
     }
 }

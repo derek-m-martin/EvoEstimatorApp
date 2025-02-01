@@ -13,6 +13,8 @@ var hourlyCharge: Double = 17.99
 var dailyCharge = 104.99
 
 func calculateCost(travelCost: Double, stopCost: [Int], completion: @escaping (Double) -> Void) {
+    print(travelCost)
+    print(stopCost)
     let stopDays = stopCost[0]
     let stopHours = stopCost[1]
     let stopMinutes = Double(stopDays * 1440 + stopHours * 60 + stopCost[2])

@@ -59,19 +59,27 @@ func estimateTripTime(
                 var shortestDistance: Double = Double.greatestFiniteMagnitude
                 for route in routes {
                     if let polyline = (route["overview_polyline"] as? [String: Any])?["points"] as? String,
-                       let legs = route["legs"] as? [[String: Any]],
-                       let firstLeg = legs.first,
-                       let durationInfo = firstLeg["duration"] as? [String: Any],
-                       let durationValue = durationInfo["value"] as? Double,
-                       let distanceInfo = firstLeg["distance"] as? [String: Any],
-                       let distanceValue = distanceInfo["value"] as? Double {
-                        if durationValue < fastestRouteDuration {
-                            fastestRouteDuration = durationValue
+                       let legs = route["legs"] as? [[String: Any]] {
+                        var totalDuration: Double = 0
+                        var totalDistance: Double = 0
+                        for leg in legs {
+                            if let durationInfo = leg["duration"] as? [String: Any],
+                               let durationValue = durationInfo["value"] as? Double {
+                                totalDuration += durationValue
+                            }
+                            if let distanceInfo = leg["distance"] as? [String: Any],
+                               let distanceValue = distanceInfo["value"] as? Double {
+                                totalDistance += distanceValue
+                            }
+                        }
+
+                        if totalDuration < fastestRouteDuration {
+                            fastestRouteDuration = totalDuration
                             fastestRoutePolyline = polyline
                         }
-                        if distanceValue < shortestDistance {
-                            shortestDistance = distanceValue
-                            shortestRouteDuration = durationValue
+                        if totalDistance < shortestDistance {
+                            shortestDistance = totalDistance
+                            shortestRouteDuration = totalDuration
                             shortestRoutePolyline = polyline
                         }
                     }
