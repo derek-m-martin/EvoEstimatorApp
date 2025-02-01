@@ -24,21 +24,29 @@ struct TripSelectorView: View {
                             VStack(alignment: .leading, spacing: 4) {
                                 Text(trip.name)
                                     .font(.headline)
-                                HStack(spacing: 4) {
-                                    Text(trip.displayStartLocation)
-                                    if !trip.displayStops.isEmpty {
-                                        Text("→")
-                                        ForEach(trip.displayStops, id: \.self) { stop in
-                                            Text(stop)
-                                            Text("→")
+
+                                HStack(spacing: 8) {
+                                    ForEach(buildRouteElements(
+                                        start: trip.displayStartLocation,
+                                        stops: trip.displayStops,
+                                        end: trip.displayEndLocation
+                                    ), id: \.self) { element in
+                                        HStack(spacing: 4) {
+                                            Text(element.text)
+                                                .font(.subheadline)
+                                                .foregroundColor(.secondary)
+                                            if element.showArrow {
+                                                Image(systemName: "arrow.right")
+                                                    .font(.subheadline)
+                                                    .foregroundColor(.secondary)
+                                            }
                                         }
                                     }
-                                    Text(trip.displayEndLocation)
                                 }
-                                .font(.subheadline)
-                                .foregroundColor(.secondary)
                             }
+                            
                             Spacer()
+                            
                             Button(action: {
                                 onTripSelected(trip)
                                 presentationMode.wrappedValue.dismiss()
@@ -65,5 +73,28 @@ struct TripSelectorView: View {
                 }
             }
         }
+    }
+
+    private struct RouteElement: Hashable {
+        let text: String
+        let showArrow: Bool
+    }
+    
+    private func buildRouteElements(start: String, stops: [String], end: String) -> [RouteElement] {
+        var elements: [RouteElement] = []
+
+        elements.append(RouteElement(text: start, showArrow: !stops.isEmpty || !end.isEmpty))
+
+        for (index, stop) in stops.enumerated() {
+            let isLastStop = index == stops.count - 1
+            let hasEnd = !end.isEmpty
+            elements.append(RouteElement(text: stop, showArrow: !isLastStop || hasEnd))
+        }
+
+        if !end.isEmpty {
+            elements.append(RouteElement(text: end, showArrow: false))
+        }
+        
+        return elements
     }
 }

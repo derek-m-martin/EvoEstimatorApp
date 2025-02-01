@@ -232,42 +232,44 @@ struct MainView: View {
                                         )
                                 }
                                 ForEach(stops.indices, id: \.self) { i in
-                                    HStack(spacing: geometry.size.width * 0.02) {
-                                        Button {
-                                            stops.remove(at: i)
-                                            stopsForRouting.remove(at: i)
-                                            stopDurations.remove(at: i)
-                                            stopsCoordinates.remove(at: i)
-                                            stopCounter -= 1
-                                            changeText()
-                                        } label: {
-                                            Image(systemName: "minus.circle")
-                                                .resizable()
-                                                .aspectRatio(contentMode: .fit)
-                                                .frame(width: geometry.size.width * 0.05)
-                                                .foregroundColor(.white)
-                                        }
-                                        Button {
-                                            isStartLocation = false
-                                            currentStopIndex = i
-                                            isPresentingAutocomplete = true
-                                        } label: {
-                                            Text(stops[i].isEmpty ? "Stop #\(i + 1)" : stops[i])
-                                                .padding()
-                                                .font(.system(size: geometry.size.width * 0.05, weight: .semibold))
-                                                .frame(maxWidth: geometry.size.width * 0.5)
-                                                .background(Color.theme.accent)
-                                                .foregroundColor(.white)
-                                                .cornerRadius(geometry.size.width * 0.05)
-                                                .shadow(color: Color.theme.accent.opacity(1), radius: 5, x: 0, y: 2)
-                                        }
-                                        if !stops[i].isEmpty && stopDurations[i] >= 0 {
-                                            Button("Modify\n Duration") {
-                                                stopDurationIndex = i
-                                                showStopDurationPicker = true
+                                    if stopDurations.indices.contains(i) {
+                                        HStack(spacing: geometry.size.width * 0.02) {
+                                            Button {
+                                                stops.remove(at: i)
+                                                stopsForRouting.remove(at: i)
+                                                stopDurations.remove(at: i)
+                                                stopsCoordinates.remove(at: i)
+                                                stopCounter -= 1
+                                                changeText()
+                                            } label: {
+                                                Image(systemName: "minus.circle")
+                                                    .resizable()
+                                                    .aspectRatio(contentMode: .fit)
+                                                    .frame(width: geometry.size.width * 0.05)
+                                                    .foregroundColor(.white)
                                             }
-                                            .font(.system(size: geometry.size.width * 0.04))
-                                            .foregroundColor(.white)
+                                            Button {
+                                                isStartLocation = false
+                                                currentStopIndex = i
+                                                isPresentingAutocomplete = true
+                                            } label: {
+                                                Text(stops[i].isEmpty ? "Stop #\(i + 1)" : stops[i])
+                                                    .padding()
+                                                    .font(.system(size: geometry.size.width * 0.05, weight: .semibold))
+                                                    .frame(maxWidth: geometry.size.width * 0.5)
+                                                    .background(Color.theme.accent)
+                                                    .foregroundColor(.white)
+                                                    .cornerRadius(geometry.size.width * 0.05)
+                                                    .shadow(color: Color.theme.accent.opacity(1), radius: 5, x: 0, y: 2)
+                                            }
+                                            if !stops[i].isEmpty && stopDurations[i] >= 0 {
+                                                Button("Modify\n Duration") {
+                                                    stopDurationIndex = i
+                                                    showStopDurationPicker = true
+                                                }
+                                                .font(.system(size: geometry.size.width * 0.04))
+                                                .foregroundColor(.white)
+                                            }
                                         }
                                     }
                                 }
