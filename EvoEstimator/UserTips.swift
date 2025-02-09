@@ -10,7 +10,7 @@ import SwiftUI
 
 struct UserTipsView: View {
     let tips = [
-        "Did you know? Evo allows one-way trips, so you don’t have to return the car to where you picked it up!",
+        "Did you know? Evo allows one way trips, so you don’t have to return the car to where you picked it up!",
         "Always end your trip in an Evo Home Zone to avoid additional charges.",
         "Gas is included! Snap a photo of your fuel receipt and send it to Evo for reimbursement!",
         "You can park in residential permit zones within the Evo Home Zone for free.",
