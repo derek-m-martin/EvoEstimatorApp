@@ -8,7 +8,7 @@
 import Foundation
 
 var perMin: Double = 0.49
-var perTripCharge: Double = 1.25
+var perTripCharge: Double = 1.85
 var hourlyCharge: Double = 17.99
 var dailyCharge = 104.99
 

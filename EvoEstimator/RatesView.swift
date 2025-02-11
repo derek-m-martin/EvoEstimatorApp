@@ -57,7 +57,7 @@ struct RatesView: View {
                                         Text("All Access Fee: ")
                                             .font(.system(size: geometry.size.width * 0.06, weight: .light))
                                             .foregroundColor(.white)
-                                        + Text("$1.25")
+                                        + Text("$1.85")
                                             .font(.system(size: geometry.size.width * 0.06, weight: .heavy))
                                             .foregroundColor(.white)
                                     }
