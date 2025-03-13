@@ -47,7 +47,11 @@ struct MainView: View {
     @State private var shortestTravelDuration: Double = 0.0
     @State private var showingSaveTripView = false
     @State private var showingTripSelector = false
+    @State private var showingBugReport = false
     @StateObject private var tripStorage = TripStorage()
+    @StateObject private var locationManager = LocationManager()
+    @State private var showLocationErrorAlert = false
+    @State private var locationErrorMessage = ""
 
     private var mapPins: [MapPinData] {
         var pins = [MapPinData]()
@@ -124,41 +128,64 @@ struct MainView: View {
     }
 
     func geocodeLoadedTrip() {
+        let group = DispatchGroup()
+        var errors: [String] = []
+        
         startCoordinate = nil
         endCoordinate = nil
         stopsCoordinates = Array(repeating: nil, count: stopsForRouting.count)
-
+        
+        if startLocationForRouting.isEmpty { return }
+        
+        group.enter()
         CLGeocoder().geocodeAddressString(startLocationForRouting) { placemarks, error in
+            defer { group.leave() }
             if let coordinate = placemarks?.first?.location?.coordinate {
                 DispatchQueue.main.async {
                     self.startCoordinate = coordinate
                 }
             } else {
-                print("Failed to geocode start address: \(error?.localizedDescription ?? "unknown error")")
+                errors.append("Failed to geocode start address: \(error?.localizedDescription ?? "unknown error")")
             }
         }
-
-        CLGeocoder().geocodeAddressString(endLocationForRouting) { placemarks, error in
-            if let coordinate = placemarks?.first?.location?.coordinate {
-                DispatchQueue.main.async {
-                    self.endCoordinate = coordinate
-                }
-            } else {
-                print("Failed to geocode end address: \(error?.localizedDescription ?? "unknown error")")
-            }
-        }
-
-        for (index, stop) in stopsForRouting.enumerated() {
-            CLGeocoder().geocodeAddressString(stop) { placemarks, error in
+        
+        if !endLocationForRouting.isEmpty {
+            group.enter()
+            CLGeocoder().geocodeAddressString(endLocationForRouting) { placemarks, error in
+                defer { group.leave() }
                 if let coordinate = placemarks?.first?.location?.coordinate {
                     DispatchQueue.main.async {
-                        if self.stopsCoordinates.indices.contains(index) {
-                            self.stopsCoordinates[index] = coordinate
-                        }
+                        self.endCoordinate = coordinate
                     }
                 } else {
-                    print("Failed to geocode stop (\(stop)): \(error?.localizedDescription ?? "unknown error")")
+                    errors.append("Failed to geocode end address: \(error?.localizedDescription ?? "unknown error")")
                 }
+            }
+        }
+        
+        for (index, stop) in stopsForRouting.enumerated() {
+            if !stop.isEmpty {
+                group.enter()
+                CLGeocoder().geocodeAddressString(stop) { placemarks, error in
+                    defer { group.leave() }
+                    if let coordinate = placemarks?.first?.location?.coordinate {
+                        DispatchQueue.main.async {
+                            if self.stopsCoordinates.indices.contains(index) {
+                                self.stopsCoordinates[index] = coordinate
+                            }
+                        }
+                    } else {
+                        errors.append("Failed to geocode stop (\(stop)): \(error?.localizedDescription ?? "unknown error")")
+                    }
+                }
+            }
+        }
+        
+        group.notify(queue: .main) {
+            if !errors.isEmpty {
+                print("Geocoding errors occurred:")
+                errors.forEach { print($0) }
+                // Here you could also show an alert to the user if desired
             }
         }
     }
@@ -191,6 +218,10 @@ struct MainView: View {
                                 }
                                 Button("Saved Trips") {
                                     showingTripSelector = true
+                                }
+                                Divider()
+                                Button("Report an Issue") {
+                                    showingBugReport = true
                                 }
                             } label: {
                                 ZStack {
@@ -230,6 +261,44 @@ struct MainView: View {
                                             RoundedRectangle(cornerRadius: geometry.size.width * 0.05)
                                                 .stroke(Color.darkBlue, lineWidth: 3)
                                         )
+                                }
+                                Button {
+                                    locationManager.requestLocation()
+                                    locationManager.getPlacemark { displayAddress, routingAddress in
+                                        DispatchQueue.main.async {
+                                            if let display = displayAddress, let routing = routingAddress {
+                                                startLocation = display
+                                                startLocationForRouting = routing
+                                                // Get coordinates for the location
+                                                CLGeocoder().geocodeAddressString(routing) { placemarks, error in
+                                                    if let coordinate = placemarks?.first?.location?.coordinate {
+                                                        startCoordinate = coordinate
+                                                    }
+                                                }
+                                            } else {
+                                                showLocationErrorAlert = true
+                                                locationErrorMessage = "Could not determine your current location. Please ensure location services are enabled."
+                                            }
+                                        }
+                                    }
+                                } label: {
+                                    HStack {
+                                        Image(systemName: "location.fill")
+                                            .foregroundColor(.white)
+                                        Text("Use Current Location")
+                                            .foregroundColor(.white)
+                                    }
+                                    .padding()
+                                    .frame(maxWidth: geometry.size.width * 0.8)
+                                    .background(Color.theme.accent.opacity(0.8))
+                                    .cornerRadius(geometry.size.width * 0.05)
+                                }
+                                .alert(isPresented: $showLocationErrorAlert) {
+                                    Alert(
+                                        title: Text("Location Error"),
+                                        message: Text(locationErrorMessage),
+                                        dismissButton: .default(Text("OK"))
+                                    )
                                 }
                                 ForEach(stops.indices, id: \.self) { i in
                                     if stopDurations.indices.contains(i) {
@@ -426,7 +495,10 @@ struct MainView: View {
                 currentRoutingStart: startLocationForRouting.isEmpty ? startLocation : startLocationForRouting,
                 currentRoutingEnd: endLocationForRouting.isEmpty ? endLocation : endLocationForRouting,
                 currentRoutingStops: stopsForRouting.isEmpty ? stops : stopsForRouting,
-                currentStopDurations: stopDurations
+                currentStopDurations: stopDurations,
+                startCoordinate: startCoordinate,
+                endCoordinate: endCoordinate,
+                stopsCoordinates: stopsCoordinates
             )
         }
         .sheet(isPresented: $showingTripSelector) {
@@ -438,8 +510,24 @@ struct MainView: View {
                 startLocationForRouting = selectedTrip.routingStartLocation
                 endLocationForRouting = selectedTrip.routingEndLocation
                 stopsForRouting = selectedTrip.routingStops
-                geocodeLoadedTrip()
+                
+                // Use stored coordinates if available
+                if let startCoord = selectedTrip.startCoordinate {
+                    startCoordinate = startCoord.toCLLocationCoordinate2D()
+                }
+                if let endCoord = selectedTrip.endCoordinate {
+                    endCoordinate = endCoord.toCLLocationCoordinate2D()
+                }
+                stopsCoordinates = selectedTrip.stopCoordinates.map { $0?.toCLLocationCoordinate2D() }
+                
+                // Only geocode if coordinates are missing
+                if startCoordinate == nil || endCoordinate == nil || stopsCoordinates.contains(where: { $0 == nil }) {
+                    geocodeLoadedTrip()
+                }
             }
+        }
+        .sheet(isPresented: $showingBugReport) {
+            BugReportView()
         }
     }
 }

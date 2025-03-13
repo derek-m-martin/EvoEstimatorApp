@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import CoreLocation
 
 struct SaveTripView: View {
     @ObservedObject var tripStorage: TripStorage
@@ -17,6 +18,10 @@ struct SaveTripView: View {
     var currentRoutingStops: [String]
     
     var currentStopDurations: [Int]
+    // Add coordinate properties
+    var startCoordinate: CLLocationCoordinate2D?
+    var endCoordinate: CLLocationCoordinate2D?
+    var stopsCoordinates: [CLLocationCoordinate2D?]
     
     @State private var tripName: String = ""
     @Environment(\.presentationMode) var presentationMode
@@ -52,7 +57,10 @@ struct SaveTripView: View {
                             routingEndLocation: currentRoutingEnd,
                             displayStops: currentDisplayStops,
                             routingStops: currentRoutingStops,
-                            stopDurations: currentStopDurations
+                            stopDurations: currentStopDurations,
+                            startCoordinate: startCoordinate.map { LocationCoordinate(from: $0) },
+                            endCoordinate: endCoordinate.map { LocationCoordinate(from: $0) },
+                            stopCoordinates: stopsCoordinates.map { $0.map { LocationCoordinate(from: $0) } }
                         )
                         tripStorage.addTrip(newTrip)
                         presentationMode.wrappedValue.dismiss()

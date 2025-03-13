@@ -3,7 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Google&apos;s Places and/or Routes API&apos;s may use your location to allow app processes to function as intended.</string>
+	<string>EvoEstimator needs your location to automatically fill in your starting point for trip estimates.</string>
+	<key>NSLocationUsageDescription</key>
+	<string>Your location is used only when you choose to start a trip from your current location.</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>UIAppFonts</key>
