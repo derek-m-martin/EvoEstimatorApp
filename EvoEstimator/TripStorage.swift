@@ -34,8 +34,15 @@ class TripStorage: ObservableObject {
     }
     
     // adds a new trip to storage
-    func addTrip(_ trip: SavedTrip) {
-        savedTrips.append(trip)
+    func addTrip(_ trip: Trip) {
+        let savedTrip = SavedTrip(
+            name: trip.name,
+            startLocation: trip.displayStartLocation,
+            endLocation: trip.displayEndLocation,
+            stops: trip.displayStops,
+            stopDurations: trip.stopDurations
+        )
+        savedTrips.append(savedTrip)
         saveTrips()
     }
     

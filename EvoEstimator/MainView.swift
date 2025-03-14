@@ -273,26 +273,19 @@ struct MainView: View {
                                         )
                                         .overlay(
                                             Button {
-                                                locationManager.requestLocation { success, error in
-                                                    if success {
-                                                        locationManager.getPlacemark { displayAddress, routingAddress in
-                                                            DispatchQueue.main.async {
-                                                                if let display = displayAddress, let routing = routingAddress {
-                                                                    startLocation = display
-                                                                    startLocationForRouting = routing
-                                                                    CLGeocoder().geocodeAddressString(routing) { placemarks, error in
-                                                                        if let coordinate = placemarks?.first?.location?.coordinate {
-                                                                            startCoordinate = coordinate
-                                                                        }
-                                                                    }
-                                                                }
+                                                locationManager.requestLocation()
+                                                locationManager.getPlacemark { displayAddress, routingAddress in
+                                                    if let display = displayAddress, let routing = routingAddress {
+                                                        startLocation = display
+                                                        startLocationForRouting = routing
+                                                        CLGeocoder().geocodeAddressString(routing) { placemarks, error in
+                                                            if let coordinate = placemarks?.first?.location?.coordinate {
+                                                                startCoordinate = coordinate
                                                             }
                                                         }
                                                     } else {
-                                                        DispatchQueue.main.async {
-                                                            showLocationErrorAlert = true
-                                                            locationErrorMessage = error ?? "Could not determine your current location. Please ensure location services are enabled."
-                                                        }
+                                                        showLocationErrorAlert = true
+                                                        locationErrorMessage = "Could not determine your current location. Please ensure location services are enabled."
                                                     }
                                                 }
                                             } label: {
@@ -403,6 +396,7 @@ struct MainView: View {
                                     let mm = (totalStopSeconds % 3600) / 60
                                     finalStopSeconds = totalStopSeconds
                                     let arr = [d, hh, mm]
+                                    
                                     estimateTripTime(
                                         startAddress: startLocationForRouting,
                                         endAddress: endLocationForRouting,
@@ -430,12 +424,15 @@ struct MainView: View {
                                             shortestTravelDuration = shortestTime
                                         }
                                     }
+                                    
                                     withAnimation(.easeInOut(duration: 1.0)) {
                                         fadeToBlack = true
                                     }
+                                    
                                     DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
                                         showResultView = true
                                     }
+                                    
                                     DispatchQueue.main.asyncAfter(deadline: .now() + 1.8) {
                                         withAnimation(.easeInOut(duration: 1.0)) {
                                             fadeToBlack = false
@@ -514,27 +511,18 @@ struct MainView: View {
         }
         .sheet(isPresented: $showingTripSelector) {
             TripSelectorView(tripStorage: tripStorage) { selectedTrip in
-                startLocation = selectedTrip.displayStartLocation
-                endLocation = selectedTrip.displayEndLocation
-                stops = selectedTrip.displayStops
+                startLocation = selectedTrip.startLocation
+                endLocation = selectedTrip.endLocation
+                stops = selectedTrip.stops
                 stopDurations = selectedTrip.stopDurations
-                startLocationForRouting = selectedTrip.routingStartLocation
-                endLocationForRouting = selectedTrip.routingEndLocation
-                stopsForRouting = selectedTrip.routingStops
+                startLocationForRouting = selectedTrip.startLocation
+                endLocationForRouting = selectedTrip.endLocation
+                stopsForRouting = selectedTrip.stops
+                stopCounter = selectedTrip.stops.count
+                changeText()
                 
-                // Use stored coordinates if available
-                if let startCoord = selectedTrip.startCoordinate {
-                    startCoordinate = startCoord.toCLLocationCoordinate2D()
-                }
-                if let endCoord = selectedTrip.endCoordinate {
-                    endCoordinate = endCoord.toCLLocationCoordinate2D()
-                }
-                stopsCoordinates = selectedTrip.stopCoordinates.map { $0?.toCLLocationCoordinate2D() }
-                
-                // Only geocode if coordinates are missing
-                if startCoordinate == nil || endCoordinate == nil || stopsCoordinates.contains(where: { $0 == nil }) {
-                    geocodeLoadedTrip()
-                }
+                // Trigger geocoding for coordinates
+                geocodeLoadedTrip()
             }
         }
         .sheet(isPresented: $showingBugReport) {

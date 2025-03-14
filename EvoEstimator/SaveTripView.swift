@@ -20,7 +20,7 @@ struct SaveTripView: View {
     var currentRoutingStops: [String]
     
     var currentStopDurations: [Int]
-    // Add coordinate properties
+    // add coordinate properties
     var startCoordinate: CLLocationCoordinate2D?
     var endCoordinate: CLLocationCoordinate2D?
     var stopsCoordinates: [CLLocationCoordinate2D?]

@@ -24,11 +24,11 @@ struct TripSelectorView: View {
     var body: some View {
         NavigationView {
             List {
-                if tripStorage.trips.isEmpty {
+                if tripStorage.savedTrips.isEmpty {
                     Text("No saved trips yet.")
                         .foregroundColor(.gray)
                 } else {
-                    ForEach(tripStorage.trips) { trip in
+                    ForEach(tripStorage.savedTrips) { trip in
                         HStack {
                             VStack(alignment: .leading, spacing: 4) {
                                 Text(trip.name)
@@ -36,9 +36,9 @@ struct TripSelectorView: View {
 
                                 HStack(spacing: 8) {
                                     ForEach(buildRouteElements(
-                                        start: trip.displayStartLocation,
-                                        stops: trip.displayStops,
-                                        end: trip.displayEndLocation
+                                        start: trip.startLocation,
+                                        stops: trip.stops,
+                                        end: trip.endLocation
                                     ), id: \.self) { element in
                                         HStack(spacing: 4) {
                                             Text(element.text)
@@ -67,7 +67,7 @@ struct TripSelectorView: View {
                             }
                         }
                     }
-                    .onDelete(perform: tripStorage.deleteTrip)
+                    .onDelete(perform: tripStorage.removeTrip)
                 }
             }
             .navigationTitle("Saved Trips")
