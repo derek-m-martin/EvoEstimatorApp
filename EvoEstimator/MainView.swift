@@ -273,19 +273,25 @@ struct MainView: View {
                                         )
                                         .overlay(
                                             Button {
-                                                locationManager.requestLocation()
-                                                locationManager.getPlacemark { displayAddress, routingAddress in
-                                                    if let display = displayAddress, let routing = routingAddress {
-                                                        startLocation = display
-                                                        startLocationForRouting = routing
-                                                        CLGeocoder().geocodeAddressString(routing) { placemarks, error in
-                                                            if let coordinate = placemarks?.first?.location?.coordinate {
-                                                                startCoordinate = coordinate
+                                                locationManager.requestLocation { success, error in
+                                                    if success {
+                                                        locationManager.getPlacemark { displayAddress, routingAddress in
+                                                            if let display = displayAddress, let routing = routingAddress {
+                                                                startLocation = display
+                                                                startLocationForRouting = routing
+                                                                CLGeocoder().geocodeAddressString(routing) { placemarks, error in
+                                                                    if let coordinate = placemarks?.first?.location?.coordinate {
+                                                                        startCoordinate = coordinate
+                                                                    }
+                                                                }
+                                                            } else {
+                                                                showLocationErrorAlert = true
+                                                                locationErrorMessage = "Could not determine your current location. Please try again."
                                                             }
                                                         }
-                                                    } else {
+                                                    } else if let errorMessage = error {
                                                         showLocationErrorAlert = true
-                                                        locationErrorMessage = "Could not determine your current location. Please ensure location services are enabled."
+                                                        locationErrorMessage = errorMessage
                                                     }
                                                 }
                                             } label: {

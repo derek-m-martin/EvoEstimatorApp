@@ -24,28 +24,58 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     }
     
     // requests location permission from user
-    func requestLocation() {
-        locationManager.requestWhenInUseAuthorization()
-        locationManager.requestLocation()
+    func requestLocation(completion: @escaping (Bool, String?) -> Void) {
+        locationCompletion = completion
+        let status = locationManager.authorizationStatus
+        
+        switch status {
+        case .notDetermined:
+            locationManager.requestWhenInUseAuthorization()
+        case .authorizedWhenInUse, .authorizedAlways:
+            locationManager.requestLocation()
+        case .denied, .restricted:
+            completion(false, "Location access is restricted or denied. Please enable it in Settings.")
+        @unknown default:
+            completion(false, "Unknown location authorization status")
+        }
     }
     
     // handles successful location updates
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let location = locations.last else { return }
         self.location = location
+        locationCompletion?(true, nil)
     }
     
     // handles location errors
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         locationError = error
+        if let error = error as? CLError {
+            switch error.code {
+            case .denied:
+                // Only show error if permission was previously granted
+                if locationManager.authorizationStatus != .notDetermined {
+                    locationCompletion?(false, "Location access was denied. Please enable it in Settings.")
+                }
+            case .locationUnknown:
+                locationCompletion?(false, "Unable to determine your location. Please try again.")
+            default:
+                locationCompletion?(false, error.localizedDescription)
+            }
+        }
     }
     
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
-        if status == .authorizedWhenInUse || status == .authorizedAlways {
+        switch status {
+        case .authorizedWhenInUse, .authorizedAlways:
             locationManager.requestLocation()
-        } else if status == .denied || status == .restricted {
-            locationCompletion?(false, "Location access is restricted or denied. Please enable it in Settings.")
-            locationCompletion = nil
+        case .denied, .restricted:
+            // Only show error if permission was previously granted
+            if status != .notDetermined {
+                locationCompletion?(false, "Location access is restricted or denied. Please enable it in Settings.")
+            }
+        default:
+            break
         }
     }
     

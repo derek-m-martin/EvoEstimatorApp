@@ -96,10 +96,8 @@ struct BugReportView: View {
                 "issuedesc": description,
                 "reproduce": steps,
                 "device": deviceModel,
-                "version": "iOS \(systemVersion)",
-                "accessToken": publicKey
-            ],
-            "accessToken": publicKey
+                "version": "iOS \(systemVersion)"
+            ]
         ]
         
         guard let url = URL(string: "https://api.emailjs.com/api/v1.0/email/send") else {
@@ -110,11 +108,9 @@ struct BugReportView: View {
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.setValue("Bearer \(publicKey)", forHTTPHeaderField: "Authorization")
         
         do {
             request.httpBody = try JSONSerialization.data(withJSONObject: parameters)
-            print("Request body: \(String(data: request.httpBody!, encoding: .utf8) ?? "")")
         } catch {
             isLoading = false
             alertTitle = "Error"
@@ -135,11 +131,6 @@ struct BugReportView: View {
                 }
                 
                 if let httpResponse = response as? HTTPURLResponse {
-                    print("Response status code: \(httpResponse.statusCode)")
-                    if let data = data, let responseString = String(data: data, encoding: .utf8) {
-                        print("Response body: \(responseString)")
-                    }
-                    
                     if httpResponse.statusCode == 200 {
                         alertTitle = "Success"
                         alertMessage = "Bug report sent successfully"
