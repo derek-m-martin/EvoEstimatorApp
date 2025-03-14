@@ -65,9 +65,10 @@ struct BugReportView: View {
     @State private var isLoading = false
     
     // emailjs credentials
-    private let serviceID = "service_eidwph6"
+    private let serviceID = "service_i22yqcb"
     private let templateID = "template_x0pzxcs"
     private let publicKey = "aMNLrr1571pK4EAKu"
+    private let privateKey = "hBuWWOwh-KTYLbq7UhqhG"
     
     // gets device info for bug report
     private var deviceModel: String {
@@ -92,7 +93,9 @@ struct BugReportView: View {
             "service_id": serviceID,
             "template_id": templateID,
             "user_id": publicKey,
+            "accessToken": privateKey,
             "template_params": [
+                "from_name": "EvoEstimator Bug Report",
                 "issuedesc": description,
                 "reproduce": steps,
                 "device": deviceModel,
@@ -110,7 +113,13 @@ struct BugReportView: View {
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         
         do {
-            request.httpBody = try JSONSerialization.data(withJSONObject: parameters)
+            let jsonData = try JSONSerialization.data(withJSONObject: parameters)
+            request.httpBody = jsonData
+            
+            // Print request for debugging
+            if let jsonString = String(data: jsonData, encoding: .utf8) {
+                print("Request body: \(jsonString)")
+            }
         } catch {
             isLoading = false
             alertTitle = "Error"
@@ -130,7 +139,13 @@ struct BugReportView: View {
                     return
                 }
                 
+                // Print response for debugging
+                if let data = data, let responseString = String(data: data, encoding: .utf8) {
+                    print("Response: \(responseString)")
+                }
+                
                 if let httpResponse = response as? HTTPURLResponse {
+                    print("Status code: \(httpResponse.statusCode)")
                     if httpResponse.statusCode == 200 {
                         alertTitle = "Success"
                         alertMessage = "Bug report sent successfully"

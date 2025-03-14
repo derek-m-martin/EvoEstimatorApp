@@ -20,7 +20,8 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     override init() {
         super.init()
         locationManager.delegate = self
-        locationManager.desiredAccuracy = kCLLocationAccuracyBest
+        locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters  // Reduced accuracy for faster response
+        locationManager.distanceFilter = kCLDistanceFilterNone
     }
     
     // requests location permission from user
@@ -32,7 +33,7 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
         case .notDetermined:
             locationManager.requestWhenInUseAuthorization()
         case .authorizedWhenInUse, .authorizedAlways:
-            locationManager.requestLocation()
+            locationManager.startUpdatingLocation()  // Changed from requestLocation
         case .denied, .restricted:
             completion(false, "Location access is restricted or denied. Please enable it in Settings.")
         @unknown default:
@@ -44,6 +45,7 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let location = locations.last else { return }
         self.location = location
+        locationManager.stopUpdatingLocation()  // Stop updates after getting location
         locationCompletion?(true, nil)
     }
     
@@ -63,12 +65,13 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
                 locationCompletion?(false, error.localizedDescription)
             }
         }
+        locationManager.stopUpdatingLocation()  // Stop updates on error
     }
     
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
         switch status {
         case .authorizedWhenInUse, .authorizedAlways:
-            locationManager.requestLocation()
+            locationManager.startUpdatingLocation()  // Changed from requestLocation
         case .denied, .restricted:
             // Only show error if permission was previously granted
             if status != .notDetermined {
