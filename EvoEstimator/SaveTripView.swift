@@ -8,7 +8,9 @@
 import SwiftUI
 import CoreLocation
 
+// view for saving trip details
 struct SaveTripView: View {
+    @Environment(\.dismiss) var dismiss
     @ObservedObject var tripStorage: TripStorage
     var currentDisplayStart: String
     var currentDisplayEnd: String
@@ -24,8 +26,36 @@ struct SaveTripView: View {
     var stopsCoordinates: [CLLocationCoordinate2D?]
     
     @State private var tripName: String = ""
-    @Environment(\.presentationMode) var presentationMode
+    @State private var showAlert = false
+    @State private var alertMessage = ""
     
+    // saves trip and validates input
+    private func saveTrip() {
+        if tripName.isEmpty {
+            alertMessage = "Please enter a trip name"
+            showAlert = true
+            return
+        }
+        
+        let newTrip = Trip(
+            name: tripName,
+            displayStartLocation: currentDisplayStart,
+            routingStartLocation: currentRoutingStart,
+            displayEndLocation: currentDisplayEnd,
+            routingEndLocation: currentRoutingEnd,
+            displayStops: currentDisplayStops,
+            routingStops: currentRoutingStops,
+            stopDurations: currentStopDurations,
+            startCoordinate: startCoordinate.map { LocationCoordinate(from: $0) },
+            endCoordinate: endCoordinate.map { LocationCoordinate(from: $0) },
+            stopCoordinates: stopsCoordinates.map { $0.map { LocationCoordinate(from: $0) } }
+        )
+        
+        tripStorage.addTrip(newTrip)
+        dismiss()
+    }
+    
+    // main view body
     var body: some View {
         NavigationView {
             Form {
@@ -45,26 +75,10 @@ struct SaveTripView: View {
             .navigationTitle("Save Trip")
             .navigationBarItems(
                 leading: Button("Cancel") {
-                    presentationMode.wrappedValue.dismiss()
+                    dismiss()
                 },
                 trailing: Button("Save") {
-                    if !tripName.isEmpty {
-                        let newTrip = Trip(
-                            name: tripName,
-                            displayStartLocation: currentDisplayStart,
-                            routingStartLocation: currentRoutingStart,
-                            displayEndLocation: currentDisplayEnd,
-                            routingEndLocation: currentRoutingEnd,
-                            displayStops: currentDisplayStops,
-                            routingStops: currentRoutingStops,
-                            stopDurations: currentStopDurations,
-                            startCoordinate: startCoordinate.map { LocationCoordinate(from: $0) },
-                            endCoordinate: endCoordinate.map { LocationCoordinate(from: $0) },
-                            stopCoordinates: stopsCoordinates.map { $0.map { LocationCoordinate(from: $0) } }
-                        )
-                        tripStorage.addTrip(newTrip)
-                        presentationMode.wrappedValue.dismiss()
-                    }
+                    saveTrip()
                 }
             )
         }

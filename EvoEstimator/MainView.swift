@@ -10,6 +10,7 @@ import GooglePlaces
 import CoreLocation
 import MapKit
 
+// main view that handles the core functionality of the app
 struct MainView: View {
     @Binding var showResultView: Bool
     @Binding var fadeToBlack: Bool
@@ -26,6 +27,8 @@ struct MainView: View {
     @Binding var stopsCoordinates: [CLLocationCoordinate2D?]
     @Binding var primaryPolyline: String?
     @Binding var alternativePolylines: [String]
+    
+    // state variables for handling route planning
     @State private var startLocationForRouting: String = ""
     @State private var endLocationForRouting: String = ""
     @State private var stopsForRouting: [String] = []
@@ -53,6 +56,7 @@ struct MainView: View {
     @State private var showLocationErrorAlert = false
     @State private var locationErrorMessage = ""
 
+    // computed property to create map pins for all locations
     private var mapPins: [MapPinData] {
         var pins = [MapPinData]()
         if let startCoord = startCoordinate, !startLocation.isEmpty {
@@ -71,6 +75,7 @@ struct MainView: View {
         return pins
     }
     
+    // resets all route planning data to initial state
     func resetEstimator() {
         startLocation = ""
         endLocation = ""
@@ -93,6 +98,7 @@ struct MainView: View {
         stopsCoordinates = []
     }
     
+    // updates the add stops button text based on number of stops
     func changeText() {
         switch stopCounter {
         case 0: addText = "Add Stops?"
@@ -104,10 +110,12 @@ struct MainView: View {
         }
     }
     
+    // calculates total duration of all stops in seconds
     var totalStopSeconds: Int {
         stopDurations.reduce(0, +)
     }
     
+    // formats stop duration into readable string
     func formatStopDuration(_ totalSeconds: Int) -> String {
         let days = totalSeconds / 86400
         let hours = (totalSeconds % 86400) / 3600
@@ -120,6 +128,7 @@ struct MainView: View {
         return components.joined(separator: ", ")
     }
     
+    // converts stop duration to array of [days, hours, minutes]
     func stopCostArray() -> [Int] {
         let days = finalStopSeconds / 86400
         let hours = (finalStopSeconds % 86400) / 3600
@@ -127,6 +136,7 @@ struct MainView: View {
         return [days, hours, minutes]
     }
 
+    // converts addresses to coordinates for saved trips
     func geocodeLoadedTrip() {
         let group = DispatchGroup()
         var errors: [String] = []
@@ -185,11 +195,11 @@ struct MainView: View {
             if !errors.isEmpty {
                 print("Geocoding errors occurred:")
                 errors.forEach { print($0) }
-                // Here you could also show an alert to the user if desired
             }
         }
     }
     
+    // main view body
     var body: some View {
         NavigationStack {
             GeometryReader { geometry in
@@ -261,37 +271,38 @@ struct MainView: View {
                                             RoundedRectangle(cornerRadius: geometry.size.width * 0.05)
                                                 .stroke(Color.darkBlue, lineWidth: 3)
                                         )
-                                }
-                                Button {
-                                    locationManager.requestLocation()
-                                    locationManager.getPlacemark { displayAddress, routingAddress in
-                                        DispatchQueue.main.async {
-                                            if let display = displayAddress, let routing = routingAddress {
-                                                startLocation = display
-                                                startLocationForRouting = routing
-                                                // Get coordinates for the location
-                                                CLGeocoder().geocodeAddressString(routing) { placemarks, error in
-                                                    if let coordinate = placemarks?.first?.location?.coordinate {
-                                                        startCoordinate = coordinate
+                                        .overlay(
+                                            Button {
+                                                locationManager.requestLocation { success, error in
+                                                    if success {
+                                                        locationManager.getPlacemark { displayAddress, routingAddress in
+                                                            DispatchQueue.main.async {
+                                                                if let display = displayAddress, let routing = routingAddress {
+                                                                    startLocation = display
+                                                                    startLocationForRouting = routing
+                                                                    CLGeocoder().geocodeAddressString(routing) { placemarks, error in
+                                                                        if let coordinate = placemarks?.first?.location?.coordinate {
+                                                                            startCoordinate = coordinate
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    } else {
+                                                        DispatchQueue.main.async {
+                                                            showLocationErrorAlert = true
+                                                            locationErrorMessage = error ?? "Could not determine your current location. Please ensure location services are enabled."
+                                                        }
                                                     }
                                                 }
-                                            } else {
-                                                showLocationErrorAlert = true
-                                                locationErrorMessage = "Could not determine your current location. Please ensure location services are enabled."
+                                            } label: {
+                                                Image(systemName: "location.fill")
+                                                    .font(.system(size: geometry.size.width * 0.04))
+                                                    .foregroundColor(.white.opacity(0.8))
                                             }
-                                        }
-                                    }
-                                } label: {
-                                    HStack {
-                                        Image(systemName: "location.fill")
-                                            .foregroundColor(.white)
-                                        Text("Use Current Location")
-                                            .foregroundColor(.white)
-                                    }
-                                    .padding()
-                                    .frame(maxWidth: geometry.size.width * 0.8)
-                                    .background(Color.theme.accent.opacity(0.8))
-                                    .cornerRadius(geometry.size.width * 0.05)
+                                            .padding(.trailing, geometry.size.width * 0.05),
+                                            alignment: .trailing
+                                        )
                                 }
                                 .alert(isPresented: $showLocationErrorAlert) {
                                     Alert(
@@ -300,6 +311,7 @@ struct MainView: View {
                                         dismissButton: .default(Text("OK"))
                                     )
                                 }
+                                .padding(.bottom, 5)
                                 ForEach(stops.indices, id: \.self) { i in
                                     if stopDurations.indices.contains(i) {
                                         HStack(spacing: geometry.size.width * 0.02) {
@@ -360,7 +372,7 @@ struct MainView: View {
                                             .font(.system(size: geometry.size.width * 0.055, weight: .light))
                                             .foregroundColor(.white)
                                     }
-                                    .padding(.vertical, geometry.size.height * 0.01)
+                                    .padding(.vertical, geometry.size.height * 0.0)
                                 }
                                 Button {
                                     isStartLocation = false
@@ -379,10 +391,10 @@ struct MainView: View {
                                                 .stroke(Color.darkBlue, lineWidth: 3)
                                         )
                                 }
-                                Spacer(minLength: -10)
                                 Text("All Set? Hit the Button Below!")
                                     .font(.system(size: geometry.size.width * 0.055, weight: .light))
                                     .foregroundColor(.white)
+                                    .padding(.vertical, geometry.size.height * 0.01)
                                 Button {
                                     primaryPolyline = nil
                                     errorOccurred = false
@@ -444,11 +456,10 @@ struct MainView: View {
                                 }
                                 UserTipsView()
                                     .frame(maxWidth: .infinity)
-                                    .padding(.top, 20)
-                                    .padding(.top, geometry.size.height * 0.015)
+                                    .padding(.top, 15)
                             }
                             .padding(.horizontal, geometry.size.width * 0.01)
-                            Spacer(minLength: 25)
+                            Spacer(minLength: 10)
                         }
                         .fullScreenCover(isPresented: $isPresentingAutocomplete) {
                             AutocompleteViewController(

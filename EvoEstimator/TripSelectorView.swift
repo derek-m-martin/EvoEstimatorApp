@@ -7,10 +7,19 @@
 
 import SwiftUI
 
+// view for selecting and managing saved trips
 struct TripSelectorView: View {
+    @Environment(\.dismiss) var dismiss
     @ObservedObject var tripStorage: TripStorage
-    var onTripSelected: (Trip) -> Void
-    @Environment(\.presentationMode) var presentationMode
+    let onTripSelected: (SavedTrip) -> Void
+    
+    // formats date for display
+    private func formatDate(_ date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .medium
+        formatter.timeStyle = .short
+        return formatter.string(from: date)
+    }
     
     var body: some View {
         NavigationView {
@@ -49,7 +58,7 @@ struct TripSelectorView: View {
                             
                             Button(action: {
                                 onTripSelected(trip)
-                                presentationMode.wrappedValue.dismiss()
+                                dismiss()
                             }) {
                                 Text("Load")
                                     .padding(8)
@@ -65,7 +74,7 @@ struct TripSelectorView: View {
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button("Close") {
-                        presentationMode.wrappedValue.dismiss()
+                        dismiss()
                     }
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {

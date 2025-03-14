@@ -9,6 +9,7 @@ import SwiftUI
 import MapKit
 import CoreLocation
 
+// displays the final route details and estimates
 struct ResultView: View {
     let errorOccurred: Bool
     let travelTime: String
@@ -48,6 +49,104 @@ struct ResultView: View {
         return pins
     }
     
+    // formats stop duration into readable string
+    func formatStopDuration(_ totalSeconds: Int) -> String {
+        let days = totalSeconds / 86400
+        let hours = (totalSeconds % 86400) / 3600
+        let minutes = (totalSeconds % 3600) / 60
+        var components: [String] = []
+        if days > 0 { components.append("\(days) day\(days == 1 ? "" : "s")") }
+        if hours > 0 { components.append("\(hours) hour\(hours == 1 ? "" : "s")") }
+        if minutes > 0 { components.append("\(minutes) minute\(minutes == 1 ? "" : "s")") }
+        if components.isEmpty { return "0 minutes" }
+        return components.joined(separator: ", ")
+    }
+    
+    // opens route in apple maps
+    func openInAppleMaps() {
+        var coordinates: [CLLocationCoordinate2D] = []
+        if let start = startCoordinate { coordinates.append(start) }
+        for stopCoord in stopsCoordinates {
+            if let coord = stopCoord { coordinates.append(coord) }
+        }
+        if let end = endCoordinate { coordinates.append(end) }
+        
+        guard coordinates.count >= 2 else { return }
+        
+        let items = coordinates.map { MKMapItem(placemark: MKPlacemark(coordinate: $0)) }
+        let options = [
+            MKLaunchOptionsDirectionsModeKey: MKLaunchOptionsDirectionsModeDriving
+        ]
+        
+        MKMapItem.openMaps(with: items, launchOptions: options)
+    }
+    
+    // opens route in google maps
+    func openInGoogleMaps() {
+        var urlString = "comgooglemaps://"
+        
+        if let start = startCoordinate {
+            urlString += "saddr=\(start.latitude),\(start.longitude)"
+        }
+        
+        if let end = endCoordinate {
+            urlString += "&daddr=\(end.latitude),\(end.longitude)"
+        }
+        
+        var waypointsString = ""
+        for stopCoord in stopsCoordinates {
+            if let coord = stopCoord {
+                if !waypointsString.isEmpty {
+                    waypointsString += "|"
+                }
+                waypointsString += "\(coord.latitude),\(coord.longitude)"
+            }
+        }
+        
+        if !waypointsString.isEmpty {
+            urlString += "&waypoints=\(waypointsString)"
+        }
+        
+        urlString += "&directionsmode=driving"
+        
+        if let url = URL(string: urlString) {
+            if UIApplication.shared.canOpenURL(url) {
+                UIApplication.shared.open(url)
+            } else {
+                let webUrlString = "https://www.google.com/maps/dir/?api=1"
+                if let webUrl = URL(string: webUrlString) {
+                    UIApplication.shared.open(webUrl)
+                }
+            }
+        }
+    }
+    
+    // creates route elements for display
+    struct RouteElement: Identifiable {
+        let id = UUID()
+        let text: String
+        let showArrow: Bool
+    }
+    
+    // generates array of route elements from locations
+    var routeElements: [RouteElement] {
+        var elements: [RouteElement] = []
+        
+        if !startLocation.isEmpty {
+            elements.append(RouteElement(text: startLocation, showArrow: !stops.isEmpty || !endLocation.isEmpty))
+        }
+        
+        for (index, stop) in stops.enumerated() {
+            elements.append(RouteElement(text: stop, showArrow: index < stops.count - 1 || !endLocation.isEmpty))
+        }
+        
+        if !endLocation.isEmpty {
+            elements.append(RouteElement(text: endLocation, showArrow: false))
+        }
+        
+        return elements
+    }
+    
     var body: some View {
         GeometryReader { geometry in
             Color.black.ignoresSafeArea()
@@ -78,7 +177,7 @@ struct ResultView: View {
                     
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 8) {
-                            ForEach(buildRouteElements(), id: \.self) { element in
+                            ForEach(routeElements, id: \.id) { element in
                                 HStack(spacing: 4) {
                                     Text(element.text)
                                         .foregroundColor(.white)
@@ -109,9 +208,11 @@ struct ResultView: View {
                         Text("Travel Time: \(travelTime)")
                             .font(.headline)
                             .foregroundColor(.white)
-                        Text("Stop Duration: \(formatStopDuration(finalStopSeconds))")
-                            .font(.headline)
-                            .foregroundColor(.white)
+                        if !stops.isEmpty {
+                            Text("Stop Duration: \(formatStopDuration(finalStopSeconds))")
+                                .font(.headline)
+                                .foregroundColor(.white)
+                        }
                         Text("Trip Price: $\(String(format: "%.2f", tripCost))")
                             .font(.headline)
                             .foregroundColor(.white)
@@ -190,87 +291,6 @@ struct ResultView: View {
                         Color.black.ignoresSafeArea()
                     }
                 }
-            }
-        }
-    }
-    
-    private struct RouteElement: Hashable {
-        let text: String
-        let showArrow: Bool
-    }
-
-    private func buildRouteElements() -> [RouteElement] {
-        var elements: [RouteElement] = []
-
-        elements.append(RouteElement(text: startLocation, showArrow: !stops.isEmpty || !endLocation.isEmpty))
-
-        for (index, stop) in stops.enumerated() {
-            elements.append(RouteElement(text: stop, showArrow: index < stops.count - 1 || !endLocation.isEmpty))
-        }
-
-        if !endLocation.isEmpty {
-            elements.append(RouteElement(text: endLocation, showArrow: false))
-        }
-        
-        return elements
-    }
-    
-    func formatStopDuration(_ totalSeconds: Int) -> String {
-        let days = totalSeconds / 86400
-        let hours = (totalSeconds % 86400) / 3600
-        let minutes = (totalSeconds % 3600) / 60
-        var components: [String] = []
-        if days > 0 { components.append("\(days) day\(days == 1 ? "" : "s")") }
-        if hours > 0 { components.append("\(hours) hour\(hours == 1 ? "" : "s")") }
-        if minutes > 0 { components.append("\(minutes) minute\(minutes == 1 ? "" : "s")") }
-        if components.isEmpty { return "0 minutes" }
-        return components.joined(separator: ", ")
-    }
-}
-
-extension ResultView {
-    func openInAppleMaps() {
-        if let startCoord = startCoordinate, let endCoord = endCoordinate {
-            let urlString = String(
-                format: "http://maps.apple.com/?saddr=%f,%f&daddr=%f,%f",
-                startCoord.latitude,
-                startCoord.longitude,
-                endCoord.latitude,
-                endCoord.longitude
-            )
-            
-            if let url = URL(string: urlString) {
-                UIApplication.shared.open(url)
-            }
-        }
-    }
-    
-    func openInGoogleMaps() {
-        if let startCoord = startCoordinate, let endCoord = endCoordinate {
-            var urlComponents = URLComponents(string: "https://www.google.com/maps/dir/")
-            
-            var queryItems = [
-                URLQueryItem(name: "api", value: "1"),
-                URLQueryItem(name: "origin", value: "\(startCoord.latitude),\(startCoord.longitude)"),
-                URLQueryItem(name: "destination", value: "\(endCoord.latitude),\(endCoord.longitude)"),
-                URLQueryItem(name: "travelmode", value: "driving")
-            ]
-            
-            if !stopsCoordinates.isEmpty {
-                let waypointCoords = stopsCoordinates.compactMap { coord -> String? in
-                    guard let coord = coord else { return nil }
-                    return "\(coord.latitude),\(coord.longitude)"
-                }
-                
-                if !waypointCoords.isEmpty {
-                    queryItems.append(URLQueryItem(name: "waypoints", value: waypointCoords.joined(separator: "|")))
-                }
-            }
-            
-            urlComponents?.queryItems = queryItems
-            
-            if let url = urlComponents?.url {
-                UIApplication.shared.open(url)
             }
         }
     }

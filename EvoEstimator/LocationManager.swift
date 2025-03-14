@@ -1,12 +1,21 @@
+//
+//  LocationManager.swift
+//  EvoEstimator
+//
+//  Created by Derek Martin on 2025-03-13.
+//
+
 import Foundation
 import CoreLocation
 import GooglePlaces
 
+// manages location services and permissions
 class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     private let locationManager = CLLocationManager()
-    @Published var currentLocation: CLLocation?
-    @Published var locationStatus: CLAuthorizationStatus?
-    @Published var lastError: Error?
+    @Published var location: CLLocation?
+    @Published var locationError: Error?
+    
+    private var locationCompletion: ((Bool, String?) -> Void)?
     
     override init() {
         super.init()
@@ -14,30 +23,34 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
     }
     
+    // requests location permission from user
     func requestLocation() {
         locationManager.requestWhenInUseAuthorization()
         locationManager.requestLocation()
     }
     
+    // handles successful location updates
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let location = locations.last else { return }
-        currentLocation = location
+        self.location = location
     }
     
+    // handles location errors
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        lastError = error
-        print("Location manager error: \(error.localizedDescription)")
+        locationError = error
     }
     
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
-        locationStatus = status
-        if status == .authorizedWhenInUse {
+        if status == .authorizedWhenInUse || status == .authorizedAlways {
             locationManager.requestLocation()
+        } else if status == .denied || status == .restricted {
+            locationCompletion?(false, "Location access is restricted or denied. Please enable it in Settings.")
+            locationCompletion = nil
         }
     }
     
     func getPlacemark(completion: @escaping (String?, String?) -> Void) {
-        guard let location = currentLocation else {
+        guard let location = self.location else {
             completion(nil, nil)
             return
         }
@@ -69,4 +82,4 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
             completion(displayAddress, routingAddress)
         }
     }
-} 
+}

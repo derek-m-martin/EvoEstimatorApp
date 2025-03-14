@@ -8,59 +8,61 @@
 import Foundation
 import SwiftUI
 
+// manages saving and loading of trip data
 class TripStorage: ObservableObject {
-    @Published var trips: [Trip] = []
-    
-    private let fileName = "savedTrips.json"
-    
-    private var fileURL: URL? {
-        do {
-            let fm = FileManager.default
-            let docs = try fm.url(for: .documentDirectory,
-                                  in: .userDomainMask,
-                                  appropriateFor: nil,
-                                  create: false)
-            return docs.appendingPathComponent(fileName)
-        } catch {
-            print("Error getting file URL: \(error)")
-            return nil
-        }
-    }
+    @Published var savedTrips: [SavedTrip] = []
+    private let tripsKey = "savedTrips"
     
     init() {
         loadTrips()
     }
     
-    func loadTrips() {
-        guard let url = fileURL else { return }
-        do {
-            let data = try Data(contentsOf: url)
-            let decodedTrips = try JSONDecoder().decode([Trip].self, from: data)
-            self.trips = decodedTrips
-        } catch {
-            print("Error loading trips: \(error)")
-            self.trips = []
+    // loads saved trips from user defaults
+    private func loadTrips() {
+        if let data = UserDefaults.standard.data(forKey: tripsKey) {
+            if let decoded = try? JSONDecoder().decode([SavedTrip].self, from: data) {
+                savedTrips = decoded
+            }
         }
     }
     
-    func saveTrips() {
-        guard let url = fileURL else { return }
-        do {
-            let data = try JSONEncoder().encode(trips)
-            try data.write(to: url)
-            print("Trips saved!")
-        } catch {
-            print("Error saving trips: \(error)")
+    // saves trips to user defaults
+    private func saveTrips() {
+        if let encoded = try? JSONEncoder().encode(savedTrips) {
+            UserDefaults.standard.set(encoded, forKey: tripsKey)
         }
     }
     
-    func addTrip(_ trip: Trip) {
-        trips.append(trip)
+    // adds a new trip to storage
+    func addTrip(_ trip: SavedTrip) {
+        savedTrips.append(trip)
         saveTrips()
     }
     
-    func deleteTrip(at offsets: IndexSet) {
-        trips.remove(atOffsets: offsets)
+    // removes a trip from storage
+    func removeTrip(at offsets: IndexSet) {
+        savedTrips.remove(atOffsets: offsets)
         saveTrips()
+    }
+}
+
+// represents a saved trip with all its details
+struct SavedTrip: Codable, Identifiable {
+    let id: UUID
+    let name: String
+    let startLocation: String
+    let endLocation: String
+    let stops: [String]
+    let stopDurations: [Int]
+    let date: Date
+    
+    init(name: String, startLocation: String, endLocation: String, stops: [String], stopDurations: [Int], date: Date = Date()) {
+        self.id = UUID()
+        self.name = name
+        self.startLocation = startLocation
+        self.endLocation = endLocation
+        self.stops = stops
+        self.stopDurations = stopDurations
+        self.date = date
     }
 }
