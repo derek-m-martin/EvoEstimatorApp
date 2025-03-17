@@ -50,8 +50,8 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
         }
         print("fetching evos at: \(location.coordinate)")
         EvoAPIService.shared.fetchEvoCarsWithDynamicToken(
-            latitude: location.coordinate.latitude,
-            longitude: location.coordinate.longitude
+            latitude: location.coordinate.latitude, //49.272251, (vancouver location hardcode for taking app store screenshots using the simulator)
+            longitude: location.coordinate.longitude //-123.132973
         ) { cars in
             if let cars = cars {
                 print("fetched \(cars.count) evos")

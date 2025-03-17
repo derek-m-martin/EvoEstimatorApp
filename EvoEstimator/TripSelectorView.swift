@@ -25,7 +25,7 @@ struct TripSelectorView: View {
         NavigationView {
             List {
                 if tripStorage.savedTrips.isEmpty {
-                    Text("no saved trips yet.")
+                    Text("No Saved Trips Yet.")
                         .foregroundColor(.gray)
                 } else {
                     ForEach(tripStorage.savedTrips) { trip in
@@ -53,7 +53,7 @@ struct TripSelectorView: View {
                                 onTripSelected(trip)
                                 dismiss() // load trip and close view
                             }) {
-                                Text("load")
+                                Text("Load")
                                     .padding(8)
                                     .foregroundColor(.blue)
                                     .cornerRadius(8)
@@ -63,10 +63,10 @@ struct TripSelectorView: View {
                     .onDelete(perform: tripStorage.removeTrip)
                 }
             }
-            .navigationTitle("saved trips")
+            .navigationTitle("Saved Trips")
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button("close") {
+                    Button("Close") {
                         dismiss()
                     }
                 }

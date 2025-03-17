@@ -736,6 +736,9 @@ struct MainView: View {
                 }
                 .navigationTitle("Nearby Evos")
                 .navigationBarTitleDisplayMode(.inline)
+                .toolbarBackground(Color.theme.accent, for: .navigationBar)
+                .toolbarBackground(.visible, for: .navigationBar)
+                .toolbarColorScheme(.dark, for: .navigationBar)
                 .toolbar {
                     ToolbarItem(placement: .navigationBarTrailing) {
                         Button("Done") {
@@ -744,6 +747,7 @@ struct MainView: View {
                                 isStartLocationExpanded = false
                             }
                         }
+                        .foregroundColor(.white)
                     }
                     ToolbarItem(placement: .navigationBarLeading) {
                         Button("Refresh") {
@@ -757,6 +761,7 @@ struct MainView: View {
                                 }
                             }
                         }
+                        .foregroundColor(.white)
                     }
                 }
             }

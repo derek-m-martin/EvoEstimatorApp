@@ -29,7 +29,7 @@ struct SaveTripView: View {
     // save the trip if a name is provided
     private func saveTrip() {
         if tripName.isEmpty {
-            alertMessage = "please enter a trip name"
+            alertMessage = "Please Enter a Trip Name"
             showAlert = true
             return
         }
@@ -55,25 +55,25 @@ struct SaveTripView: View {
     var body: some View {
         NavigationView {
             Form {
-                Section(header: Text("trip name")) {
-                    TextField("enter trip name", text: $tripName)
+                Section(header: Text("Trip Name")) {
+                    TextField("Enter Trip Name", text: $tripName)
                 }
-                Section(header: Text("trip details")) {
-                    Text("from: \(currentDisplayStart)")
-                    Text("to: \(currentDisplayEnd)")
+                Section(header: Text("Trip Details")) {
+                    Text("From: \(currentDisplayStart)")
+                    Text("To: \(currentDisplayEnd)")
                     if !currentDisplayStops.isEmpty {
                         ForEach(currentDisplayStops.indices, id: \.self) { index in
-                            Text("stop \(index + 1): \(currentDisplayStops[index])")
+                            Text("Stop \(index + 1): \(currentDisplayStops[index])")
                         }
                     }
                 }
             }
-            .navigationTitle("save trip")
+            .navigationTitle("Save trip")
             .navigationBarItems(
-                leading: Button("cancel") {
+                leading: Button("Cancel") {
                     dismiss()
                 },
-                trailing: Button("save") {
+                trailing: Button("Save") {
                     saveTrip()
                 }
             )

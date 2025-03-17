@@ -34,7 +34,7 @@ struct Trip: Codable, Identifiable {
     
     var stopDurations: [Int]
     
-    // Add coordinate storage
+    // add coordinate storage
     var startCoordinate: LocationCoordinate?
     var endCoordinate: LocationCoordinate?
     var stopCoordinates: [LocationCoordinate?]

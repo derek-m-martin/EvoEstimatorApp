@@ -3,7 +3,7 @@
 //  EvoEstimator
 //
 //  Created by Derek Martin on 2024-10-13.
-//
+//  Updated: March 17th, 2025
 //
 
 import SwiftUI
@@ -38,7 +38,7 @@ struct PrivacyPolicy: View {
                         ScrollView {
                             VStack(alignment: .center, spacing: 25) {
 
-                                Text("Last updated: January 31st, 2025")
+                                Text("Last updated: March 17th, 2025")
                                     .font(.system(size: geometry.size.width * 0.045, weight: .light))
                                     .foregroundColor(.white)
                                     .padding(.bottom, 5)
@@ -76,12 +76,24 @@ EvoEstimator is committed to protecting your privacy. This Privacy Policy descri
                                     .foregroundColor(.white)
                                     .multilineTextAlignment(.center)
                                     
+                                    Text("Location & Device Data")
+                                        .font(.system(size: geometry.size.width * 0.055, weight: .semibold))
+                                        .foregroundColor(.white)
+                                    
+                                    Text("""
+• Precise Location Data: If you opt to use the "Use Current Location" or "Find Nearby Evos" features, your device’s precise location is collected solely to prefill your starting location or to display nearby Evos within a 1km radius.
+• Device Information: When using the "Report an Issue" feature, we automatically collect non-identifying details about your device (e.g., whether you are using an iPhone or iPad and your iOS version) to help diagnose issues.
+""")
+                                    .font(.system(size: geometry.size.width * 0.045, weight: .light))
+                                    .foregroundColor(.white)
+                                    .multilineTextAlignment(.center)
+                                    
                                     Text("Automatically Collected Information")
                                         .font(.system(size: geometry.size.width * 0.055, weight: .semibold))
                                         .foregroundColor(.white)
                                     
                                     Text("""
-We do not collect any personal or non-personal information automatically. The App does not use cookies, tracking technologies, or analytics services.
+We do not collect any other personal or non-personal information automatically. The App does not use cookies, tracking technologies, or analytics services.
 """)
                                     .font(.system(size: geometry.size.width * 0.045, weight: .light))
                                     .foregroundColor(.white)
@@ -97,7 +109,8 @@ We do not collect any personal or non-personal information automatically. The Ap
                                     
                                     Text("""
 • Provide Services: The addresses you enter are used in real-time with Google's Places and Distance Matrix APIs to calculate trip estimates.
-• Local Trip Storage: If you choose to save a trip, the details are stored locally on your device for your convenience and future reference. We do not have access to this locally stored information.
+• Location Services: When you enable the "Use Current Location" feature, your precise location is used to quickly prefill your starting address. Additionally, the "Find Nearby Evos" feature utilizes your location to retrieve and display nearby Evos within a 1km radius.
+• Report an Issue: Submissions from the "Report an Issue" page, including your device details and any reported bugs, are transmitted via EmailJS to our support team to help us improve the App.
 """)
                                     .font(.system(size: geometry.size.width * 0.045, weight: .light))
                                     .foregroundColor(.white)
@@ -112,7 +125,11 @@ We do not collect any personal or non-personal information automatically. The Ap
                                         .foregroundColor(.white)
                                     
                                     Text("""
-Google APIs: The App utilizes Google's Places and Distance Matrix APIs to process the addresses you provide. Your use of these services is subject to Google's Privacy Policy. We do not control and are not responsible for the content or practices of Google's services.
+Google APIs: The App utilizes Google's Places and Distance Matrix APIs to process the addresses you provide. Your use of these services is subject to Google's Privacy Policy.
+
+EmailJS: The "Report an Issue" feature uses EmailJS to send your anonymous reports along with device details. Your interaction with EmailJS is governed by its own Privacy Policy.
+
+Evos API: The "Find Nearby Evos" feature calls the Evos API to display nearby Evos based on your current location.
 """)
                                     .font(.system(size: geometry.size.width * 0.045, weight: .light))
                                     .foregroundColor(.white)
@@ -127,7 +144,7 @@ Google APIs: The App utilizes Google's Places and Distance Matrix APIs to proces
                                         .foregroundColor(.white)
                                     
                                     Text("""
-We take reasonable measures to protect any information you input into the App during trip estimation. However, no method of transmission over the internet or method of electronic storage is 100% secure.
+We take reasonable measures to protect any information you provide, including location and device details, during transmission and storage. However, no method of transmission over the internet or method of electronic storage is 100% secure.
 """)
                                     .font(.system(size: geometry.size.width * 0.045, weight: .light))
                                     .foregroundColor(.white)
@@ -142,7 +159,7 @@ We take reasonable measures to protect any information you input into the App du
                                         .foregroundColor(.white)
                                     
                                     Text("""
-Trip details (start/end locations, stops, stop durations) are stored locally on your device only when you explicitly choose to save them. You can delete saved trips any time within the App’s “Saved Trips” section. Uninstalling the App will also remove all locally stored data.
+Trip details are stored locally on your device only when you explicitly choose to save them. Location data used for the "Use Current Location" and "Find Nearby Evos" features is processed in real-time and not stored long-term. Reports sent via the "Report an Issue" feature are transmitted directly to our support team and are not retained beyond what is necessary for issue resolution.
 """)
                                     .font(.system(size: geometry.size.width * 0.045, weight: .light))
                                     .foregroundColor(.white)
