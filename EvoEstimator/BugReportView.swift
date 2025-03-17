@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 import MessageUI
 
-// gets device model info for bug reports
+// helper to get device model info for bug reports
 private struct MachineIdentifier {
     static func model() -> String {
         var systemInfo = utsname()
@@ -19,42 +19,34 @@ private struct MachineIdentifier {
             guard let value = element.value as? Int8, value != 0 else { return identifier }
             return identifier + String(UnicodeScalar(UInt8(value)))
         }
-        
-        // maps device identifiers to marketing names
+        // mapping device identifiers to user-friendly names
         let modelMap: [String: String] = [
-            // iPhone 12 Series
-            "iPhone13,1": "iPhone 12 Mini",
-            "iPhone13,2": "iPhone 12",
-            "iPhone13,3": "iPhone 12 Pro",
-            "iPhone13,4": "iPhone 12 Pro Max",
-            // iPhone 13 Series
-            "iPhone14,2": "iPhone 13 Pro",
-            "iPhone14,3": "iPhone 13 Pro Max",
-            "iPhone14,4": "iPhone 13 Mini",
-            "iPhone14,5": "iPhone 13",
-            "iPhone14,6": "iPhone SE (3rd generation)",
-            // iPhone 14 Series
-            "iPhone14,7": "iPhone 14",
-            "iPhone14,8": "iPhone 14 Plus",
-            "iPhone15,2": "iPhone 14 Pro",
-            "iPhone15,3": "iPhone 14 Pro Max",
-            // iPhone 15 Series
-            "iPhone15,4": "iPhone 15",
-            "iPhone15,5": "iPhone 15 Plus",
-            "iPhone16,1": "iPhone 15 Pro",
-            "iPhone16,2": "iPhone 15 Pro Max",
-            // iPhone 16 Series
-            "iPhone17,3": "iPhone 16",
-            "iPhone17,4": "iPhone 16 Plus",
-            "iPhone17,5": "iPhone 16 Pro",
-            "iPhone17,6": "iPhone 16 Pro Max"
+            "iPhone13,1": "iphone 12 mini",
+            "iPhone13,2": "iphone 12",
+            "iPhone13,3": "iphone 12 pro",
+            "iPhone13,4": "iphone 12 pro max",
+            "iPhone14,2": "iphone 13 pro",
+            "iPhone14,3": "iphone 13 pro max",
+            "iPhone14,4": "iphone 13 mini",
+            "iPhone14,5": "iphone 13",
+            "iPhone14,6": "iphone se (3rd generation)",
+            "iPhone14,7": "iphone 14",
+            "iPhone14,8": "iphone 14 plus",
+            "iPhone15,2": "iphone 14 pro",
+            "iPhone15,3": "iphone 14 pro max",
+            "iPhone15,4": "iphone 15",
+            "iPhone15,5": "iphone 15 plus",
+            "iPhone16,1": "iphone 15 pro",
+            "iPhone16,2": "iphone 15 pro max",
+            "iPhone17,3": "iphone 16",
+            "iPhone17,4": "iphone 16 plus",
+            "iPhone17,5": "iphone 16 pro",
+            "iPhone17,6": "iphone 16 pro max"
         ]
-        
-        return modelMap[identifier] ?? "iPhone"
+        return modelMap[identifier] ?? "iphone"
     }
 }
 
-// handles bug report submission via emailjs
 struct BugReportView: View {
     @Environment(\.presentationMode) var presentationMode
     @State private var description = ""
@@ -70,36 +62,33 @@ struct BugReportView: View {
     private let publicKey = "aMNLrr1571pK4EAKu"
     private let privateKey = "hBuWWOwh-KTYLbq7UhqhG"
     
-    // gets device info for bug report
+    // get device model string for bug report
     private var deviceModel: String {
         #if targetEnvironment(simulator)
-        let identifier = ProcessInfo.processInfo.environment["SIMULATOR_MODEL_IDENTIFIER"] ?? "iPhone"
-        return "Simulator (\(identifier))"
+        let identifier = ProcessInfo.processInfo.environment["SIMULATOR_MODEL_IDENTIFIER"] ?? "iphone"
+        return "simulator (\(identifier))"
         #else
         return MachineIdentifier.model()
         #endif
     }
     
-    // gets ios version for bug report
     private var systemVersion: String {
         UIDevice.current.systemVersion
     }
     
-    // sends email using emailjs api
     func sendEmail() {
         isLoading = true
-        
         let parameters: [String: Any] = [
             "service_id": serviceID,
             "template_id": templateID,
             "user_id": publicKey,
             "accessToken": privateKey,
             "template_params": [
-                "from_name": "EvoEstimator Bug Report",
+                "from_name": "evoestimator bug report",
                 "issuedesc": description,
                 "reproduce": steps,
                 "device": deviceModel,
-                "version": "iOS \(systemVersion)"
+                "version": "ios \(systemVersion)"
             ]
         ]
         
@@ -115,15 +104,14 @@ struct BugReportView: View {
         do {
             let jsonData = try JSONSerialization.data(withJSONObject: parameters)
             request.httpBody = jsonData
-            
-            // Print request for debugging
+            // print out request body for debugging
             if let jsonString = String(data: jsonData, encoding: .utf8) {
-                print("Request body: \(jsonString)")
+                print("sending bug report: \(jsonString)")
             }
         } catch {
             isLoading = false
-            alertTitle = "Error"
-            alertMessage = "Failed to prepare email data"
+            alertTitle = "error"
+            alertMessage = "failed to prepare email data"
             showAlert = true
             return
         }
@@ -131,30 +119,26 @@ struct BugReportView: View {
         URLSession.shared.dataTask(with: request) { data, response, error in
             DispatchQueue.main.async {
                 isLoading = false
-                
                 if let error = error {
-                    alertTitle = "Error"
-                    alertMessage = "Failed to send email: \(error.localizedDescription)"
+                    alertTitle = "error"
+                    alertMessage = "failed to send email: \(error.localizedDescription)"
                     showAlert = true
                     return
                 }
-                
-                // Print response for debugging
                 if let data = data, let responseString = String(data: data, encoding: .utf8) {
-                    print("Response: \(responseString)")
+                    print("email response: \(responseString)")
                 }
-                
                 if let httpResponse = response as? HTTPURLResponse {
-                    print("Status code: \(httpResponse.statusCode)")
+                    print("email status: \(httpResponse.statusCode)")
                     if httpResponse.statusCode == 200 {
-                        alertTitle = "Success"
-                        alertMessage = "Bug report sent successfully"
+                        alertTitle = "success"
+                        alertMessage = "bug report sent successfully"
                         showAlert = true
                         description = ""
                         steps = ""
                     } else {
-                        alertTitle = "Error"
-                        alertMessage = "Failed to send email (Status: \(httpResponse.statusCode))"
+                        alertTitle = "error"
+                        alertMessage = "failed to send email (status: \(httpResponse.statusCode))"
                         showAlert = true
                     }
                 }
@@ -162,43 +146,36 @@ struct BugReportView: View {
         }.resume()
     }
     
-    // main view body
     var body: some View {
         NavigationView {
             ZStack {
                 Color(UIColor.systemBackground)
-                    .ignoresSafeArea()
-                
+                    .ignoresSafeArea() // use system background
                 Form {
-                    Section(header: Text("DESCRIPTION OF ISSUE")
+                    Section(header: Text("description of issue")
                         .foregroundColor(.gray)
-                        .font(.system(size: 14))
-                    ) {
+                        .font(.system(size: 14))) {
                         TextEditor(text: $description)
                             .frame(height: 100)
                     }
-                    
-                    Section(header: Text("HOW TO REPRODUCE")
+                    Section(header: Text("how to reproduce")
                         .foregroundColor(.gray)
-                        .font(.system(size: 14))
-                    ) {
+                        .font(.system(size: 14))) {
                         TextEditor(text: $steps)
                             .frame(height: 100)
                     }
-                    
-                    Section(header: Text("DEVICE INFORMATION")
+                    Section(header: Text("device information")
                         .foregroundColor(.gray)
-                        .font(.system(size: 14))
-                    ) {
+                        .font(.system(size: 14))) {
                         HStack {
-                            Text("Device Type:")
+                            Text("device type:")
                                 .foregroundColor(.white)
                             Spacer()
                             Text(deviceModel)
                                 .foregroundColor(.gray)
                         }
                         HStack {
-                            Text("iOS Version:")
+                            Text("ios version:")
                                 .foregroundColor(.white)
                             Spacer()
                             Text(systemVersion)
@@ -208,26 +185,25 @@ struct BugReportView: View {
                 }
                 .scrollContentBackground(.hidden)
             }
-            .navigationTitle("Report an Issue")
+            .navigationTitle("report an issue")
             .navigationBarTitleDisplayMode(.large)
             .navigationBarItems(
-                leading: Button("Cancel") {
+                leading: Button("cancel") {
                     presentationMode.wrappedValue.dismiss()
                 },
                 trailing: Button(action: {
                     if description.isEmpty {
-                        alertTitle = "Error"
-                        alertMessage = "Please provide a description of the issue."
+                        alertTitle = "error"
+                        alertMessage = "please provide a description of the issue."
                         showAlert = true
                     } else {
                         sendEmail()
                     }
                 }) {
                     if isLoading {
-                        ProgressView()
-                            .progressViewStyle(CircularProgressViewStyle(tint: .blue))
+                        ProgressView().progressViewStyle(CircularProgressViewStyle(tint: .blue))
                     } else {
-                        Text("Send")
+                        Text("send")
                     }
                 }
                 .disabled(isLoading)
@@ -237,8 +213,8 @@ struct BugReportView: View {
             Alert(
                 title: Text(alertTitle),
                 message: Text(alertMessage),
-                dismissButton: .default(Text("OK")) {
-                    if alertTitle == "Success" {
+                dismissButton: .default(Text("ok")) {
+                    if alertTitle == "success" {
                         presentationMode.wrappedValue.dismiss()
                     }
                 }

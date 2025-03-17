@@ -19,7 +19,7 @@ func estimateTripTime(
 ) {
     guard !startAddress.isEmpty, !endAddress.isEmpty else {
         DispatchQueue.main.async {
-            completion("Missing Address Error", 0, "Missing Address Error", 0, nil)
+            completion("missing address error", 0, "missing address error", 0, nil)
         }
         return
     }
@@ -31,20 +31,20 @@ func estimateTripTime(
     let urlString = "https://maps.googleapis.com/maps/api/directions/json?origin=\(originsEncoded)&destination=\(destinationsEncoded)\(waypointsParam)&mode=driving&alternatives=true&key=\(apiKey)"
     guard let url = URL(string: urlString) else {
         DispatchQueue.main.async {
-            completion("Invalid URL Error", 0, "Invalid URL Error", 0, nil)
+            completion("invalid url error", 0, "invalid url error", 0, nil)
         }
         return
     }
     URLSession.shared.dataTask(with: url) { data, response, error in
         if error != nil {
             DispatchQueue.main.async {
-                completion("Error fetching data", 0, "Error fetching data", 0, nil)
+                completion("error fetching data", 0, "error fetching data", 0, nil)
             }
             return
         }
         guard let data = data else {
             DispatchQueue.main.async {
-                completion("No data received Error", 0, "No data received Error", 0, nil)
+                completion("no data received error", 0, "no data received error", 0, nil)
             }
             return
         }
@@ -72,7 +72,6 @@ func estimateTripTime(
                                 totalDistance += distanceValue
                             }
                         }
-
                         if totalDuration < fastestRouteDuration {
                             fastestRouteDuration = totalDuration
                             fastestRoutePolyline = polyline
@@ -91,12 +90,12 @@ func estimateTripTime(
                 }
             } else {
                 DispatchQueue.main.async {
-                    completion("No routes found", 0, "No routes found", 0, nil)
+                    completion("no routes found", 0, "no routes found", 0, nil)
                 }
             }
         } catch {
             DispatchQueue.main.async {
-                completion("Error parsing JSON", 0, "Error parsing JSON", 0, nil)
+                completion("error parsing json", 0, "error parsing json", 0, nil)
             }
         }
     }.resume()

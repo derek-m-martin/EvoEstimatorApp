@@ -18,9 +18,7 @@
 		D32ED5842C8A60FF00140CE2 /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = D32ED5832C8A60FF00140CE2 /* Color.swift */; };
 		D32ED5882C8B86E200140CE2 /* Arya W00 Triple Slant.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D32ED5872C8A62DC00140CE2 /* Arya W00 Triple Slant.ttf */; };
 		D32ED5892C8B88E300140CE2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D3A8BE662C88F4DB001232F9 /* Assets.xcassets */; };
-		D33DC31E2D35A8CB00844B15 /* MapViewToggler.swift in Sources */ = {isa = PBXBuildFile; fileRef = D33DC31D2D35A8CB00844B15 /* MapViewToggler.swift */; };
 		D36533E42CB8DDED007C90F8 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D36533E32CB8DDED007C90F8 /* AppDelegate.swift */; };
-		D39122612D2787ED0019C204 /* RouteMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D39122602D2787ED0019C204 /* RouteMapView.swift */; };
 		D39122632D2889910019C204 /* StopDurationPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = D39122622D2889910019C204 /* StopDurationPicker.swift */; };
 		D39122652D2F14680019C204 /* PickerViewTemplate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D39122642D2F14680019C204 /* PickerViewTemplate.swift */; };
 		D3A8BE552C72F2B2001232F9 /* EvoEstimatorApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3A8BE542C72F2B2001232F9 /* EvoEstimatorApp.swift */; };
@@ -28,6 +26,8 @@
 		D3BB81322CB9B2E200A49903 /* HandleAutofill.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3BB81312CB9B2E200A49903 /* HandleAutofill.swift */; };
 		D3BB81342CB9B3C500A49903 /* HandleTravelTime.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3BB81332CB9B3C500A49903 /* HandleTravelTime.swift */; };
 		D3BB81362CB9F33B00A49903 /* ComputeTripCost.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3BB81352CB9F33B00A49903 /* ComputeTripCost.swift */; };
+		D3C896CB2D84E36A00363CCF /* EvoAPIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3C896CA2D84E36700363CCF /* EvoAPIService.swift */; };
+		D3C896D32D85509A00363CCF /* MapComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3C896D22D85509A00363CCF /* MapComponents.swift */; };
 		D3DCFA0E2D837CA50001704A /* BugReportView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3DCFA0D2D837CA50001704A /* BugReportView.swift */; };
 		D3DCFA102D837CC10001704A /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3DCFA0F2D837CC10001704A /* LocationManager.swift */; };
 		D3F089CC2CBB1F7500CDF2E4 /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3F089CB2CBB1F7500CDF2E4 /* MainView.swift */; };
@@ -50,10 +50,8 @@
 		D309990A2D4DA25A009E2257 /* SaveTripView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SaveTripView.swift; sourceTree = "<group>"; };
 		D32ED5832C8A60FF00140CE2 /* Color.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
 		D32ED5872C8A62DC00140CE2 /* Arya W00 Triple Slant.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Arya W00 Triple Slant.ttf"; path = "EvoEstimator/Arya W00 Triple Slant.ttf"; sourceTree = "<group>"; };
-		D33DC31D2D35A8CB00844B15 /* MapViewToggler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewToggler.swift; sourceTree = "<group>"; };
 		D33DC3222D35F7E700844B15 /* ci_post_clone.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = ci_post_clone.sh; sourceTree = "<group>"; };
 		D36533E32CB8DDED007C90F8 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		D39122602D2787ED0019C204 /* RouteMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouteMapView.swift; sourceTree = "<group>"; };
 		D39122622D2889910019C204 /* StopDurationPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopDurationPicker.swift; sourceTree = "<group>"; };
 		D39122642D2F14680019C204 /* PickerViewTemplate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PickerViewTemplate.swift; sourceTree = "<group>"; };
 		D3A8BE512C72F2B2001232F9 /* EvoEstimator.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = EvoEstimator.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -64,6 +62,8 @@
 		D3BB81312CB9B2E200A49903 /* HandleAutofill.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HandleAutofill.swift; sourceTree = "<group>"; };
 		D3BB81332CB9B3C500A49903 /* HandleTravelTime.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HandleTravelTime.swift; sourceTree = "<group>"; };
 		D3BB81352CB9F33B00A49903 /* ComputeTripCost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComputeTripCost.swift; sourceTree = "<group>"; };
+		D3C896CA2D84E36700363CCF /* EvoAPIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EvoAPIService.swift; sourceTree = "<group>"; };
+		D3C896D22D85509A00363CCF /* MapComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapComponents.swift; sourceTree = "<group>"; };
 		D3DCFA0D2D837CA50001704A /* BugReportView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BugReportView.swift; sourceTree = "<group>"; };
 		D3DCFA0F2D837CC10001704A /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
 		D3F089CB2CBB1F7500CDF2E4 /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
@@ -133,6 +133,8 @@
 		D3A8BE532C72F2B2001232F9 /* EvoEstimator */ = {
 			isa = PBXGroup;
 			children = (
+				D3C896D22D85509A00363CCF /* MapComponents.swift */,
+				D3C896CA2D84E36700363CCF /* EvoAPIService.swift */,
 				D3A8BE692C88F66E001232F9 /* Info.plist */,
 				D3A8BE662C88F4DB001232F9 /* Assets.xcassets */,
 				D30999022D4C79CC009E2257 /* ViewHandler.swift */,
@@ -150,10 +152,8 @@
 				D3BB81352CB9F33B00A49903 /* ComputeTripCost.swift */,
 				D3F089D32CBCE56500CDF2E4 /* AboutView.swift */,
 				D3F089D52CBCE79F00CDF2E4 /* PrivacyPolicy.swift */,
-				D39122602D2787ED0019C204 /* RouteMapView.swift */,
 				D39122622D2889910019C204 /* StopDurationPicker.swift */,
 				D39122642D2F14680019C204 /* PickerViewTemplate.swift */,
-				D33DC31D2D35A8CB00844B15 /* MapViewToggler.swift */,
 				D30998FE2D4C4B5E009E2257 /* UserTips.swift */,
 				D30999062D4DA224009E2257 /* Trip.swift */,
 				D30999082D4DA23C009E2257 /* TripStorage.swift */,
@@ -304,13 +304,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D39122612D2787ED0019C204 /* RouteMapView.swift in Sources */,
+				D3C896CB2D84E36A00363CCF /* EvoAPIService.swift in Sources */,
 				D3F089D02CBB923800CDF2E4 /* SplashScreen.swift in Sources */,
 				D3DCFA102D837CC10001704A /* LocationManager.swift in Sources */,
 				D36533E42CB8DDED007C90F8 /* AppDelegate.swift in Sources */,
 				D3DCFA0E2D837CA50001704A /* BugReportView.swift in Sources */,
 				D3F089CC2CBB1F7500CDF2E4 /* MainView.swift in Sources */,
 				D30999032D4C79CC009E2257 /* ViewHandler.swift in Sources */,
+				D3C896D32D85509A00363CCF /* MapComponents.swift in Sources */,
 				D3BB81302CB9AD7D00A49903 /* APIKeys.swift in Sources */,
 				D3F089D62CBCE79F00CDF2E4 /* PrivacyPolicy.swift in Sources */,
 				D39122652D2F14680019C204 /* PickerViewTemplate.swift in Sources */,
@@ -324,7 +325,6 @@
 				D30999012D4C54D6009E2257 /* ResultView.swift in Sources */,
 				D3BB81322CB9B2E200A49903 /* HandleAutofill.swift in Sources */,
 				D3BB81342CB9B3C500A49903 /* HandleTravelTime.swift in Sources */,
-				D33DC31E2D35A8CB00844B15 /* MapViewToggler.swift in Sources */,
 				D309990B2D4DA25A009E2257 /* SaveTripView.swift in Sources */,
 				D39122632D2889910019C204 /* StopDurationPicker.swift in Sources */,
 				D3F089CE2CBB1F9100CDF2E4 /* RatesView.swift in Sources */,

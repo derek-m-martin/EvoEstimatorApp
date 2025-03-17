@@ -13,6 +13,7 @@ struct EvoEstimatorApp: App {
     @State private var startOutroAnimation = false
 
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+    
     var body: some Scene {
         WindowGroup {
             if showSplashScreen {

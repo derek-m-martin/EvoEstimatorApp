@@ -28,14 +28,16 @@ struct AutocompleteViewController: UIViewControllerRepresentable {
 
     func makeUIViewController(context: Context) -> GMSAutocompleteViewController {
         let autocompleteController = GMSAutocompleteViewController()
-        autocompleteController.delegate = context.coordinator
+        autocompleteController.delegate = context.coordinator // set our delegate
         let filter = GMSAutocompleteFilter()
-        filter.countries = ["CA"]
+        filter.countries = ["CA"] // restrict to canada
         autocompleteController.autocompleteFilter = filter
         return autocompleteController
     }
 
-    func updateUIViewController(_ uiViewController: GMSAutocompleteViewController, context: Context) {}
+    func updateUIViewController(_ uiViewController: GMSAutocompleteViewController, context: Context) {
+        // no update logic needed here
+    }
 
     func makeCoordinator() -> Coordinator {
         Coordinator(self)
@@ -67,15 +69,15 @@ struct AutocompleteViewController: UIViewControllerRepresentable {
                 parent.endLocationForRouting = routingAddress
                 parent.endCoordinate = coordinate
             }
-            viewController.dismiss(animated: true)
+            viewController.dismiss(animated: true) // close the autocomplete
         }
 
         func viewController(_ viewController: GMSAutocompleteViewController, didFailAutocompleteWithError error: Error) {
-            viewController.dismiss(animated: true)
+            viewController.dismiss(animated: true) // dismiss on error
         }
 
         func wasCancelled(_ viewController: GMSAutocompleteViewController) {
-            viewController.dismiss(animated: true)
+            viewController.dismiss(animated: true) // dismiss if cancelled
         }
     }
 }

@@ -8,7 +8,6 @@
 import SwiftUI
 import CoreLocation
 
-// view for saving trip details
 struct SaveTripView: View {
     @Environment(\.dismiss) var dismiss
     @ObservedObject var tripStorage: TripStorage
@@ -18,9 +17,7 @@ struct SaveTripView: View {
     var currentRoutingStart: String
     var currentRoutingEnd: String
     var currentRoutingStops: [String]
-    
     var currentStopDurations: [Int]
-    // add coordinate properties
     var startCoordinate: CLLocationCoordinate2D?
     var endCoordinate: CLLocationCoordinate2D?
     var stopsCoordinates: [CLLocationCoordinate2D?]
@@ -29,10 +26,10 @@ struct SaveTripView: View {
     @State private var showAlert = false
     @State private var alertMessage = ""
     
-    // saves trip and validates input
+    // save the trip if a name is provided
     private func saveTrip() {
         if tripName.isEmpty {
-            alertMessage = "Please enter a trip name"
+            alertMessage = "please enter a trip name"
             showAlert = true
             return
         }
@@ -52,32 +49,31 @@ struct SaveTripView: View {
         )
         
         tripStorage.addTrip(newTrip)
-        dismiss()
+        dismiss() // close the view after saving
     }
     
-    // main view body
     var body: some View {
         NavigationView {
             Form {
-                Section(header: Text("Trip Name")) {
-                    TextField("Enter trip name", text: $tripName)
+                Section(header: Text("trip name")) {
+                    TextField("enter trip name", text: $tripName)
                 }
-                Section(header: Text("Trip Details")) {
-                    Text("From: \(currentDisplayStart)")
-                    Text("To: \(currentDisplayEnd)")
+                Section(header: Text("trip details")) {
+                    Text("from: \(currentDisplayStart)")
+                    Text("to: \(currentDisplayEnd)")
                     if !currentDisplayStops.isEmpty {
                         ForEach(currentDisplayStops.indices, id: \.self) { index in
-                            Text("Stop \(index + 1): \(currentDisplayStops[index])")
+                            Text("stop \(index + 1): \(currentDisplayStops[index])")
                         }
                     }
                 }
             }
-            .navigationTitle("Save Trip")
+            .navigationTitle("save trip")
             .navigationBarItems(
-                leading: Button("Cancel") {
+                leading: Button("cancel") {
                     dismiss()
                 },
-                trailing: Button("Save") {
+                trailing: Button("save") {
                     saveTrip()
                 }
             )

@@ -10,7 +10,6 @@ import GooglePlaces
 import CoreLocation
 import MapKit
 
-// main view that handles the core functionality of the app
 struct MainView: View {
     @Binding var showResultView: Bool
     @Binding var fadeToBlack: Bool
@@ -28,7 +27,7 @@ struct MainView: View {
     @Binding var primaryPolyline: String?
     @Binding var alternativePolylines: [String]
     
-    // state variables for handling route planning
+    // state for route planning inputs and ui control
     @State private var startLocationForRouting: String = ""
     @State private var endLocationForRouting: String = ""
     @State private var stopsForRouting: [String] = []
@@ -55,13 +54,22 @@ struct MainView: View {
     @StateObject private var locationManager = LocationManager()
     @State private var showLocationErrorAlert = false
     @State private var locationErrorMessage = ""
+    @State private var isStartLocationExpanded = false
+    @State private var evoCars: [EvoCar] = []
+    @State private var showEvoMap = false
+    @State private var selectedCar: EvoCar?
+    @State private var selectedCarAddress: String = ""
+    @State private var selectedCarDistance: Double = 0.0
+    @State private var isLoadingEvos: Bool = false
 
-    // computed property to create map pins for all locations
+    // making map pins for start, stops, end and evo cars
     private var mapPins: [MapPinData] {
         var pins = [MapPinData]()
+        
         if let startCoord = startCoordinate, !startLocation.isEmpty {
             pins.append(MapPinData(coordinate: startCoord, title: startLocation))
         }
+        
         for (i, stopName) in stops.enumerated() {
             if stopsCoordinates.indices.contains(i),
                let coord = stopsCoordinates[i],
@@ -69,13 +77,21 @@ struct MainView: View {
                 pins.append(MapPinData(coordinate: coord, title: stopName))
             }
         }
+        
         if let endCoord = endCoordinate, !endLocation.isEmpty {
             pins.append(MapPinData(coordinate: endCoord, title: endLocation))
         }
+        
+        for car in evoCars {
+            let evoCoordinate = CLLocationCoordinate2D(latitude: car.latitude, longitude: car.longitude)
+            let pinTitle = "\(car.model) (\(car.plate))"
+            pins.append(MapPinData(coordinate: evoCoordinate, title: pinTitle, car: car))
+        }
+        
         return pins
     }
     
-    // resets all route planning data to initial state
+    // clear all routing data
     func resetEstimator() {
         startLocation = ""
         endLocation = ""
@@ -96,26 +112,29 @@ struct MainView: View {
         startCoordinate = nil
         endCoordinate = nil
         stopsCoordinates = []
+        withAnimation(.easeOut(duration: 0.3)) {
+            isStartLocationExpanded = false
+        }
     }
     
-    // updates the add stops button text based on number of stops
+    // update 'add stops' button text based on count
     func changeText() {
         switch stopCounter {
         case 0: addText = "Add Stops?"
         case 1: addText = "Another?"
         case 2: addText = "Even More?"
-        case 3: addText = "Why not walk?"
-        case 4: addText = "Buy a car at this point."
-        default: addText = "Alright Go Crazy."
+        case 3: addText = "why not walk?"
+        case 4: addText = "buy a car at this point."
+        default: addText = "alright go crazy."
         }
     }
     
-    // calculates total duration of all stops in seconds
+    // total seconds from all stops
     var totalStopSeconds: Int {
         stopDurations.reduce(0, +)
     }
     
-    // formats stop duration into readable string
+    // make stop duration human-readable
     func formatStopDuration(_ totalSeconds: Int) -> String {
         let days = totalSeconds / 86400
         let hours = (totalSeconds % 86400) / 3600
@@ -128,7 +147,7 @@ struct MainView: View {
         return components.joined(separator: ", ")
     }
     
-    // converts stop duration to array of [days, hours, minutes]
+    // split stop seconds into [days, hours, minutes]
     func stopCostArray() -> [Int] {
         let days = finalStopSeconds / 86400
         let hours = (finalStopSeconds % 86400) / 3600
@@ -136,7 +155,7 @@ struct MainView: View {
         return [days, hours, minutes]
     }
 
-    // converts addresses to coordinates for saved trips
+    // geocode addresses for saved trips
     func geocodeLoadedTrip() {
         let group = DispatchGroup()
         var errors: [String] = []
@@ -155,7 +174,7 @@ struct MainView: View {
                     self.startCoordinate = coordinate
                 }
             } else {
-                errors.append("Failed to geocode start address: \(error?.localizedDescription ?? "unknown error")")
+                errors.append("failed to geocode start address: \(error?.localizedDescription ?? "unknown error")")
             }
         }
         
@@ -168,7 +187,7 @@ struct MainView: View {
                         self.endCoordinate = coordinate
                     }
                 } else {
-                    errors.append("Failed to geocode end address: \(error?.localizedDescription ?? "unknown error")")
+                    errors.append("failed to geocode end address: \(error?.localizedDescription ?? "unknown error")")
                 }
             }
         }
@@ -185,7 +204,7 @@ struct MainView: View {
                             }
                         }
                     } else {
-                        errors.append("Failed to geocode stop (\(stop)): \(error?.localizedDescription ?? "unknown error")")
+                        errors.append("failed to geocode stop (\(stop)): \(error?.localizedDescription ?? "unknown error")")
                     }
                 }
             }
@@ -193,19 +212,20 @@ struct MainView: View {
         
         group.notify(queue: .main) {
             if !errors.isEmpty {
-                print("Geocoding errors occurred:")
+                print("geocoding errors:")
                 errors.forEach { print($0) }
             }
         }
     }
     
-    // main view body
     var body: some View {
         NavigationStack {
+            // main ui container
             GeometryReader { geometry in
                 ZStack {
                     Color.black.ignoresSafeArea()
                     VStack(spacing: geometry.size.height * 0.025) {
+                        // header with app icon and menu
                         HStack {
                             VStack(alignment: .leading, spacing: geometry.size.height * 0.005) {
                                 Image("icon")
@@ -254,24 +274,29 @@ struct MainView: View {
                         }
                         .padding(.horizontal, geometry.size.width * 0.05)
                         Spacer(minLength: 5)
+                        // scrollable routing options
                         ScrollView {
                             VStack(spacing: geometry.size.height * 0.025) {
-                                Button {
-                                    isStartLocation = true
-                                    isPresentingAutocomplete = true
-                                } label: {
-                                    Text(startLocation.isEmpty ? "Start Location" : startLocation)
-                                        .padding()
-                                        .font(.system(size: geometry.size.width * 0.05, weight: .semibold))
-                                        .frame(maxWidth: geometry.size.width * 0.8)
-                                        .background(Color.theme.accent)
-                                        .foregroundColor(.white)
-                                        .cornerRadius(geometry.size.width * 0.05)
-                                        .background(
-                                            RoundedRectangle(cornerRadius: geometry.size.width * 0.05)
-                                                .stroke(Color.darkBlue, lineWidth: 3)
-                                        )
-                                        .overlay(
+                                DisclosureGroup(
+                                    isExpanded: $isStartLocationExpanded,
+                                    content: {
+                                        VStack(spacing: 10) {
+                                            Button {
+                                                isStartLocation = true
+                                                isPresentingAutocomplete = true
+                                            } label: {
+                                                HStack {
+                                                    Image(systemName: "magnifyingglass")
+                                                    Text("Enter Custom Location")
+                                                }
+                                                .font(.system(size: geometry.size.width * 0.04, weight: .semibold))
+                                                .foregroundColor(.white)
+                                                .frame(maxWidth: .infinity)
+                                                .padding(.vertical, 12)
+                                                .background(Color.theme.accent)
+                                                .cornerRadius(geometry.size.width * 0.05)
+                                            }
+                                            
                                             Button {
                                                 locationManager.requestLocation { success, error in
                                                     if success {
@@ -282,11 +307,14 @@ struct MainView: View {
                                                                 CLGeocoder().geocodeAddressString(routing) { placemarks, error in
                                                                     if let coordinate = placemarks?.first?.location?.coordinate {
                                                                         startCoordinate = coordinate
+                                                                        withAnimation(.easeOut(duration: 0.3)) {
+                                                                            isStartLocationExpanded = false
+                                                                        }
                                                                     }
                                                                 }
                                                             } else {
                                                                 showLocationErrorAlert = true
-                                                                locationErrorMessage = "Could not determine your current location. Please try again."
+                                                                locationErrorMessage = "could not determine your current location. please try again."
                                                             }
                                                         }
                                                     } else if let errorMessage = error {
@@ -295,14 +323,71 @@ struct MainView: View {
                                                     }
                                                 }
                                             } label: {
-                                                Image(systemName: "location.fill")
-                                                    .font(.system(size: geometry.size.width * 0.04))
-                                                    .foregroundColor(.white.opacity(0.8))
+                                                HStack {
+                                                    Image(systemName: "location.fill")
+                                                    Text("Use Current Location")
+                                                }
+                                                .font(.system(size: geometry.size.width * 0.04, weight: .semibold))
+                                                .foregroundColor(.white)
+                                                .frame(maxWidth: .infinity)
+                                                .padding(.vertical, 12)
+                                                .background(Color.theme.accent)
+                                                .cornerRadius(geometry.size.width * 0.05)
                                             }
-                                            .padding(.trailing, geometry.size.width * 0.05),
-                                            alignment: .trailing
-                                        )
-                                }
+                                            
+                                            Button {
+                                                // show loading state immediately
+                                                isLoadingEvos = true
+                                                // then fetch nearby evos
+                                                locationManager.fetchNearbyEvos { cars in
+                                                    DispatchQueue.main.async {
+                                                        isLoadingEvos = false
+                                                        if let cars = cars, !cars.isEmpty {
+                                                            evoCars = cars
+                                                            showEvoMap = true
+                                                        } else {
+                                                            showLocationErrorAlert = true
+                                                            locationErrorMessage = "no evo cars found within 1km of your location."
+                                                        }
+                                                    }
+                                                }
+                                            } label: {
+                                                HStack {
+                                                    Image(systemName: "car.fill")
+                                                    Text("Find Nearby Evos")
+                                                }
+                                                .font(.system(size: geometry.size.width * 0.04, weight: .semibold))
+                                                .foregroundColor(.white)
+                                                .frame(maxWidth: .infinity)
+                                                .padding(.vertical, 12)
+                                                .background(Color.theme.accent)
+                                                .cornerRadius(geometry.size.width * 0.05)
+                                            }
+                                        }
+                                        .padding(.top, 10)
+                                    },
+                                    label: {
+                                        ZStack {
+                                            HStack {
+                                                Spacer()
+                                                Text(startLocation.isEmpty ? "Start Location" : startLocation)
+                                                    .font(.system(size: geometry.size.width * 0.05, weight: .semibold))
+                                                    .foregroundColor(.white)
+                                                    .multilineTextAlignment(.center)
+                                                Spacer()
+                                            }
+                                        }
+                                    }
+                                )
+                                .accentColor(.white)
+                                .padding()
+                                .background(Color.theme.accent)
+                                .cornerRadius(geometry.size.width * 0.05)
+                                .background(
+                                    RoundedRectangle(cornerRadius: geometry.size.width * 0.05)
+                                        .stroke(Color.darkBlue, lineWidth: 3)
+                                )
+                                .frame(maxWidth: geometry.size.width * 0.8)
                                 .alert(isPresented: $showLocationErrorAlert) {
                                     Alert(
                                         title: Text("Location Error"),
@@ -311,6 +396,7 @@ struct MainView: View {
                                     )
                                 }
                                 .padding(.bottom, 5)
+                                // list stops with remove & modify options
                                 ForEach(stops.indices, id: \.self) { i in
                                     if stopDurations.indices.contains(i) {
                                         HStack(spacing: geometry.size.width * 0.02) {
@@ -353,6 +439,7 @@ struct MainView: View {
                                         }
                                     }
                                 }
+                                // add new stop button
                                 Button {
                                     stops.append("")
                                     stopsForRouting.append("")
@@ -373,6 +460,7 @@ struct MainView: View {
                                     }
                                     .padding(.vertical, geometry.size.height * 0.0)
                                 }
+                                // set end location button
                                 Button {
                                     isStartLocation = false
                                     currentStopIndex = nil
@@ -394,6 +482,7 @@ struct MainView: View {
                                     .font(.system(size: geometry.size.width * 0.055, weight: .light))
                                     .foregroundColor(.white)
                                     .padding(.vertical, geometry.size.height * 0.01)
+                                // get estimate and calculate cost
                                 Button {
                                     primaryPolyline = nil
                                     errorOccurred = false
@@ -464,6 +553,7 @@ struct MainView: View {
                             .padding(.horizontal, geometry.size.width * 0.01)
                             Spacer(minLength: 10)
                         }
+                        // address autocomplete sheet
                         .fullScreenCover(isPresented: $isPresentingAutocomplete) {
                             AutocompleteViewController(
                                 isStartLocation: $isStartLocation,
@@ -480,8 +570,16 @@ struct MainView: View {
                                 endCoordinate: $endCoordinate,
                                 stopsCoordinates: $stopsCoordinates
                             )
+                            .onDisappear {
+                                if !startLocation.isEmpty && isStartLocation {
+                                    withAnimation(.easeOut(duration: 0.3)) {
+                                        isStartLocationExpanded = false
+                                    }
+                                }
+                            }
                             .interactiveDismissDisabled()
                         }
+                        // stop duration picker sheet
                         .fullScreenCover(isPresented: $showStopDurationPicker) {
                             if let stopIndex = stopDurationIndex {
                                 StopPickerView(
@@ -498,8 +596,27 @@ struct MainView: View {
                         .ignoresSafeArea()
                         .transition(.opacity)
                 }
+                
+                if isLoadingEvos {
+                    ZStack {
+                        Color.black.opacity(0.5)
+                            .ignoresSafeArea()
+                            .blur(radius: 10)
+                        
+                        VStack {
+                            Spacer()
+                            HStack {
+                                Spacer()
+                                LoadingPopup()
+                                Spacer()
+                            }
+                            Spacer()
+                        }
+                    }
+                }
             }
         }
+        // save trip sheet
         .sheet(isPresented: $showingSaveTripView) {
             SaveTripView(
                 tripStorage: tripStorage,
@@ -515,6 +632,7 @@ struct MainView: View {
                 stopsCoordinates: stopsCoordinates
             )
         }
+        // saved trips sheet
         .sheet(isPresented: $showingTripSelector) {
             TripSelectorView(tripStorage: tripStorage) { selectedTrip in
                 startLocation = selectedTrip.startLocation
@@ -526,13 +644,122 @@ struct MainView: View {
                 stopsForRouting = selectedTrip.stops
                 stopCounter = selectedTrip.stops.count
                 changeText()
-                
-                // Trigger geocoding for coordinates
                 geocodeLoadedTrip()
             }
         }
+        // bug report sheet
         .sheet(isPresented: $showingBugReport) {
             BugReportView()
+        }
+        // evo map sheet for nearby evos
+        .sheet(isPresented: $showEvoMap) {
+            NavigationView {
+                ZStack {
+                    EvoMapView(
+                        pins: mapPins,
+                        selectedCar: $selectedCar,
+                        selectedCarAddress: $selectedCarAddress,
+                        selectedCarDistance: $selectedCarDistance,
+                        userLocation: locationManager.currentLocation?.coordinate,
+                        onUseForStartLocation: { address in
+                            startLocation = address
+                            startLocationForRouting = address
+                            CLGeocoder().geocodeAddressString(address) { placemarks, error in
+                                if let coordinate = placemarks?.first?.location?.coordinate {
+                                    startCoordinate = coordinate
+                                }
+                            }
+                            showEvoMap = false
+                            withAnimation(.easeOut(duration: 0.3)) {
+                                isStartLocationExpanded = false
+                            }
+                        }
+                    )
+                    .onAppear {
+                        print("current location when map appears: \(String(describing: locationManager.currentLocation))")
+                        print("current location coord when map appears: \(String(describing: locationManager.currentLocation?.coordinate))")
+                    }
+                    .ignoresSafeArea()
+                    
+                    if !evoCars.isEmpty {
+                        VStack {
+                            Spacer()
+                            HStack {
+                                Spacer()
+                                VStack(spacing: 8) {
+                                    Text("\(evoCars.count) evo\(evoCars.count == 1 ? "" : "s") found nearby")
+                                        .font(.system(size: 18, weight: .semibold))
+                                        .foregroundColor(.white)
+                                    Text("within 1km of your location")
+                                        .font(.system(size: 14))
+                                        .foregroundColor(.white.opacity(0.8))
+                                }
+                                .padding()
+                                .background(Color.theme.accent)
+                                .cornerRadius(15)
+                                .shadow(radius: 5)
+                                .padding(.bottom, 20)
+                                Spacer()
+                            }
+                        }
+                    }
+                    
+                    if let selectedCar = selectedCar {
+                        Color.black.opacity(0.3)
+                            .ignoresSafeArea()
+                            .onTapGesture {
+                                self.selectedCar = nil
+                            }
+                        
+                        EvoDetailPopup(
+                            car: selectedCar,
+                            address: selectedCarAddress,
+                            distance: selectedCarDistance,
+                            onDismiss: {
+                                self.selectedCar = nil
+                            },
+                            onUseForStartLocation: { address in
+                                startLocation = address
+                                startLocationForRouting = address
+                                CLGeocoder().geocodeAddressString(address) { placemarks, error in
+                                    if let coordinate = placemarks?.first?.location?.coordinate {
+                                        startCoordinate = coordinate
+                                    }
+                                }
+                                showEvoMap = false
+                                withAnimation(.easeOut(duration: 0.3)) {
+                                    isStartLocationExpanded = false
+                                }
+                            }
+                        )
+                    }
+                }
+                .navigationTitle("Nearby Evos")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button("Done") {
+                            showEvoMap = false
+                            withAnimation(.easeOut(duration: 0.3)) {
+                                isStartLocationExpanded = false
+                            }
+                        }
+                    }
+                    ToolbarItem(placement: .navigationBarLeading) {
+                        Button("Refresh") {
+                            isLoadingEvos = true
+                            locationManager.fetchNearbyEvos { cars in
+                                DispatchQueue.main.async {
+                                    if let cars = cars {
+                                        evoCars = cars
+                                    }
+                                    isLoadingEvos = false
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }

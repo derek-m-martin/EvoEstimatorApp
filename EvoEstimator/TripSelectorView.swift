@@ -7,13 +7,13 @@
 
 import SwiftUI
 
-// view for selecting and managing saved trips
+// view for selecting a saved trip
 struct TripSelectorView: View {
     @Environment(\.dismiss) var dismiss
     @ObservedObject var tripStorage: TripStorage
     let onTripSelected: (SavedTrip) -> Void
     
-    // formats date for display
+    // format date nicely for display
     private func formatDate(_ date: Date) -> String {
         let formatter = DateFormatter()
         formatter.dateStyle = .medium
@@ -25,7 +25,7 @@ struct TripSelectorView: View {
         NavigationView {
             List {
                 if tripStorage.savedTrips.isEmpty {
-                    Text("No saved trips yet.")
+                    Text("no saved trips yet.")
                         .foregroundColor(.gray)
                 } else {
                     ForEach(tripStorage.savedTrips) { trip in
@@ -33,13 +33,8 @@ struct TripSelectorView: View {
                             VStack(alignment: .leading, spacing: 4) {
                                 Text(trip.name)
                                     .font(.headline)
-
                                 HStack(spacing: 8) {
-                                    ForEach(buildRouteElements(
-                                        start: trip.startLocation,
-                                        stops: trip.stops,
-                                        end: trip.endLocation
-                                    ), id: \.self) { element in
+                                    ForEach(buildRouteElements(start: trip.startLocation, stops: trip.stops, end: trip.endLocation), id: \.self) { element in
                                         HStack(spacing: 4) {
                                             Text(element.text)
                                                 .font(.subheadline)
@@ -53,14 +48,12 @@ struct TripSelectorView: View {
                                     }
                                 }
                             }
-                            
                             Spacer()
-                            
                             Button(action: {
                                 onTripSelected(trip)
-                                dismiss()
+                                dismiss() // load trip and close view
                             }) {
-                                Text("Load")
+                                Text("load")
                                     .padding(8)
                                     .foregroundColor(.blue)
                                     .cornerRadius(8)
@@ -70,10 +63,10 @@ struct TripSelectorView: View {
                     .onDelete(perform: tripStorage.removeTrip)
                 }
             }
-            .navigationTitle("Saved Trips")
+            .navigationTitle("saved trips")
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Close") {
+                    Button("close") {
                         dismiss()
                     }
                 }
@@ -89,21 +82,18 @@ struct TripSelectorView: View {
         let showArrow: Bool
     }
     
+    // build route elements for a trip summary
     private func buildRouteElements(start: String, stops: [String], end: String) -> [RouteElement] {
         var elements: [RouteElement] = []
-
         elements.append(RouteElement(text: start, showArrow: !stops.isEmpty || !end.isEmpty))
-
         for (index, stop) in stops.enumerated() {
             let isLastStop = index == stops.count - 1
             let hasEnd = !end.isEmpty
             elements.append(RouteElement(text: stop, showArrow: !isLastStop || hasEnd))
         }
-
         if !end.isEmpty {
             elements.append(RouteElement(text: end, showArrow: false))
         }
-        
         return elements
     }
 }

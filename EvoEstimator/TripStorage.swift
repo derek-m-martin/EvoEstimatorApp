@@ -8,7 +8,7 @@
 import Foundation
 import SwiftUI
 
-// manages saving and loading of trip data
+// manages saving and loading of trips
 class TripStorage: ObservableObject {
     @Published var savedTrips: [SavedTrip] = []
     private let tripsKey = "savedTrips"
@@ -17,7 +17,7 @@ class TripStorage: ObservableObject {
         loadTrips()
     }
     
-    // loads saved trips from user defaults
+    // load trips from userdefaults
     private func loadTrips() {
         if let data = UserDefaults.standard.data(forKey: tripsKey) {
             if let decoded = try? JSONDecoder().decode([SavedTrip].self, from: data) {
@@ -26,14 +26,14 @@ class TripStorage: ObservableObject {
         }
     }
     
-    // saves trips to user defaults
+    // save trips to userdefaults
     private func saveTrips() {
         if let encoded = try? JSONEncoder().encode(savedTrips) {
             UserDefaults.standard.set(encoded, forKey: tripsKey)
         }
     }
     
-    // adds a new trip to storage
+    // add a new trip and persist it
     func addTrip(_ trip: Trip) {
         let savedTrip = SavedTrip(
             name: trip.name,
@@ -46,14 +46,14 @@ class TripStorage: ObservableObject {
         saveTrips()
     }
     
-    // removes a trip from storage
+    // remove a trip from storage
     func removeTrip(at offsets: IndexSet) {
         savedTrips.remove(atOffsets: offsets)
         saveTrips()
     }
 }
 
-// represents a saved trip with all its details
+// represents a saved trip
 struct SavedTrip: Codable, Identifiable {
     let id: UUID
     let name: String

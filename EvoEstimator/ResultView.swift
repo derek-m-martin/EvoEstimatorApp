@@ -8,6 +8,7 @@
 import SwiftUI
 import MapKit
 import CoreLocation
+import Contacts
 
 // displays the final route details and estimates
 struct ResultView: View {
@@ -64,57 +65,82 @@ struct ResultView: View {
     
     // opens route in apple maps
     func openInAppleMaps() {
-        var coordinates: [CLLocationCoordinate2D] = []
-        if let start = startCoordinate { coordinates.append(start) }
-        for stopCoord in stopsCoordinates {
-            if let coord = stopCoord { coordinates.append(coord) }
+        var items: [MKMapItem] = []
+        
+        // Add start location
+        if let start = startCoordinate {
+            let startPlacemark = MKPlacemark(coordinate: start, addressDictionary: [CNPostalAddressStreetKey: routingStart])
+            let startItem = MKMapItem(placemark: startPlacemark)
+            startItem.name = startLocation
+            items.append(startItem)
         }
-        if let end = endCoordinate { coordinates.append(end) }
         
-        guard coordinates.count >= 2 else { return }
+        // Add stops in order
+        for (index, stopCoord) in stopsCoordinates.enumerated() {
+            if let coord = stopCoord, stops.indices.contains(index) {
+                let stopPlacemark = MKPlacemark(coordinate: coord, addressDictionary: [CNPostalAddressStreetKey: routingStops[index]])
+                let stopItem = MKMapItem(placemark: stopPlacemark)
+                stopItem.name = stops[index]
+                items.append(stopItem)
+            }
+        }
         
-        let items = coordinates.map { MKMapItem(placemark: MKPlacemark(coordinate: $0)) }
+        // Add end location
+        if let end = endCoordinate {
+            let endPlacemark = MKPlacemark(coordinate: end, addressDictionary: [CNPostalAddressStreetKey: routingEnd])
+            let endItem = MKMapItem(placemark: endPlacemark)
+            endItem.name = endLocation
+            items.append(endItem)
+        }
+        
+        guard items.count >= 2 else { return }
+        
         let options = [
-            MKLaunchOptionsDirectionsModeKey: MKLaunchOptionsDirectionsModeDriving
-        ]
+            MKLaunchOptionsDirectionsModeKey: MKLaunchOptionsDirectionsModeDriving,
+            MKLaunchOptionsShowsTrafficKey: true
+        ] as [String : Any]
         
         MKMapItem.openMaps(with: items, launchOptions: options)
     }
     
     // opens route in google maps
     func openInGoogleMaps() {
-        var urlString = "comgooglemaps://"
+        // Try to use the app first
+        var urlComponents = URLComponents(string: "comgooglemaps://")
+        urlComponents?.queryItems = []
         
-        if let start = startCoordinate {
-            urlString += "saddr=\(start.latitude),\(start.longitude)"
+        // Add start location using address
+        urlComponents?.queryItems?.append(URLQueryItem(name: "saddr", value: routingStart))
+        
+        // Add end location using address
+        urlComponents?.queryItems?.append(URLQueryItem(name: "daddr", value: routingEnd))
+        
+        // Add waypoints using addresses
+        if !routingStops.isEmpty {
+            let waypointsString = routingStops.joined(separator: "|")
+            urlComponents?.queryItems?.append(URLQueryItem(name: "waypoints", value: waypointsString))
         }
         
-        if let end = endCoordinate {
-            urlString += "&daddr=\(end.latitude),\(end.longitude)"
-        }
+        urlComponents?.queryItems?.append(URLQueryItem(name: "directionsmode", value: "driving"))
         
-        var waypointsString = ""
-        for stopCoord in stopsCoordinates {
-            if let coord = stopCoord {
-                if !waypointsString.isEmpty {
-                    waypointsString += "|"
-                }
-                waypointsString += "\(coord.latitude),\(coord.longitude)"
-            }
-        }
-        
-        if !waypointsString.isEmpty {
-            urlString += "&waypoints=\(waypointsString)"
-        }
-        
-        urlString += "&directionsmode=driving"
-        
-        if let url = URL(string: urlString) {
+        if let url = urlComponents?.url {
             if UIApplication.shared.canOpenURL(url) {
                 UIApplication.shared.open(url)
             } else {
-                let webUrlString = "https://www.google.com/maps/dir/?api=1"
-                if let webUrl = URL(string: webUrlString) {
+                // Fallback to web URL if app is not installed
+                var webComponents = URLComponents(string: "https://www.google.com/maps/dir/")
+                webComponents?.queryItems = [
+                    URLQueryItem(name: "api", value: "1"),
+                    URLQueryItem(name: "origin", value: routingStart),
+                    URLQueryItem(name: "destination", value: routingEnd),
+                    URLQueryItem(name: "travelmode", value: "driving")
+                ]
+                
+                if !routingStops.isEmpty {
+                    webComponents?.queryItems?.append(URLQueryItem(name: "waypoints", value: routingStops.joined(separator: "|")))
+                }
+                
+                if let webUrl = webComponents?.url {
                     UIApplication.shared.open(webUrl)
                 }
             }
@@ -233,7 +259,7 @@ struct ResultView: View {
                         Text("Get Directions")
                             .padding()
                             .frame(maxWidth: geometry.size.width * 0.4)
-                            .background(Color.green.opacity(0.5))
+                            .background(Color.theme.accent)
                             .foregroundColor(.white)
                             .cornerRadius(20)
                             .font(.headline)
@@ -263,7 +289,7 @@ struct ResultView: View {
                         Text("Close Estimate")
                             .padding()
                             .frame(maxWidth: geometry.size.width * 0.4)
-                            .background(Color.red.opacity(0.5))
+                            .background(Color.red)
                             .foregroundColor(.white)
                             .cornerRadius(20)
                             .font(.headline)
